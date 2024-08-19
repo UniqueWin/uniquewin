@@ -3,20 +3,12 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 interface Answer {
-  text: string;
-  frequency: number;
+  answer: string;
+  frequency: number | "PENDING";
   status: "UNIQUE" | "NOT UNIQUE" | "PENDING";
-  instantWin: number | "REVEAL" | "NO";
+  instantWin: string | "REVEAL" | "PENDING";
 }
 
 interface Game {
@@ -31,93 +23,102 @@ const Home = () => {
   const [answer, setAnswer] = useState("");
   const [isLuckyDip, setIsLuckyDip] = useState(false);
   const [userBalance, setUserBalance] = useState(10);
+  const [countdown, setCountdown] = useState("");
 
   useEffect(() => {
-    // Load game data from local storage or initialize if not present
-    const storedGame = localStorage.getItem("currentGame");
-    if (storedGame) {
-      setGame(JSON.parse(storedGame));
-    } else {
-      const newGame: Game = {
-        question: "NAME A BOYS NAME BEGINNING WITH 'T'",
-        jackpot: 1500,
-        endTime: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
-        answers: [],
-      };
-      setGame(newGame);
-      localStorage.setItem("currentGame", JSON.stringify(newGame));
-    }
+    // Initialize game data
+    const newGame: Game = {
+      question: "NAME A BOYS NAME BEGINNING WITH 'T'",
+      jackpot: 1500,
+      endTime: new Date(Date.now() + 8 * 3600000 + 23 * 60000 + 13 * 1000), // 8:23:13 from now
+      answers: [
+        { answer: "APPLE", frequency: 27, status: "NOT UNIQUE", instantWin: "£25" },
+        { answer: "ORANGE", frequency: 1, status: "UNIQUE", instantWin: "REVEAL" },
+        { answer: "TOMATO", frequency: "PENDING", status: "PENDING", instantWin: "PENDING" },
+        { answer: "BEETROOT", frequency: 1, status: "UNIQUE", instantWin: "NO" },
+      ],
+    };
+    setGame(newGame);
 
-    // Load user balance
-    const storedBalance = localStorage.getItem("userBalance");
-    if (storedBalance) {
-      setUserBalance(parseInt(storedBalance));
-    }
+    // Set up countdown timer
+    const timer = setInterval(() => {
+      const now = new Date();
+      const distance = newGame.endTime.getTime() - now.getTime();
+      const hours = Math.floor(distance / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      setCountdown(`${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
   const submitAnswer = () => {
     if (!game || !answer.trim()) return;
 
-    const cost = isLuckyDip ? 5 : 1;
-    if (userBalance < cost) {
-      alert("Insufficient balance!");
-      return;
-    }
+    const newAnswer: Answer = {
+      answer: answer.toUpperCase(),
+      frequency: isLuckyDip ? 1 : "PENDING",
+      status: isLuckyDip ? "UNIQUE" : "PENDING",
+      instantWin: isLuckyDip ? "REVEAL" : "PENDING",
+    };
 
-    let newAnswer: Answer;
-    if (isLuckyDip) {
-      // Implement lucky dip logic here
-      newAnswer = {
-        text: answer,
-        frequency: 1,
-        status: "UNIQUE",
-        instantWin: "REVEAL",
-      };
-    } else {
-      newAnswer = {
-        text: answer,
-        frequency: 1,
-        status: "PENDING",
-        instantWin: "NO",
-      };
-    }
-
-    const updatedAnswers = [...game.answers, newAnswer];
-    const updatedGame = { ...game, answers: updatedAnswers };
-    setGame(updatedGame);
-    localStorage.setItem("currentGame", JSON.stringify(updatedGame));
-
-    // Update user balance
-    const newBalance = userBalance - cost;
-    setUserBalance(newBalance);
-    localStorage.setItem("userBalance", newBalance.toString());
+    setGame(prevGame => ({
+      ...prevGame!,
+      answers: [newAnswer, ...prevGame!.answers],
+    }));
 
     setAnswer("");
     setIsLuckyDip(false);
   };
 
+  const calculateWinnings = () => {
+    const uniqueAnswers = game?.answers.filter(a => a.status === "UNIQUE") || [];
+    return uniqueAnswers.length ? (750 / uniqueAnswers.length).toFixed(2) : "0.00";
+  };
+
   if (!game) return <div>Loading...</div>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">UniqueWin.co.uk</h1>
-      <div className="mb-4">
-        <p>LIVE: JACKPOT: £{game.jackpot}</p>
-        <p>GAME ENDS IN: {/* Add countdown logic */}</p>
-      </div>
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold mb-2">
-          FIND A UNIQUE ANSWER & WIN!
-        </h2>
-        <p className="mb-2">{game.question}</p>
+    <div className="bg-purple-300 min-h-screen">
+      <header className="bg-purple-700 text-white p-4">
+        <nav className="flex justify-between">
+          <div>
+            <a href="#" className="mr-4">HOME</a>
+            <a href="#" className="mr-4">HOW TO PLAY?</a>
+            <a href="#" className="mr-4">WINNERS</a>
+            <a href="#" className="mr-4">FAQ</a>
+            <a href="#" className="mr-4">CONTACT US</a>
+          </div>
+          <div>
+            <a href="#" className="mr-4">SIGN IN/LOGOUT</a>
+            <a href="#" className="mr-4">MY ACCOUNT</a>
+            <span className="mr-4">BALANCE: £{userBalance}</span>
+            <a href="#" className="bg-orange-500 px-2 py-1 rounded">BUY CREDITS</a>
+          </div>
+        </nav>
+      </header>
+
+      <main className="container mx-auto p-4">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-3xl font-bold">UNIQUEWIN.CO.UK</h1>
+          <div>
+            <p>LIVE: JACKPOT: £{game.jackpot}</p>
+            <p>GAME ENDS IN {countdown}</p>
+          </div>
+        </div>
+
+        <h2 className="text-2xl font-bold mb-4">FIND A UNIQUE ANSWER & WIN!</h2>
+        <p className="text-xl mb-4">{game.question}</p>
+
         <Input
           type="text"
           value={answer}
           onChange={(e) => setAnswer(e.target.value)}
           placeholder="ENTER YOUR ANSWER"
-          className="mb-2"
+          className="mb-4"
         />
-        <div className="flex items-center mb-2">
+        <div className="flex items-center mb-4">
           <input
             type="checkbox"
             checked={isLuckyDip}
@@ -126,34 +127,56 @@ const Home = () => {
           />
           <label>LUCKY DIP</label>
         </div>
-        <Button onClick={submitAnswer}>PLAY NOW/SUBMIT</Button>
-      </div>
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold mb-2">GAME HISTORY</h3>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>YOUR ANSWER</TableHead>
-              <TableHead>ANSWER FREQUENCY</TableHead>
-              <TableHead>ANSWER STATUS</TableHead>
-              <TableHead>INSTANT WIN</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+        <Button onClick={submitAnswer} className="bg-orange-500 w-full mb-8">PLAY NOW/SUBMIT</Button>
+
+        <h3 className="text-xl font-bold mb-4">GAME HISTORY</h3>
+        <p className="mb-4">YOU ARE CURRENTLY WINNING: £{calculateWinnings()}</p>
+        <table className="w-full mb-8">
+          <thead>
+            <tr>
+              <th className="text-left">YOUR ANSWER</th>
+              <th className="text-left">ANSWER FREQUENCY</th>
+              <th className="text-left">ANSWER STATUS</th>
+              <th className="text-left">INSTANT WIN</th>
+            </tr>
+          </thead>
+          <tbody>
             {game.answers.map((answer, index) => (
-              <TableRow key={index}>
-                <TableCell>{answer.text}</TableCell>
-                <TableCell>{answer.frequency}</TableCell>
-                <TableCell>{answer.status}</TableCell>
-                <TableCell>{answer.instantWin}</TableCell>
-              </TableRow>
+              <tr key={index}>
+                <td>{answer.answer}</td>
+                <td>{answer.frequency}</td>
+                <td className={
+                  answer.status === "UNIQUE" ? "text-green-500" :
+                  answer.status === "NOT UNIQUE" ? "text-red-500" :
+                  "text-orange-500"
+                }>{answer.status}</td>
+                <td>{answer.instantWin}</td>
+              </tr>
             ))}
-          </TableBody>
-        </Table>
-      </div>
-      <div>
-        <p>YOU ARE CURRENTLY WINNING: £{/* Add winning calculation logic */}</p>
-      </div>
+          </tbody>
+        </table>
+
+        <div className="bg-purple-500 text-white p-4 text-center mb-8">
+          <h3 className="text-xl font-bold">DON'T MISS THE 8PM RESULTS SHOW</h3>
+          <p>EVERY MONDAY NIGHT LIVE ON FACEBOOK</p>
+        </div>
+
+        <div className="flex justify-between items-center mb-8">
+          <div className="w-1/2 bg-purple-400 h-32"></div>
+          <div>
+            <h3 className="text-xl font-bold">NEW WINNERS EVERYDAY</h3>
+            <p>WILL YOU BE NEXT?</p>
+          </div>
+        </div>
+
+        <div className="bg-purple-400 p-4 text-center">
+          TRUSTPILOT WIDGET
+        </div>
+      </main>
+
+      <footer className="bg-purple-700 text-white p-4 text-center">
+        FOOTER LINKS HERE
+      </footer>
     </div>
   );
 };
