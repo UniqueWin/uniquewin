@@ -1,0 +1,9 @@
+unique wins - how do we prevent someone entering something that is not an answer
+if the question is "name a boy's name beginnin with 'T'" and someone answers "tdfkefihsd" this will surely be unique - but this is a false answer
+do we have to have prepopulated list of answers?
+
+
+lucky dip disabled if all names are taken from predefined list
+game rolls over if nobody wins
+instant wins
+scratch card effect - money goes furhter, more to do

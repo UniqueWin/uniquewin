@@ -1,0 +1,121 @@
+Concept 
+
+UniqueWin is a skill based gambling game where players have to guess the answer to a very simple question where there are multiple answers but the winner is the person who has the only (Unique) answer.  
+
+Players deposit money and pay £1 a go. There is a prize for the Unique answer along with ‘instant’ prizes if they guess a particular answer. There is a ‘lucky dip’ option that costs £5 this gives the user a guaranteed winning answer at the time of purchase. All entries go into a raffle for another chance to win.  
+
+Register  
+
+Basic sign-up form with Username, Password and then Full Name, DOB, Address, Postcode, Country, Phone Number etc. Coupon Code Box. Agree to T&Cs/Privacy Policy and Opt In to Marketing tick boxes. Should be for Over 18’s only so validation on the DOB. Validation on other fields etc. 
+
+Submitting Answers  
+
+Any answer that is not on the prepopulated list of winning answers automatically falls into the ‘Pending’ list for manual validation. These could be answers that I have not thought of or it could be spelling errors. These answers will be displayed as ‘Pending’ in the game history until they have been verified.  
+
+I want the game to be as user friendly as possible so I would like to stay away from refreshing the page after each submitted answer and dynamically update the page if that makes sense e.g. once you click ‘submit’ your answer automatically appears below in the table. 
+
+The most important thing is how to show the user whether or not their answer is a winning or losing one after they submit their guess. Could the textbox itself change into green, orange or red depending on the answer? Do we display a message above the text box e.g Congratulations this is a Unique Answer!’? Or, do we just display the answer in the table below but make sure it’s above the fold and in view on both desktop / mobile? The user friendliness of playing the game will be key to how addictive the game is. I want it to be really simple and intuitive with most key actions all taking place on the same screen e.g. submitting answers and being able to view the status of answers. Most people will play this on their phone so this design needs to be at the forefront of development.  
+
+If they correctly guess an answer that has not been guessed before it’s UNIQUE and they are currently winning the game jackpot. This would be listed in the table as ‘UNIQUE’ with a count of 1 and it would also show the prize amount they are winning as the full amount.  
+
+If they guess an answer that has already been said then it’s a DUPLICATE and will be in red. It will show next to that guess the number of other guesses e.g. 14.  
+
+If they have guessed a UNIQUE answer but there are multiple unique answers then this will show in orange in this case the prize is split between all the users who have UNIQUE answers.  
+
+Game Play Example 
+
+Let’s say you are the only player in the game and you guess 3 answers and the statuses are as follows  
+
+Lion UNIQUE  
+
+Tiger UNIQUE  
+
+Eléphant UNIQUE  
+
+This is because you have three UNIQUE answers but as there are multiple UNIQUE answers they appear in orange.  
+
+So if someone guesses ‘Elephant’ that answer would turn into ‘NOT UNIQUE’ and the other two entries would still be ‘UNIQUE’. If someone then guessed ‘Tiger’ this would become ‘NOT UNIQUE’ and ‘Lion’ would turn into ‘UNIQUE’ as it’s now the only unique answer left. If someone then came along and guessed ‘Puma’ then ‘Lion’ would turn back into ‘UNIQUE’ as we have two UNIQUE answers. If someone then guesses ‘Lion’ it would be ‘NOT UNIQUE’.  
+
+Game End 
+
+There will be a countdown timer from the start of the game until the end and once one game ends the next one will begin it will be seamless and the old one will be archived. 
+
+Let’s assume the game will run from 8pm-8pm. The last 60 minutes of the game the ‘game history’ will be hidden so from 7pm you won’t be able to view any of your previous guesses or their status or any instant wins. This allows for us to keep the ‘winner’ unknown until our live results show on Facebook later that night. So, just because you’re winning at 7pm doesn’t mean you will win at 8pm and likewise you could be winning a small amount at 7pm but winning everything at 8pm!  
+
+The second reason is we need to manually verify all the guesses outside of the prepopulated list so there is a degree of human verification needed and this will take an hour or so (I guess) so the actual live show and results will be done at 9pm (an hour after the game ends). 
+
+Facebook will be one of the marketing channels for the website and it also allows us to build trustworthiness with a live host. The live show will reveal who has won the game (or not won) and the host will also reveal all the instant wins. There will also be a raffle for another chance to win. People will see other winners in the chat and as these are real people it will help to build confidence in the game as they can actually see real people winning.  
+
+Winners Page  
+
+There will also be a separate winners page that will list all the past games, what the question was, number of answers, winning answer or not, prize won and the user etc. Once the finished game has been confirmed via the backend it will be published on the winners page. 
+
+Lucky Dip 
+
+This feature randomly selects a current winning answer from the database. E.g. an answer that has not been picked before. So, at the time of purchase it is a ‘Unique’ answer. Because it is a guaranteed winning answer at that time it will cost more than submitting your own answer e.g. £5.  
+
+When all the submitted answers in the backend have already been guessed then the ‘Lucky Dip’ will no longer be an option for that game.  
+
+I have a radio box that when ticked would automatically show a current winning answer in the text box and it is at this point that their account is deducted.  I wonder whether this should be a button instead? Or should we alert them that this will cost £5?  
+
+To avoid this becoming a ‘gambling’ game we need to show the answer first before they decide to play it. Therefore they pay £5 for the answer and a further £1 to submit it. Once the answer is displayed in the text box they have to then click ‘Submit’ again.  
+
+If there is a better way to implement this I am open to ideas.  
+
+Instant Win 
+
+We can assign prize values next to answers in the prepopulated list. When a user guesses that answer they win an Instant prize. Typically it will be for the first person to guess the answer but there should be the feature to specify how many times it can be used.  
+
+E.g. a typical game might have 100 common answers and 10 of those might be marked as ‘Instant Win’ and in the backend there will be the facility to specify the amount e.g. £5 or £10 and whether it’s for the first person to guess or for multiple guesses etc.  
+
+Now, every answer could be an instant win so my idea was in the game history we could have a ‘scratch card’ type effect or a toggle button or something so that they have to reveal whether they have won or not on that answer. For me, this just adds another layer to the game and excitement. Rather than reveal straight away if it’s an ‘instant win’ they have to then do something else. This way they could have a losing guess and be disappointed but then remember they still have to check if it’s a ‘instant win’. So, where I have ‘reveal’ in the design this is where the slider or toggle would be to reveal the prize and then it would say the amount they’ve won or ‘No’. It would be at the point they reveal the ‘instant win’ that is then credits their account.    
+
+Raffle 
+
+I just need the ability in the backend to press a button and randomly draw an entry (RNG) and see who the user was. As we are going to give away some bonus prizes on the Live Stream.  
+
+User Account 
+
+All users need the ability to edit their accounts e.g. basic profile information.  
+
+Also the option to ‘Self Exclude’ their account (lock it) for a period of 6 or 12 months (this is something that I should not be able to undo for them) so once it’s locked it won’t be reactivated until the time set.  
+
+ID verification – they need to upload a scanned document in order for their account to be manually verified by us. They don’t need to do it to deposit funds and play but if they try and withdraw funds it will not be possible until it has been verified.  
+
+Deposit funds / withdraw via payment gateway. When they withdraw there will be a notification on the AdminCP side for us to approve it. This is where it will show us if they are verified or not. All withdrawals take up to 24 hrs. Minimum withdrawal amount to be specified in AdminCP.  Once a withdrawal is initiated it can’t be reversed.  
+
+View game history – much like the game history when they play they can past games, their guesses, whether it was unique or not etc.  
+
+Admin CP 
+
+Overview screen that shows current game and number of answers, current winner (s) and prize amount, instant wins, time left etc. A quick glance at what is happening on the website.  
+
+ 
+
+Filter games into ‘Live’, ‘Pending’, ‘Finished’. A game would be ‘Pending’ if it has ended but hasn’t been manually reviewed and closed. This is when we check the manually submitted answers and review them. Each game I need to see all the answers and be able to approve / disapprove. If approved as a valid answer then it would either be ‘Unique’ or ‘Not Unique’ based on other answers. If disapproved then the status would be ‘Invalid Answer’. There would be a button to ‘Close’ the game and then this publishes it onto the ‘Winners’ page.  
+
+ 
+
+Ability to add / edit / delete games and order them. Each game will have a question, winning answers, instant win prizes (specify amount and number of times it can be won), lucky dip (specify price) start / end time.  
+
+ 
+
+Ability to add / edit / delete players including ban their accounts and edit their balance.  
+
+ 
+
+Raffle – ability to select a winning answer from a game at random and display the winners details.  
+
+ 
+
+Coupon system – ability to have coupon codes to be used as promotional on sign-up or elsewhere. E.g. enter ‘BONUS10’ for £10 credit. The box could be on the sign-up form and also on the ‘Deposit’ page.  
+
+ 
+
+Ability to E-mail/SMS all users for promotional if they have ‘opted’ in.  
+
+ 
+
+ 
+
+ 

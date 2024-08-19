@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UniqueWin - Find a Unique Answer & Win!</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #e6b3ff;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      header {
+        background-color: #8000ff;
+        color: white;
+        padding: 10px 0;
+      }
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+      }
+      nav a {
+        color: white;
+        text-decoration: none;
+        margin-right: 10px;
+      }
+      .game-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .game-question {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      button {
+        background-color: #ff9933;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .unique {
+        color: green;
+      }
+      .not-unique {
+        color: red;
+      }
+      .pending {
+        color: orange;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div>
+          <a href="#">Home</a>
+          <a href="#">How to Play?</a>
+          <a href="#">Winners</a>
+          <a href="#">FAQ</a>
+          <a href="#">Contact Us</a>
+        </div>
+        <div>
+          <a href="#">Sign In/Logout</a>
+          <a href="#">My Account</a>
+          <span>Balance: £10</span>
+          <a href="#">Buy Credits</a>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+      <div class="game-info">
+        <h1>UniqueWin.co.uk</h1>
+        <div>
+          <p>LIVE: JACKPOT: £1,500</p>
+          <p>Game ends in <span id="countdown">8:23:13</span></p>
+        </div>
+      </div>
+
+      <h2>Find a Unique Answer & Win!</h2>
+      <p class="game-question">Name a boy's name beginning with 'T'</p>
+
+      <input type="text" id="answer" placeholder="Enter your answer" />
+      <label> <input type="checkbox" id="luckyDip" /> Lucky Dip </label>
+      <button id="submitAnswer">Play Now/Submit</button>
+
+      <h3>Game History</h3>
+      <p id="currentWinnings">You are currently winning: £750</p>
+      <table id="gameHistory">
+        <tr>
+          <th>Your Answer</th>
+          <th>Answer Frequency</th>
+          <th>Answer Status</th>
+          <th>Instant Win</th>
+        </tr>
+      </table>
+
+      <h3>Don't miss the 8PM Results Show</h3>
+      <p>Every Monday night live on Facebook</p>
+
+      <h3>New Winners Everyday</h3>
+      <p>Will you be next?</p>
+
+      <div id="trustpilot">Trustpilot Widget</div>
+    </div>
+
+    <script>
+      const gameHistory = [
+        {
+          answer: "Apple",
+          frequency: 27,
+          status: "NOT UNIQUE",
+          instantWin: "£25",
+        },
+        {
+          answer: "Orange",
+          frequency: 1,
+          status: "UNIQUE",
+          instantWin: "REVEAL",
+        },
+        {
+          answer: "Tomato",
+          frequency: "PENDING",
+          status: "PENDING",
+          instantWin: "PENDING",
+        },
+        {
+          answer: "Beetroot",
+          frequency: 1,
+          status: "UNIQUE",
+          instantWin: "NO",
+        },
+      ];
+
+      function updateGameHistory() {
+        const table = document.getElementById("gameHistory");
+        gameHistory.forEach((entry, index) => {
+          const row = table.insertRow(-1);
+          row.insertCell(0).textContent = entry.answer;
+          row.insertCell(1).textContent = entry.frequency;
+          const statusCell = row.insertCell(2);
+          statusCell.textContent = entry.status;
+          statusCell.className = entry.status.toLowerCase().replace(" ", "-");
+          const instantWinCell = row.insertCell(3);
+          instantWinCell.textContent = entry.instantWin;
+          if (entry.instantWin === "REVEAL") {
+            instantWinCell.style.cursor = "pointer";
+            instantWinCell.addEventListener("click", () => revealInstantWin(index));
+          }
+        });
+      }
+
+      function revealInstantWin(index) {
+        const entry = gameHistory[index];
+        if (entry.instantWin === "REVEAL") {
+          entry.instantWin = Math.random() < 0.5 ? "NO" : "£" + (Math.floor(Math.random() * 50) + 1);
+          document.getElementById("gameHistory").innerHTML = "<tr><th>Your Answer</th><th>Answer Frequency</th><th>Answer Status</th><th>Instant Win</th></tr>";
+          updateGameHistory();
+        }
+      }
+
+      function submitAnswer() {
+        const answer = document.getElementById("answer").value;
+        const luckyDip = document.getElementById("luckyDip").checked;
+        
+        if (answer) {
+          const newEntry = {
+            answer: answer,
+            frequency: luckyDip ? 1 : Math.floor(Math.random() * 30) + 1,
+            status: luckyDip ? "UNIQUE" : ["UNIQUE", "NOT UNIQUE", "PENDING"][Math.floor(Math.random() * 3)],
+            instantWin: Math.random() < 0.2 ? "£" + (Math.floor(Math.random() * 50) + 1) : "NO",
+          };
+          
+          gameHistory.unshift(newEntry);
+          document.getElementById("gameHistory").innerHTML = "<tr><th>Your Answer</th><th>Answer Frequency</th><th>Answer Status</th><th>Instant Win</th></tr>";
+          updateGameHistory();
+          document.getElementById("answer").value = "";
+          document.getElementById("luckyDip").checked = false;
+          document.getElementById("answer").disabled = false;
+        }
+      }
+
+      function handleLuckyDip() {
+        const luckyDipCheckbox = document.getElementById("luckyDip");
+        const answerInput = document.getElementById("answer");
+        
+        answerInput.disabled = luckyDipCheckbox.checked;
+        if (luckyDipCheckbox.checked) {
+          answerInput.value = "Lucky Dip";
+        } else {
+          answerInput.value = "";
+        }
+      }
+
+      function updateCurrentWinnings() {
+        const uniqueAnswers = gameHistory.filter(entry => entry.status === "UNIQUE");
+        const winningAmount = 750 / (uniqueAnswers.length || 1);
+        document.getElementById("currentWinnings").textContent = `You are currently winning: £${winningAmount.toFixed(2)}`;
+      }
+
+      document
+        .getElementById("submitAnswer")
+        .addEventListener("click", submitAnswer);
+      document.getElementById("luckyDip").addEventListener("change", handleLuckyDip);
+
+      updateGameHistory();
+      updateCurrentWinnings();
+
+      // Simple countdown timer
+      let time = 8 * 3600 + 23 * 60 + 13; // 8:23:13 in seconds
+      const countdownElement = document.getElementById("countdown");
+      setInterval(() => {
+        time--;
+        const hours = Math.floor(time / 3600);
+        const minutes = Math.floor((time % 3600) / 60);
+        const seconds = time % 60;
+        countdownElement.textContent = `${hours}:${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      }, 1000);
+    </script>
+  </body>
+</html>
