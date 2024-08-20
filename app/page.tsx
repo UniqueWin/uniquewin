@@ -16,8 +16,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ScratchCard } from "next-scratchcard";
+import { ScratchCard } from "next-scratchcard"; // Correct import
 import { useRouter } from "next/navigation";
+import Confetti from "react-confetti"; // Import confetti
 
 interface Answer {
   answer: string;
@@ -43,14 +44,21 @@ const ScratchCardComponent = ({
   onReveal: () => void;
 }) => {
   const [isRevealed, setIsRevealed] = useState(false);
+  const [scratchedPercentage, setScratchedPercentage] = useState(0); // Track scratched percentage
 
   const handleComplete = () => {
     setIsRevealed(true);
     onReveal();
+    if (scratchedPercentage >= 70) {
+      // Check if 70% is scratched
+      // Trigger confetti
+      setConfetti(true);
+    }
   };
 
   return (
     <div className="relative w-[300px] h-[300px]">
+      {isRevealed && <Confetti />}
       <ScratchCard
         width={300}
         height={300}
@@ -61,6 +69,7 @@ const ScratchCardComponent = ({
           height: 40,
           shape: "circle",
         }}
+        onScratch={(percentage) => setScratchedPercentage(percentage)} // Update scratched percentage
       >
         <div className="flex items-center justify-center w-full h-full bg-purple-500">
           <div className="text-center">
