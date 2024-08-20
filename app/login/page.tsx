@@ -1,7 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import { headers } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation"; // Correct import for client-side navigation
+import users from "@/data/users.json"; // Import users from JSON
 import { SubmitButton } from "./submit-button";
 
 export default function Login({
@@ -9,46 +10,22 @@ export default function Login({
 }: {
   searchParams: { message: string };
 }) {
-  const signIn = async (formData: FormData) => {
-    "use server";
+  const router = useRouter(); // Initialize router
 
-    const email = formData.get("email") as string;
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const username = formData.get("username") as string;
     const password = formData.get("password") as string;
-    const supabase = createClient();
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      return redirect("/login?message=Could not authenticate user");
+    const user = users.find((u) => u.username === username);
+    if (user) {
+      // In a real app, you'd check the password here
+      localStorage.setItem("currentUserId", user.id.toString());
+      router.push("/"); // Redirect to home on successful login
+    } else {
+      alert("Invalid credentials");
     }
-
-    return redirect("/protected");
-  };
-
-  const signUp = async (formData: FormData) => {
-    "use server";
-
-    const origin = headers().get("origin");
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const supabase = createClient();
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/auth/callback`,
-      },
-    });
-
-    if (error) {
-      return redirect("/login?message=Could not authenticate user");
-    }
-
-    return redirect("/login?message=Check email to continue sign in process");
   };
 
   return (
@@ -74,14 +51,17 @@ export default function Login({
         Back
       </Link>
 
-      <form className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
-        <label className="text-md" htmlFor="email">
-          Email
+      <form
+        onSubmit={handleLogin}
+        className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
+      >
+        <label className="text-md" htmlFor="username">
+          Username
         </label>
         <input
           className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          name="email"
-          placeholder="you@example.com"
+          name="username"
+          placeholder="Username"
           required
         />
         <label className="text-md" htmlFor="password">
@@ -95,18 +75,11 @@ export default function Login({
           required
         />
         <SubmitButton
-          formAction={signIn}
+          formAction={handleLogin}
           className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2"
           pendingText="Signing In..."
         >
           Sign In
-        </SubmitButton>
-        <SubmitButton
-          formAction={signUp}
-          className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
-          pendingText="Signing Up..."
-        >
-          Sign Up
         </SubmitButton>
         {searchParams?.message && (
           <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">

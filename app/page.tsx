@@ -1,6 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import {
+  getCurrentUser,
+  getCurrentGame,
+  submitAnswer,
+} from "../utils/dataHelpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
@@ -11,7 +16,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ScratchCard } from 'next-scratchcard';
+import { ScratchCard } from "next-scratchcard";
+import { useRouter } from "next/navigation";
 
 interface Answer {
   answer: string;
@@ -27,20 +33,15 @@ interface Game {
   answers: Answer[];
 }
 
-const luckyDipNames = [
-  "THOMAS",
-  "TIMOTHY",
-  "TYLER",
-  "THEODORE",
-  "TOBY",
-  "TREVOR",
-  "TRISTAN",
-  "TANNER",
-  "TATE",
-  "THADDEUS",
-];
+const luckyDipNames = ["THEODRE", "TEDDY", "THOMAS", "TREVOR", "TAYTE"];
 
-const ScratchCardComponent = ({ prize, onReveal }: { prize: string, onReveal: () => void }) => {
+const ScratchCardComponent = ({
+  prize,
+  onReveal,
+}: {
+  prize: string;
+  onReveal: () => void;
+}) => {
   const [isRevealed, setIsRevealed] = useState(false);
 
   const handleComplete = () => {
@@ -63,8 +64,19 @@ const ScratchCardComponent = ({ prize, onReveal }: { prize: string, onReveal: ()
       >
         <div className="flex items-center justify-center w-full h-full bg-purple-500">
           <div className="text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto mb-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-16 w-16 mx-auto mb-4 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+              />
             </svg>
             <p className="text-white text-2xl font-bold">YOU WIN {prize}</p>
           </div>
@@ -73,8 +85,19 @@ const ScratchCardComponent = ({ prize, onReveal }: { prize: string, onReveal: ()
       {!isRevealed && (
         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-purple-500 pointer-events-none">
           <div className="text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto mb-4 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-16 w-16 mx-auto mb-4 text-yellow-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
             </svg>
             <p className="text-white text-lg font-bold">YOU WIN</p>
             <p className="text-yellow-400 text-2xl font-bold">{prize}</p>
@@ -86,10 +109,11 @@ const ScratchCardComponent = ({ prize, onReveal }: { prize: string, onReveal: ()
 };
 
 const Home = () => {
-  const [game, setGame] = useState<Game | null>(null);
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [game, setGame] = useState(null);
   const [answer, setAnswer] = useState("");
   const [isLuckyDip, setIsLuckyDip] = useState(false);
-  const [userBalance, setUserBalance] = useState(10);
   const [countdown, setCountdown] = useState("");
   const [availableLuckyDips, setAvailableLuckyDips] = useState([
     ...luckyDipNames,
@@ -97,61 +121,45 @@ const Home = () => {
   const [revealedPrizes, setRevealedPrizes] = useState<{
     [key: number]: string;
   }>({});
+  const [showGameHistory, setShowGameHistory] = useState(true);
 
   useEffect(() => {
-    // Initialize game data
-    const newGame: Game = {
-      question: "NAME A BOYS NAME BEGINNING WITH 'T'",
-      jackpot: 1500,
-      endTime: new Date(Date.now() + 5 * 60000), // 5 minutes from now
-      answers: [
-        {
-          answer: "THOMAS",
-          frequency: 27,
-          status: "NOT UNIQUE",
-          instantWin: "£25",
-        },
-        {
-          answer: "TIMOTHY",
-          frequency: 1,
-          status: "UNIQUE",
-          instantWin: "REVEAL",
-        },
-        {
-          answer: "TYLER",
-          frequency: "PENDING",
-          status: "PENDING",
-          instantWin: "PENDING",
-        },
-        {
-          answer: "THEODORE",
-          frequency: 1,
-          status: "UNIQUE",
-          instantWin: "NO",
-        },
-      ],
-    };
-    setGame(newGame);
-
-    // Set up countdown timer
-    const timer = setInterval(() => {
-      const now = new Date();
-      const distance = newGame.endTime.getTime() - now.getTime();
-      if (distance < 0) {
-        clearInterval(timer);
-        setCountdown("GAME OVER");
-        // Handle game over logic here
+    const userId = localStorage.getItem("currentUserId");
+    if (userId) {
+      const currentUser = getCurrentUser(parseInt(userId));
+      if (currentUser) {
+        setUser(currentUser);
+        setGame(getCurrentGame());
       } else {
-        const minutes = Math.floor(distance / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        setCountdown(`${minutes}:${seconds.toString().padStart(2, "0")}`);
+        router.push("/login");
       }
-    }, 1000);
+    } else {
+      router.push("/login");
+    }
+  }, [router]);
 
-    return () => clearInterval(timer);
-  }, []);
+  useEffect(() => {
+    if (game) {
+      const timer = setInterval(() => {
+        const now = new Date();
+        const distance = game.endTime.getTime() - now.getTime();
+        if (distance < 0) {
+          clearInterval(timer);
+          setCountdown("GAME OVER");
+          setShowGameHistory(false); // Hide game history after the game ends
+        } else {
+          const minutes = Math.floor(distance / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+          setCountdown(`${minutes}:${seconds.toString().padStart(2, "0")}`);
+          setShowGameHistory(minutes > 30 ? true : false); // Hide if less than 60 minutes left
+        }
+      }, 1000);
 
-  const submitAnswer = () => {
+      return () => clearInterval(timer);
+    }
+  }, [game]);
+
+  const handleSubmitAnswer = () => {
     if (!game || (!answer.trim() && !isLuckyDip)) return;
 
     let submittedAnswer = answer.toUpperCase();
@@ -181,7 +189,10 @@ const Home = () => {
 
     setAnswer("");
     setIsLuckyDip(false);
-    setUserBalance((prev) => prev - (isLuckyDip ? 5 : 1));
+    setUser((prev) => ({
+      ...prev!,
+      balance: prev!.balance - (isLuckyDip ? 5 : 1),
+    }));
   };
 
   const calculateWinnings = () => {
@@ -193,7 +204,7 @@ const Home = () => {
   };
 
   const handleReveal = (index: number) => {
-    if (revealedPrizes[index]) return; // Prevent re-revealing
+    if (revealedPrizes[index]) return;
     const prize =
       Math.random() < 0.5 ? "NO WIN" : `£${Math.floor(Math.random() * 50) + 1}`;
     setRevealedPrizes((prev) => ({ ...prev, [index]: prize }));
@@ -205,7 +216,7 @@ const Home = () => {
     }));
   };
 
-  if (!game) return <div>Loading...</div>;
+  if (!user || !game) return <div>Loading...</div>;
 
   return (
     <motion.div
@@ -226,7 +237,7 @@ const Home = () => {
           <div className="space-x-4">
             <a href="#">SIGN IN/LOGOUT</a>
             <a href="#">MY ACCOUNT</a>
-            <span>BALANCE: £{userBalance}</span>
+            <span>BALANCE: £{user.balance}</span>
             <a href="#" className="bg-orange-500 px-2 py-1 rounded">
               BUY CREDITS
             </a>
@@ -276,76 +287,81 @@ const Home = () => {
             />
             <label>LUCKY DIP ({availableLuckyDips.length} left)</label>
           </div>
-          <Button onClick={submitAnswer} className="bg-orange-500 w-full mb-8">
+          <Button
+            onClick={handleSubmitAnswer}
+            className="bg-orange-500 w-full mb-8"
+          >
             PLAY NOW/SUBMIT
           </Button>
         </motion.div>
 
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-        >
-          <h3 className="text-xl font-bold mb-4">GAME HISTORY</h3>
-          <p className="mb-4">
-            YOU ARE CURRENTLY WINNING: £{calculateWinnings()}
-          </p>
-          <div className="overflow-x-auto">
-            <table className="w-full mb-8">
-              <thead>
-                <tr>
-                  <th className="text-left">YOUR ANSWER</th>
-                  <th className="text-left">ANSWER FREQUENCY</th>
-                  <th className="text-left">ANSWER STATUS</th>
-                  <th className="text-left">INSTANT WIN</th>
-                </tr>
-              </thead>
-              <tbody>
-                {game.answers.map((answer, index) => (
-                  <tr key={index}>
-                    <td>{answer.answer}</td>
-                    <td>{answer.frequency}</td>
-                    <td
-                      className={
-                        answer.status === "UNIQUE"
-                          ? "text-green-500"
-                          : answer.status === "NOT UNIQUE"
-                          ? "text-red-500"
-                          : "text-orange-500"
-                      }
-                    >
-                      {answer.status}
-                    </td>
-                    <td>
-                      {answer.instantWin === "REVEAL" ? (
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              REVEAL
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                              <DialogTitle>
-                                Scratch to Reveal Your Prize!
-                              </DialogTitle>
-                            </DialogHeader>
-                            <ScratchCardComponent
-                              prize={revealedPrizes[index] || "£50.00!"}
-                              onReveal={() => handleReveal(index)}
-                            />
-                          </DialogContent>
-                        </Dialog>
-                      ) : (
-                        answer.instantWin
-                      )}
-                    </td>
+        {showGameHistory && (
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            <h3 className="text-xl font-bold mb-4">GAME HISTORY</h3>
+            <p className="mb-4">
+              YOU ARE CURRENTLY WINNING: £{calculateWinnings()}
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full mb-8">
+                <thead>
+                  <tr>
+                    <th className="text-left">YOUR ANSWER</th>
+                    <th className="text-left">ANSWER FREQUENCY</th>
+                    <th className="text-left">ANSWER STATUS</th>
+                    <th className="text-left">INSTANT WIN</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
+                </thead>
+                <tbody>
+                  {game.answers.map((answer, index) => (
+                    <tr key={index}>
+                      <td>{answer.answer}</td>
+                      <td>{answer.frequency}</td>
+                      <td
+                        className={
+                          answer.status === "UNIQUE"
+                            ? "text-green-500"
+                            : answer.status === "NOT UNIQUE"
+                            ? "text-red-500"
+                            : "text-orange-500"
+                        }
+                      >
+                        {answer.status}
+                      </td>
+                      <td>
+                        {answer.instantWin === "REVEAL" ? (
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button variant="outline" size="sm">
+                                REVEAL
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                              <DialogHeader>
+                                <DialogTitle>
+                                  Scratch to Reveal Your Prize!
+                                </DialogTitle>
+                              </DialogHeader>
+                              <ScratchCardComponent
+                                prize={revealedPrizes[index] || "£50.00!"}
+                                onReveal={() => handleReveal(index)}
+                              />
+                            </DialogContent>
+                          </Dialog>
+                        ) : (
+                          answer.instantWin
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
+        )}
 
         <motion.div
           initial={{ opacity: 0 }}
@@ -364,7 +380,6 @@ const Home = () => {
           className="flex flex-wrap justify-between items-center mb-8"
         >
           <div className="w-full md:w-1/2 bg-purple-400 h-32 mb-4 md:mb-0">
-            {/* Placeholder for winner testimonial or recent win highlight */}
             <p className="text-white p-4">
               "I won £500 last week with UniqueWin! It's so exciting!" - Sarah
               T.
@@ -382,7 +397,6 @@ const Home = () => {
           transition={{ delay: 1.2, duration: 0.5 }}
           className="bg-purple-400 p-4 text-center"
         >
-          {/* Placeholder for Trustpilot widget */}
           <p className="text-white">
             Trustpilot Rating: 4.8/5 from 1000+ reviews
           </p>
