@@ -141,15 +141,20 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
 
     let submittedAnswer = answer.toUpperCase();
     if (isLuckyDip) {
-      if (availableLuckyDips.length === 0) {
+      if (game.luckyDipAnswers.length === 0) {
         alert("No more Lucky Dips available!");
         return;
       }
-      const randomIndex = Math.floor(Math.random() * availableLuckyDips.length);
-      submittedAnswer = availableLuckyDips[randomIndex];
-      setAvailableLuckyDips((prev) =>
-        prev.filter((_, index) => index !== randomIndex)
+      const randomIndex = Math.floor(
+        Math.random() * game.luckyDipAnswers.length
       );
+      submittedAnswer = game.luckyDipAnswers[randomIndex];
+      setGame((prevGame) => ({
+        ...prevGame!,
+        luckyDipAnswers: prevGame!.luckyDipAnswers.filter(
+          (_, index) => index !== randomIndex
+        ),
+      }));
     }
 
     // Check if the answer is in the validAnswers list
@@ -157,12 +162,8 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
 
     const newAnswer: Answer = {
       answer: submittedAnswer,
-      frequency: isLuckyDip ? 1 : "PENDING",
-      status: isValidAnswer
-        ? isLuckyDip
-          ? "UNIQUE"
-          : "PENDING"
-        : "NOT UNIQUE",
+      frequency: 1,
+      status: isLuckyDip ? "UNIQUE" : isValidAnswer ? "PENDING" : "NOT UNIQUE",
       instantWin: isLuckyDip ? "REVEAL" : "PENDING",
     };
 
@@ -216,27 +217,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
       transition={{ duration: 0.5 }}
       className="bg-purple-300 min-h-screen"
     >
-      <header className="bg-purple-700 text-white p-4">
-        <nav className="flex flex-wrap justify-between">
-          <div className="space-x-4 mb-2 sm:mb-0">
-            <a href="#">HOME</a>
-            <a href="#">HOW TO PLAY?</a>
-            <a href="#">WINNERS</a>
-            <a href="#">FAQ</a>
-            <a href="#">CONTACT US</a>
-          </div>
-          <div className="space-x-4">
-            <a href="#">SIGN IN/LOGOUT</a>
-            <a href="#">MY ACCOUNT</a>
-            <span>BALANCE: £{user.balance}</span>
-            <a href="#" className="bg-orange-500 px-2 py-1 rounded">
-              BUY CREDITS
-            </a>
-          </div>
-        </nav>
-      </header>
-
-      <main className="container mx-auto p-4">
+      <div className="container mx-auto p-4">
         <motion.div
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -392,7 +373,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
             Trustpilot Rating: 4.8/5 from 1000+ reviews
           </p>
         </motion.div>
-      </main>
+      </div>
 
       <footer className="bg-purple-700 text-white p-4 text-center mt-8">
         <a href="#" className="mx-2">

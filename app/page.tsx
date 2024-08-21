@@ -7,7 +7,7 @@ export default function LandingPage() {
 
   return (
     <div className="bg-purple-300 min-h-screen">
-      <main className="container mx-auto p-4">
+      <main className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-8 text-purple-800">
           Welcome to UniqueWin
         </h1>
@@ -26,34 +26,74 @@ export default function LandingPage() {
           </Link>
         </div>
 
-        <div className="mb-8 bg-purple-100 p-6 rounded-lg shadow-md">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div className="bg-purple-100 p-6 rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold mb-4 text-purple-700">
+              How It Works
+            </h2>
+            <ol className="list-decimal list-inside space-y-2">
+              <li>Choose a game from our list of active games</li>
+              <li>Submit your answer for £1, or use Lucky Dip for £5</li>
+              <li>Wait for the game to end to see if your answer is unique!</li>
+            </ol>
+            <Link
+              href="/how-it-works"
+              className="text-purple-600 hover:text-purple-800 transition mt-4 inline-block"
+            >
+              Learn More
+            </Link>
+          </div>
+
+          <div className="bg-purple-100 p-6 rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold mb-4 text-purple-700">
+              Latest Winners
+            </h2>
+            <ul className="space-y-2">
+              <li>"I won £500 last week!" - Sarah T.</li>
+              <li>"UniqueWin is so exciting!" - John D.</li>
+              <li>"Best game ever!" - Emma S.</li>
+            </ul>
+            <Link
+              href="/winners"
+              className="text-purple-600 hover:text-purple-800 transition mt-4 inline-block"
+            >
+              See All Winners
+            </Link>
+          </div>
+        </div>
+
+        <div className="bg-purple-100 p-6 rounded-lg shadow-md mb-8">
           <h2 className="text-2xl font-bold mb-4 text-purple-700">
-            How It Works
+            Current Games
           </h2>
-          <p className="mb-4">Find a unique answer and win the jackpot!</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {games.slice(0, 6).map((game) => (
+              <div key={game.id} className="bg-white p-4 rounded shadow">
+                <h3 className="font-bold mb-2">{game.question}</h3>
+                <p className="mb-2">Jackpot: £{game.jackpot}</p>
+                <Link
+                  href={`/games/${game.id}`}
+                  className="bg-orange-500 text-white px-3 py-1 rounded text-sm hover:bg-orange-600 transition"
+                >
+                  Play
+                </Link>
+              </div>
+            ))}
+          </div>
           <Link
-            href="/how-it-works"
-            className="text-purple-600 hover:text-purple-800 transition"
+            href="/games"
+            className="text-purple-600 hover:text-purple-800 transition mt-4 inline-block"
           >
-            Learn More
+            View All Games
           </Link>
         </div>
 
-        <div className="mb-8 bg-purple-100 p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold mb-4 text-purple-700">
-            Testimonials
+        <div className="bg-purple-500 text-white p-4 text-center rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold mb-2">
+            Don't Miss the 8PM Results Show
           </h2>
-          <p>
-            "I won £500 last week with UniqueWin! It's so exciting!" - Sarah T.
-          </p>
+          <p>Every Monday Night Live on Facebook</p>
         </div>
-
-        <Link
-          href="/games"
-          className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition"
-        >
-          View All Games
-        </Link>
       </main>
     </div>
   );
