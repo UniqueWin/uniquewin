@@ -117,7 +117,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     if (game) {
       const timer = setInterval(() => {
         const now = new Date();
-        const endTime = new Date(game.endTime); // Ensure this is a Date object
+        const endTime = new Date(game.endTime);
         const distance = endTime.getTime() - now.getTime();
 
         if (distance < 0) {

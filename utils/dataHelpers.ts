@@ -73,8 +73,8 @@ export function generateDummyGames(count: number): Game[] {
   return Array.from({ length: count }, (_, i) => {
     const question = questions[i % questions.length];
     const validAnswers = generateValidAnswers(question);
-    const startTime = new Date(Date.now() + Math.random() * 30 * 60 * 1000);
-    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+    const startTime = new Date(Date.now() + Math.random() * 30 * 60 * 1000); // Start within next 30 minutes
+    const endTime = new Date(startTime.getTime() + 30 * 60 * 1000); // End 30 minutes after start
 
     return {
       id: i + 1,
