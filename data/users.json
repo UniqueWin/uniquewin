@@ -3,6 +3,7 @@
     "id": 1,
     "username": "user1",
     "email": "user1@example.com",
+    "password": "hashed_password_1",
     "balance": 100,
     "gameHistory": [
       {
@@ -18,13 +19,14 @@
     "id": 2,
     "username": "user2",
     "email": "user2@example.com",
+    "password": "hashed_password_2",
     "balance": 50,
     "gameHistory": [
       {
         "gameId": 1,
         "answers": [
           { "answer": "THOMAS", "status": "NOT UNIQUE", "instantWin": "NO" },
-          { "answer": "TYLER", "status": "UNIQUE", "instantWin": "£5" }
+          { "answer": "TREVOR", "status": "UNIQUE", "instantWin": "NO" }
         ]
       }
     ]

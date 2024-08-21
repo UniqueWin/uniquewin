@@ -1,92 +1,53 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation"; // Correct import for client-side navigation
-import users from "@/data/users.json"; // Import users from JSON
-import { SubmitButton } from "./submit-button";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useUser } from "@/utils/userHelpers";
+import { useRouter } from "next/navigation";
 
-export default function Login({
-  searchParams,
-}: {
-  searchParams: { message: string };
-}) {
-  const router = useRouter(); // Initialize router
+export default function LoginPage() {
+  const [formData, setFormData] = useState({ username: "", password: "" });
+  const { login } = useUser();
+  const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const username = formData.get("username") as string;
-    const password = formData.get("password") as string;
-
-    const user = users.find((u) => u.username === username);
-    if (user) {
-      // In a real app, you'd check the password here
-      localStorage.setItem("currentUserId", user.id.toString());
-      router.push("/"); // Redirect to home on successful login
-    } else {
-      alert("Invalid credentials");
-    }
+    // Here you would typically validate the user credentials against your backend
+    // For now, we'll just simulate a successful login
+    login({ id: 1, username: formData.username, balance: 100 });
+    router.push("/profile");
   };
 
   return (
-    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
-      <Link
-        href="/"
-        className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
+    <div className="bg-purple-300 min-h-screen">
+      <motion.div
+        className="container mx-auto px-4 py-8 max-w-md"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
-        >
-          <polyline points="15 18 9 12 15 6" />
-        </svg>{" "}
-        Back
-      </Link>
-
-      <form
-        onSubmit={handleLogin}
-        className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
-      >
-        <label className="text-md" htmlFor="username">
-          Username
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          name="username"
-          placeholder="Username"
-          required
-        />
-        <label className="text-md" htmlFor="password">
-          Password
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          type="password"
-          name="password"
-          placeholder="••••••••"
-          required
-        />
-        <SubmitButton
-          formAction={handleLogin}
-          className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2"
-          pendingText="Signing In..."
-        >
-          Sign In
-        </SubmitButton>
-        {searchParams?.message && (
-          <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-            {searchParams.message}
-          </p>
-        )}
-      </form>
+        <h1 className="text-4xl font-bold mb-8 text-purple-800">Login</h1>
+        <div className="bg-purple-100 p-6 rounded-lg shadow-md">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              placeholder="Username"
+              value={formData.username}
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+            />
+            <Input
+              type="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            />
+            <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600">
+              Sign In
+            </Button>
+          </form>
+        </div>
+      </motion.div>
     </div>
   );
 }

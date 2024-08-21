@@ -2,9 +2,9 @@ import users from "../data/users.json";
 
 export interface Answer {
   answer: string;
-  frequency: number | "PENDING";
+  frequency: number;
   status: "UNIQUE" | "NOT UNIQUE" | "PENDING";
-  instantWin: string | "REVEAL" | "PENDING";
+  instantWin: string;
 }
 
 export interface Game {
@@ -18,7 +18,9 @@ export interface Game {
   luckyDipAnswers: string[];
 }
 
-export function generateDummyGames(count: number): Game[] {
+let currentGame: Game | null = null;
+
+export function generateDailyGame(): Game {
   const questions = [
     "NAME A BOYS NAME BEGINNING WITH 'T'",
     "NAME A FRUIT THAT STARTS WITH 'A'",
@@ -27,101 +29,44 @@ export function generateDummyGames(count: number): Game[] {
     "NAME A PLANET IN OUR SOLAR SYSTEM",
   ];
 
-  const generateValidAnswers = (question: string): string[] => {
-    switch (question) {
-      case "NAME A BOYS NAME BEGINNING WITH 'T'":
-        return [
-          "THOMAS",
-          "TYLER",
-          "THEODORE",
-          "TREVOR",
-          "TRISTAN",
-          "TANNER",
-          "TATE",
-          "THADDEUS",
-        ];
-      case "NAME A FRUIT THAT STARTS WITH 'A'":
-        return ["APPLE", "APRICOT", "AVOCADO", "ACKEE", "ASIAN PEAR"];
-      case "NAME A COUNTRY IN EUROPE":
-        return [
-          "FRANCE",
-          "GERMANY",
-          "SPAIN",
-          "ITALY",
-          "POLAND",
-          "UKRAINE",
-          "SWEDEN",
-        ];
-      case "NAME A COLOR OF THE RAINBOW":
-        return ["RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "INDIGO", "VIOLET"];
-      case "NAME A PLANET IN OUR SOLAR SYSTEM":
-        return [
-          "MERCURY",
-          "VENUS",
-          "EARTH",
-          "MARS",
-          "JUPITER",
-          "SATURN",
-          "URANUS",
-          "NEPTUNE",
-        ];
-      default:
-        return [];
-    }
+  const question = questions[Math.floor(Math.random() * questions.length)];
+  const validAnswers = generateValidAnswers(question);
+  const now = new Date();
+  const endTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // End in 24 hours
+
+  return {
+    id: 1,
+    question,
+    jackpot: 1000 + Math.floor(Math.random() * 1000),
+    startTime: now.toISOString(),
+    endTime: endTime.toISOString(),
+    validAnswers,
+    answers: [],
+    luckyDipAnswers: validAnswers.slice(0, 5),
   };
-
-  return Array.from({ length: count }, (_, i) => {
-    const question = questions[i % questions.length];
-    const validAnswers = generateValidAnswers(question);
-    const now = new Date();
-    const startTime = new Date(now.getTime() + Math.random() * 30 * 60 * 1000); // Start within next 30 minutes
-    const endTime = new Date(startTime.getTime() + 30 * 60 * 1000); // End 30 minutes after start
-
-    return {
-      id: i + 1,
-      question,
-      jackpot: 1000 + Math.floor(Math.random() * 1000),
-      startTime: startTime.toISOString(),
-      endTime: endTime.toISOString(),
-      validAnswers,
-      answers: [],
-      luckyDipAnswers: validAnswers.slice(0, 5),
-    };
-  });
 }
 
-const dummyGames = generateDummyGames(10);
+export function getCurrentGame(): Game {
+  if (!currentGame || new Date(currentGame.endTime) < new Date()) {
+    currentGame = generateDailyGame();
+  }
+  return currentGame;
+}
 
 export function getCurrentUser(userId: number) {
   return users.find((user) => user.id === userId);
 }
 
 export function getAllGames(): Game[] {
-  return dummyGames.map((game) => ({
-    ...game,
-    startTime: new Date(game.startTime),
-    endTime: new Date(game.endTime),
-  }));
+  // For now, we'll just return an array with the current game
+  return [getCurrentGame()];
 }
 
 export function getGameById(gameId: number): Game | undefined {
-  const game = dummyGames.find((g) => g.id === gameId);
-  if (game) {
-    return {
-      ...game,
-      startTime: new Date(game.startTime),
-      endTime: new Date(game.endTime),
-    };
+  if (gameId === 1) {
+    return getCurrentGame();
   }
   return undefined;
-}
-
-export function getCurrentGame(): Game {
-  const game = dummyGames[Math.floor(Math.random() * dummyGames.length)];
-  return {
-    ...game,
-    endTime: new Date(game.endTime), // Convert endTime to Date object
-  };
 }
 
 export function submitAnswer(userId: number, gameId: number, answer: string) {
@@ -146,4 +91,17 @@ export function submitAnswer(userId: number, gameId: number, answer: string) {
     // Update the game's answers
     game.answers.push(newAnswer);
   }
+}
+
+export function generateValidAnswers(question: string): string[] {
+  // This is a simplified version. In a real application, you'd have a more comprehensive list.
+  const answers = {
+    "NAME A BOYS NAME BEGINNING WITH 'T'": ["THOMAS", "TIMOTHY", "TYLER", "THEODORE", "TREVOR"],
+    "NAME A FRUIT THAT STARTS WITH 'A'": ["APPLE", "APRICOT", "AVOCADO", "ACAI", "ACKEE"],
+    "NAME A COUNTRY IN EUROPE": ["FRANCE", "GERMANY", "ITALY", "SPAIN", "POLAND"],
+    "NAME A COLOR OF THE RAINBOW": ["RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "INDIGO", "VIOLET"],
+    "NAME A PLANET IN OUR SOLAR SYSTEM": ["MERCURY", "VENUS", "EARTH", "MARS", "JUPITER", "SATURN", "URANUS", "NEPTUNE"],
+  };
+
+  return answers[question as keyof typeof answers] || [];
 }
