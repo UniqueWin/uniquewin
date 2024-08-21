@@ -1,0 +1,38 @@
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+
+export default function WaysToWin() {
+  const ways = [
+    {
+      title: "1. Find a Unique Answer",
+      description:
+        "Submit a unique answer to win the jackpot. If your answer is the only one of its kind, you win!",
+    },
+    {
+      title: "2. Instant Prizes",
+      description:
+        "Some answers have instant win prizes attached. Reveal your prize right after submitting!",
+    },
+    {
+      title: "3. Live Raffle",
+      description:
+        "All entries go into a raffle drawn during our live show. Another chance to win big!",
+    },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {ways.map((way, index) => (
+        <Card key={index}>
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-purple-600">
+              {way.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>{way.description}</p>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}

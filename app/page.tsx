@@ -1,18 +1,55 @@
+"use client";
+
 import Link from "next/link";
 import { getAllGames } from "@/utils/dataHelpers";
+import { motion } from "framer-motion";
 
 export default function LandingPage() {
   const games = getAllGames();
   const featuredGame = games[0];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { 
+        type: "spring",
+        stiffness: 100
+      }
+    }
+  };
+
   return (
     <div className="bg-purple-300 min-h-screen">
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8 text-purple-800">
+      <motion.main 
+        className="container mx-auto px-4 py-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.h1 
+          className="text-4xl font-bold mb-8 text-purple-800"
+          variants={itemVariants}
+        >
           Welcome to UniqueWin
-        </h1>
+        </motion.h1>
 
-        <div className="bg-purple-100 p-6 rounded-lg mb-8 shadow-md">
+        <motion.div 
+          className="bg-purple-100 p-6 rounded-lg mb-8 shadow-md"
+          variants={itemVariants}
+        >
           <h2 className="text-2xl font-bold mb-4 text-purple-700">
             Featured Game
           </h2>
@@ -24,10 +61,16 @@ export default function LandingPage() {
           >
             Play Now
           </Link>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <div className="bg-purple-100 p-6 rounded-lg shadow-md">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8"
+          variants={itemVariants}
+        >
+          <motion.div 
+            className="bg-purple-100 p-6 rounded-lg shadow-md"
+            variants={itemVariants}
+          >
             <h2 className="text-2xl font-bold mb-4 text-purple-700">
               How It Works
             </h2>
@@ -42,9 +85,12 @@ export default function LandingPage() {
             >
               Learn More
             </Link>
-          </div>
+          </motion.div>
 
-          <div className="bg-purple-100 p-6 rounded-lg shadow-md">
+          <motion.div 
+            className="bg-purple-100 p-6 rounded-lg shadow-md"
+            variants={itemVariants}
+          >
             <h2 className="text-2xl font-bold mb-4 text-purple-700">
               Latest Winners
             </h2>
@@ -59,16 +105,24 @@ export default function LandingPage() {
             >
               See All Winners
             </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <div className="bg-purple-100 p-6 rounded-lg shadow-md mb-8">
+        <motion.div 
+          className="bg-purple-100 p-6 rounded-lg shadow-md mb-8"
+          variants={itemVariants}
+        >
           <h2 className="text-2xl font-bold mb-4 text-purple-700">
             Current Games
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {games.slice(0, 6).map((game) => (
-              <div key={game.id} className="bg-white p-4 rounded shadow">
+            {games.slice(0, 6).map((game, index) => (
+              <motion.div 
+                key={game.id} 
+                className="bg-white p-4 rounded shadow"
+                variants={itemVariants}
+                custom={index}
+              >
                 <h3 className="font-bold mb-2">{game.question}</h3>
                 <p className="mb-2">Jackpot: £{game.jackpot}</p>
                 <Link
@@ -77,7 +131,7 @@ export default function LandingPage() {
                 >
                   Play
                 </Link>
-              </div>
+              </motion.div>
             ))}
           </div>
           <Link
@@ -86,15 +140,18 @@ export default function LandingPage() {
           >
             View All Games
           </Link>
-        </div>
+        </motion.div>
 
-        <div className="bg-purple-500 text-white p-4 text-center rounded-lg shadow-md">
+        <motion.div 
+          className="bg-purple-500 text-white p-4 text-center rounded-lg shadow-md"
+          variants={itemVariants}
+        >
           <h2 className="text-2xl font-bold mb-2">
             Don't Miss the 8PM Results Show
           </h2>
           <p>Every Monday Night Live on Facebook</p>
-        </div>
-      </main>
+        </motion.div>
+      </motion.main>
     </div>
   );
 }

@@ -1,86 +1,117 @@
+"use client";
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import WaysToWin from "@/components/WaysToWin";
+import HowToPlay from "@/components/HowToPlay";
+import { motion } from "framer-motion";
+
 export default function HowItWorksPage() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { 
+        type: "spring",
+        stiffness: 100
+      }
+    }
+  };
+
   return (
     <div className="bg-purple-300 min-h-screen">
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8 text-purple-800">
+      <motion.main 
+        className="container mx-auto px-4 py-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.h1 
+          className="text-4xl font-bold mb-8 text-purple-800"
+          variants={itemVariants}
+        >
           How UniqueWin Works
-        </h1>
+        </motion.h1>
 
-        <div className="bg-purple-100 p-6 rounded-lg mb-8 shadow-md">
-          <h2 className="text-2xl font-bold mb-4 text-purple-700">
-            3 Ways to Win!
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-4 rounded shadow">
-              <h3 className="text-xl font-bold mb-2 text-purple-600">
-                1. Find a Unique Answer
-              </h3>
-              <p>
-                Submit a unique answer to win the jackpot. If your answer is the
-                only one of its kind, you win!
-              </p>
-            </div>
-            <div className="bg-white p-4 rounded shadow">
-              <h3 className="text-xl font-bold mb-2 text-purple-600">
-                2. Instant Prizes
-              </h3>
-              <p>
-                Some answers have instant win prizes attached. Reveal your prize
-                right after submitting!
-              </p>
-            </div>
-            <div className="bg-white p-4 rounded shadow">
-              <h3 className="text-xl font-bold mb-2 text-purple-600">
-                3. Live Raffle
-              </h3>
-              <p>
-                All entries go into a raffle drawn during our live show. Another
-                chance to win big!
-              </p>
-            </div>
-          </div>
-        </div>
+        <motion.div variants={itemVariants}>
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-purple-700">
+                3 Ways to Win!
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <WaysToWin />
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        <div className="bg-purple-100 p-6 rounded-lg mb-8 shadow-md">
-          <h2 className="text-2xl font-bold mb-4 text-purple-700">
-            How to Play
-          </h2>
-          <ol className="list-decimal list-inside space-y-4">
-            <li>Choose an active game from our list</li>
-            <li>Read the question carefully</li>
-            <li>Submit your answer for £1, or use Lucky Dip for £5</li>
-            <li>Wait for the game to end to see if your answer is unique</li>
-            <li>Check the live results show for winners announcement</li>
-          </ol>
-        </div>
+        <motion.div variants={itemVariants}>
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-purple-700">
+                How to Play
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <HowToPlay />
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        <div className="bg-purple-100 p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold mb-4 text-purple-700">FAQ</h2>
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-bold">What is a unique answer?</h3>
-              <p>
-                A unique answer is one that no other player has submitted for
-                that game.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-bold">How do I know if I've won?</h3>
-              <p>
-                Check your game history or tune into our live results show every
-                Monday at 8PM on Facebook.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-bold">What is Lucky Dip?</h3>
-              <p>
-                Lucky Dip automatically selects an answer for you from our list
-                of valid answers. It costs £5 but guarantees a valid entry.
-              </p>
-            </div>
-          </div>
-        </div>
-      </main>
+        <motion.div variants={itemVariants}>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-purple-700">
+                FAQ
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>What is a unique answer?</AccordionTrigger>
+                  <AccordionContent>
+                    A unique answer is one that no other player has submitted for
+                    that game.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-2">
+                  <AccordionTrigger>How do I know if I've won?</AccordionTrigger>
+                  <AccordionContent>
+                    Check your game history or tune into our live results show
+                    every Monday at 8PM on Facebook.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-3">
+                  <AccordionTrigger>What is Lucky Dip?</AccordionTrigger>
+                  <AccordionContent>
+                    Lucky Dip automatically selects an answer for you from our
+                    list of valid answers. It costs £5 but guarantees a valid
+                    entry.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </motion.main>
     </div>
   );
 }
