@@ -1,21 +1,27 @@
 import Link from "next/link";
-import { generateDummyGames } from "@/utils/dataHelpers";
+import { getAllGames } from "@/utils/dataHelpers";
 
 export default function GamesListPage() {
-  const games = generateDummyGames(10); // Or however many games you want to show
+  const games = getAllGames();
 
   return (
-    <div>
-      <h1>Current Games</h1>
-      <ul>
-        {games.map((game) => (
-          <li key={game.id}>
-            <Link href={`/games/${game.id}`}>
-              {game.question} - Jackpot: £{game.jackpot}
+    <div className="container mx-auto px-4">
+      <h1 className="text-4xl font-bold mb-8">Current Games</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {games?.map((game) => (
+          <div key={game.id} className="bg-purple-100 p-4 rounded">
+            <h2 className="text-xl font-bold mb-2">{game.question}</h2>
+            <p className="mb-2">Jackpot: £{game.jackpot}</p>
+            <p className="mb-4">Ends: {game.endTime.toLocaleString()}</p>
+            <Link
+              href={`/games/${game.id}`}
+              className="bg-purple-500 text-white px-4 py-2 rounded"
+            >
+              Play Now
             </Link>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

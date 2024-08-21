@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import {
   getCurrentUser,
   getCurrentGame,
+  getGameById,
   submitAnswer,
-} from "../utils/dataHelpers";
+} from "@/utils/dataHelpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
@@ -19,7 +20,7 @@ import {
 import { ScratchCard } from "next-scratchcard"; // Correct import
 import { useRouter } from "next/navigation";
 import Confetti from "react-confetti"; // Import confetti
-import { Game, Answer } from "../utils/dataHelpers";
+import { Game, Answer } from "@/utils/dataHelpers";
 
 const luckyDipNames = ["THEODRE", "TEDDY", "THOMAS", "TREVOR", "TAYTE"];
 
@@ -77,7 +78,7 @@ const ScratchCardComponent = ({
   );
 };
 
-const Game = () => {
+export default function GamePage({ params }: { params: { gameId: string } }) {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [game, setGame] = useState<Game | null>(null);
@@ -98,14 +99,19 @@ const Game = () => {
       const currentUser = getCurrentUser(parseInt(userId));
       if (currentUser) {
         setUser(currentUser);
-        setGame(getCurrentGame());
+        const currentGame = getGameById(parseInt(params.gameId));
+        if (currentGame) {
+          setGame(currentGame);
+        } else {
+          router.push("/games");
+        }
       } else {
         router.push("/login");
       }
     } else {
       router.push("/login");
     }
-  }, [router]);
+  }, [router, params.gameId]);
 
   useEffect(() => {
     if (game) {
@@ -404,6 +410,4 @@ const Game = () => {
       </footer>
     </motion.div>
   );
-};
-
-export default Game;
+}

@@ -73,15 +73,15 @@ export function generateDummyGames(count: number): Game[] {
   return Array.from({ length: count }, (_, i) => {
     const question = questions[i % questions.length];
     const validAnswers = generateValidAnswers(question);
-    const startTime = new Date(Date.now() + Math.random() * 30 * 60 * 1000); // Start within next 30 minutes
-    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // End 1 hour after start
+    const startTime = new Date(Date.now() + Math.random() * 30 * 60 * 1000);
+    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
 
     return {
       id: i + 1,
       question,
       jackpot: 1000 + Math.floor(Math.random() * 1000),
-      startTime: startTime.toISOString(), // Store as ISO string
-      endTime: endTime.toISOString(), // Store as ISO string
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
       validAnswers,
       answers: [],
       luckyDipAnswers: validAnswers.slice(0, 5),
@@ -93,6 +93,26 @@ const dummyGames = generateDummyGames(10);
 
 export function getCurrentUser(userId: number) {
   return users.find((user) => user.id === userId);
+}
+
+export function getAllGames(): Game[] {
+  return dummyGames.map((game) => ({
+    ...game,
+    startTime: new Date(game.startTime),
+    endTime: new Date(game.endTime),
+  }));
+}
+
+export function getGameById(gameId: number): Game | undefined {
+  const game = dummyGames.find((g) => g.id === gameId);
+  if (game) {
+    return {
+      ...game,
+      startTime: new Date(game.startTime),
+      endTime: new Date(game.endTime),
+    };
+  }
+  return undefined;
 }
 
 export function getCurrentGame(): Game {
