@@ -1,4 +1,5 @@
 import users from "../data/users.json";
+import { pastGames } from "@/data/pastGames";
 
 export interface Answer {
   answer: string;
@@ -58,8 +59,7 @@ export function getCurrentUser(userId: number) {
 }
 
 export function getAllGames(): Game[] {
-  // For now, we'll just return an array with the current game
-  return [getCurrentGame()];
+  return [getCurrentGame(), ...pastGames];
 }
 
 export function getGameById(gameId: number): Game | undefined {

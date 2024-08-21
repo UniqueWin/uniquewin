@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 interface User {
   id: number;
   username: string;
+  email: string;
   balance: number;
 }
 
@@ -45,8 +46,9 @@ export function useUser() {
 export function emulateLogin(
   userId: number,
   username: string,
+  email: string,
   initialBalance: number
 ) {
-  const userData: User = { id: userId, username, balance: initialBalance };
+  const userData: User = { id: userId, username, email, balance: initialBalance };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
 }

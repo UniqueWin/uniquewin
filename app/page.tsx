@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { getCurrentGame } from "@/utils/dataHelpers";
+import { getCurrentGame, getAllGames } from "@/utils/dataHelpers";
 import { motion } from "framer-motion";
 
 export default function LandingPage() {
-  const game = getCurrentGame();
+  const currentGame = getCurrentGame();
+  const pastGames = getAllGames().slice(1, 4); // Get 3 past games
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -52,10 +53,10 @@ export default function LandingPage() {
           <h2 className="text-2xl font-bold mb-4 text-purple-700">
             Today's Game
           </h2>
-          <p className="text-xl mb-2">{game.question}</p>
-          <p className="mb-4">Jackpot: £{game.jackpot}</p>
+          <p className="text-xl mb-2">{currentGame.question}</p>
+          <p className="mb-4">Jackpot: £{currentGame.jackpot}</p>
           <Link
-            href={`/games/${game.id}`}
+            href={`/games/${currentGame.id}`}
             className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition"
           >
             Play Now
@@ -75,6 +76,28 @@ export default function LandingPage() {
             className="text-purple-600 hover:text-purple-800 transition"
           >
             Learn More
+          </Link>
+        </motion.div>
+
+        <motion.div 
+          className="bg-purple-100 p-6 rounded-lg shadow-md mb-8"
+          variants={itemVariants}
+        >
+          <h2 className="text-2xl font-bold mb-4 text-purple-700">
+            Recent Winners
+          </h2>
+          {pastGames.map((game, index) => (
+            <div key={index} className="mb-4">
+              <h3 className="font-bold">{game.question}</h3>
+              <p>Winner: {game.answers.find(a => a.status === "UNIQUE")?.answer || "No winner"}</p>
+              <p>Jackpot: £{game.jackpot}</p>
+            </div>
+          ))}
+          <Link
+            href="/winners"
+            className="text-purple-600 hover:text-purple-800 transition"
+          >
+            View All Winners
           </Link>
         </motion.div>
 

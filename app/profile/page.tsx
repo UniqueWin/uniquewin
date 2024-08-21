@@ -11,6 +11,12 @@ export default function ProfilePage() {
   const [editMode, setEditMode] = useState(false);
   const [editedUser, setEditedUser] = useState(user);
 
+  useEffect(() => {
+    if (user) {
+      setEditedUser(user);
+    }
+  }, [user]);
+
   if (!user) return <div>Loading...</div>;
 
   const handleSave = () => {
