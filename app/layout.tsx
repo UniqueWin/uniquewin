@@ -22,7 +22,9 @@ export default function RootLayout({
       <body className="bg-background text-foreground">
         <NavBar />
         <main className="min-h-screen flex flex-col items-center">
-          {children}
+          <div className="w-full max-w-5xl px-4">
+            {children}
+          </div>
         </main>
       </body>
     </html>

@@ -305,24 +305,10 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                       </td>
                       <td>
                         {answer.instantWin === "REVEAL" ? (
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button variant="outline" size="sm">
-                                REVEAL
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px]">
-                              <DialogHeader>
-                                <DialogTitle>
-                                  Scratch to Reveal Your Prize!
-                                </DialogTitle>
-                              </DialogHeader>
-                              <ScratchCardComponent
-                                prize={revealedPrizes[index] || "£50.00!"}
-                                onReveal={() => handleReveal(index)}
-                              />
-                            </DialogContent>
-                          </Dialog>
+                          <ScratchCardComponent
+                            prize={revealedPrizes[index] || "£50.00!"}
+                            onReveal={() => handleReveal(index)}
+                          />
                         ) : (
                           answer.instantWin
                         )}
