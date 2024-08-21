@@ -39,7 +39,15 @@ export function useUser() {
     }
   };
 
-  return { user, login, logout, addCredits };
+  const updateUser = (updatedUserData: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...updatedUserData };
+      setUser(updatedUser);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
+    }
+  };
+
+  return { user, login, logout, addCredits, updateUser };
 }
 
 // Emulate login function (for development purposes)
