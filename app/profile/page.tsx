@@ -5,15 +5,20 @@ import { motion } from "framer-motion";
 import { useUser } from "@/utils/userHelpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getAllGames } from "@/utils/dataHelpers";
 
 export default function ProfilePage() {
   const { user, addCredits, updateUser } = useUser();
   const [editMode, setEditMode] = useState(false);
   const [editedUser, setEditedUser] = useState(user);
+  const [gameHistory, setGameHistory] = useState([]);
 
   useEffect(() => {
     if (user) {
       setEditedUser(user);
+      // This is a placeholder. In a real app, you'd fetch the user's game history from your backend.
+      const allGames = getAllGames();
+      setGameHistory(allGames.slice(0, 5)); // Just showing last 5 games for now
     }
   }, [user]);
 
@@ -33,7 +38,7 @@ export default function ProfilePage() {
         transition={{ duration: 0.5 }}
       >
         <h1 className="text-4xl font-bold mb-8 text-purple-800">My Profile</h1>
-        <div className="bg-purple-100 p-6 rounded-lg shadow-md">
+        <div className="bg-purple-100 p-6 rounded-lg shadow-md mb-8">
           {editMode ? (
             <>
               <Input
@@ -75,7 +80,46 @@ export default function ProfilePage() {
             </>
           )}
         </div>
+
+        <h2 className="text-2xl font-bold mb-4 text-purple-800">Game History</h2>
+        <div className="bg-purple-100 p-6 rounded-lg shadow-md overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr>
+                <th className="text-left">Game ID</th>
+                <th className="text-left">Question</th>
+                <th className="text-left">Entries</th>
+                <th className="text-left">Win/Lose</th>
+                <th className="text-left">Instant Win</th>
+                <th className="text-left">Profit/Loss</th>
+              </tr>
+            </thead>
+            <tbody>
+              {gameHistory.map((game) => (
+                <tr key={game.id}>
+                  <td>{game.id}</td>
+                  <td>{game.question}</td>
+                  <td>{game.answers.length}</td>
+                  <td>{game.answers.some(a => a.status === "UNIQUE") ? "WIN" : "LOSE"}</td>
+                  <td>{game.answers.some(a => a.instantWin !== "NO") ? "YES" : "NO"}</td>
+                  <td>£{calculateProfitLoss(game)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </motion.div>
     </div>
   );
+}
+
+function calculateProfitLoss(game) {
+  // This is a placeholder function. You'd need to implement the actual logic based on your game rules.
+  const winningAnswer = game.answers.find(a => a.status === "UNIQUE");
+  const instantWin = game.answers.find(a => a.instantWin !== "NO");
+  let profit = 0;
+  if (winningAnswer) profit += game.jackpot;
+  if (instantWin) profit += parseInt(instantWin.instantWin.replace('£', ''));
+  profit -= game.answers.length; // Assuming each entry costs £1
+  return profit;
 }

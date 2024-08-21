@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { getAllGames } from "@/utils/dataHelpers";
 
 export default function WinnersPage() {
+  const [activeTab, setActiveTab] = useState("LAST MONTH");
   const games = getAllGames();
 
   return (
@@ -15,31 +17,60 @@ export default function WinnersPage() {
         transition={{ duration: 0.5 }}
       >
         <h1 className="text-4xl font-bold mb-8 text-purple-800">Winners</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {games.map((game, index) => {
-            const winner = game.answers.find(a => a.status === "UNIQUE");
-            return (
-              <motion.div
-                key={game.id}
-                className="bg-purple-100 p-6 rounded-lg shadow-md"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <h2 className="text-xl font-bold mb-2 text-purple-700">{game.question}</h2>
-                <p className="mb-2">Jackpot: £{game.jackpot}</p>
-                <p className="mb-2">Game ended: {new Date(game.endTime).toLocaleString()}</p>
-                {winner ? (
-                  <>
-                    <p className="font-bold">Winning Answer: {winner.answer}</p>
-                    <p>Prize: £{game.jackpot}</p>
-                  </>
-                ) : (
-                  <p className="font-bold">No winner for this game</p>
-                )}
-              </motion.div>
-            );
-          })}
+        <div className="bg-purple-100 p-6 rounded-lg shadow-md">
+          <div className="flex mb-4">
+            <button
+              className={`mr-2 px-4 py-2 rounded ${
+                activeTab === "LAST MONTH" ? "bg-purple-500 text-white" : "bg-purple-200"
+              }`}
+              onClick={() => setActiveTab("LAST MONTH")}
+            >
+              LAST MONTH
+            </button>
+            <button
+              className={`px-4 py-2 rounded ${
+                activeTab === "STATUS" ? "bg-purple-500 text-white" : "bg-purple-200"
+              }`}
+              onClick={() => setActiveTab("STATUS")}
+            >
+              STATUS
+            </button>
+          </div>
+          <table className="w-full">
+            <thead>
+              <tr>
+                <th className="text-left">Game ID</th>
+                <th className="text-left">Question</th>
+                <th className="text-left">Entries</th>
+                <th className="text-left">Win/Lose</th>
+                <th className="text-left">Instant Win</th>
+                <th className="text-left">Profit/Loss</th>
+              </tr>
+            </thead>
+            <tbody>
+              {games.map((game) => {
+                const winningAnswer = game.answers.find(a => a.status === "UNIQUE");
+                const instantWin = game.answers.find(a => a.instantWin !== "NO");
+                let profit = 0;
+                if (winningAnswer) profit += game.jackpot;
+                if (instantWin) profit += parseInt(instantWin.instantWin.replace('£', ''));
+                profit -= game.answers.length; // Assuming each entry costs £1
+
+                return (
+                  <tr key={game.id}>
+                    <td>{game.id}</td>
+                    <td>{game.question}</td>
+                    <td>{game.answers.length}</td>
+                    <td>{winningAnswer ? "WIN" : "LOSE"}</td>
+                    <td>{instantWin ? instantWin.instantWin : "NO"}</td>
+                    <td className={profit >= 0 ? "text-green-500" : "text-red-500"}>
+                      {profit >= 0 ? `+£${profit}` : `-£${Math.abs(profit)}`}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </motion.div>
     </div>
