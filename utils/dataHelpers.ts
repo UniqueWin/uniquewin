@@ -1,12 +1,102 @@
 import users from "../data/users.json";
-import games from "../data/games.json";
+
+export interface Answer {
+  answer: string;
+  frequency: number | "PENDING";
+  status: "UNIQUE" | "NOT UNIQUE" | "PENDING";
+  instantWin: string | "REVEAL" | "PENDING";
+}
+
+export interface Game {
+  id: number;
+  question: string;
+  jackpot: number;
+  startTime: string;
+  endTime: string;
+  validAnswers: string[];
+  answers: Answer[];
+  luckyDipAnswers: string[];
+}
+
+export function generateDummyGames(count: number): Game[] {
+  const questions = [
+    "NAME A BOYS NAME BEGINNING WITH 'T'",
+    "NAME A FRUIT THAT STARTS WITH 'A'",
+    "NAME A COUNTRY IN EUROPE",
+    "NAME A COLOR OF THE RAINBOW",
+    "NAME A PLANET IN OUR SOLAR SYSTEM",
+  ];
+
+  const generateValidAnswers = (question: string): string[] => {
+    switch (question) {
+      case "NAME A BOYS NAME BEGINNING WITH 'T'":
+        return [
+          "THOMAS",
+          "TYLER",
+          "THEODORE",
+          "TREVOR",
+          "TRISTAN",
+          "TANNER",
+          "TATE",
+          "THADDEUS",
+        ];
+      case "NAME A FRUIT THAT STARTS WITH 'A'":
+        return ["APPLE", "APRICOT", "AVOCADO", "ACKEE", "ASIAN PEAR"];
+      case "NAME A COUNTRY IN EUROPE":
+        return [
+          "FRANCE",
+          "GERMANY",
+          "SPAIN",
+          "ITALY",
+          "POLAND",
+          "UKRAINE",
+          "SWEDEN",
+        ];
+      case "NAME A COLOR OF THE RAINBOW":
+        return ["RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "INDIGO", "VIOLET"];
+      case "NAME A PLANET IN OUR SOLAR SYSTEM":
+        return [
+          "MERCURY",
+          "VENUS",
+          "EARTH",
+          "MARS",
+          "JUPITER",
+          "SATURN",
+          "URANUS",
+          "NEPTUNE",
+        ];
+      default:
+        return [];
+    }
+  };
+
+  return Array.from({ length: count }, (_, i) => {
+    const question = questions[i % questions.length];
+    const validAnswers = generateValidAnswers(question);
+    const startTime = new Date(Date.now() + Math.random() * 30 * 60 * 1000); // Start within next 30 minutes
+    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // End 1 hour after start
+
+    return {
+      id: i + 1,
+      question,
+      jackpot: 1000 + Math.floor(Math.random() * 1000),
+      startTime: startTime.toISOString(), // Store as ISO string
+      endTime: endTime.toISOString(), // Store as ISO string
+      validAnswers,
+      answers: [],
+      luckyDipAnswers: validAnswers.slice(0, 5),
+    };
+  });
+}
+
+const dummyGames = generateDummyGames(10);
 
 export function getCurrentUser(userId: number) {
   return users.find((user) => user.id === userId);
 }
 
-export function getCurrentGame() {
-  const game = games[0]; // Assuming you want the first game
+export function getCurrentGame(): Game {
+  const game = dummyGames[Math.floor(Math.random() * dummyGames.length)];
   return {
     ...game,
     endTime: new Date(game.endTime), // Convert endTime to Date object
@@ -19,7 +109,7 @@ export function submitAnswer(userId: number, gameId: number, answer: string) {
 
   if (user && game) {
     // Update user's game history
-    const newAnswer = {
+    const newAnswer: Answer = {
       answer,
       frequency: 1,
       status: "PENDING", // This should be updated based on game logic
@@ -36,5 +126,3 @@ export function submitAnswer(userId: number, gameId: number, answer: string) {
     game.answers.push(newAnswer);
   }
 }
-
-// Add more helper functions as needed

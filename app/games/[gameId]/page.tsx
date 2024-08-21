@@ -77,7 +77,7 @@ const ScratchCardComponent = ({
   );
 };
 
-const Home = () => {
+const Game = () => {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [game, setGame] = useState<Game | null>(null);
@@ -406,4 +406,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Game;
