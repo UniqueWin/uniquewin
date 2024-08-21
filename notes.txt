@@ -7,3 +7,8 @@ lucky dip disabled if all names are taken from predefined list
 game rolls over if nobody wins
 instant wins
 scratch card effect - money goes furhter, more to do
+
+
+
+credit system - show as £ value but in actuality - they purchase credits when they add money to their wallet
+ - simplifies gaming process, transaction fees, other benefits?

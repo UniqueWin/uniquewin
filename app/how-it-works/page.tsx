@@ -38,7 +38,7 @@ export default function HowItWorksPage() {
   return (
     <div className="bg-purple-300 min-h-screen">
       <motion.main 
-        className="container mx-auto px-4 py-8"
+        className="container mx-auto px-4 py-8 max-w-5xl"
         variants={containerVariants}
         initial="hidden"
         animate="visible"

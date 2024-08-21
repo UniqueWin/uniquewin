@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { getAllGames } from "@/utils/dataHelpers";
 import { motion } from "framer-motion";
+import HowItWorksPage from "./how-it-works/page";
 
 export default function LandingPage() {
   const games = getAllGames();
@@ -34,7 +35,7 @@ export default function LandingPage() {
   return (
     <div className="bg-purple-300 min-h-screen">
       <motion.main 
-        className="container mx-auto px-4 py-8"
+        className="container mx-auto px-4 py-8 max-w-5xl"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
