@@ -37,28 +37,53 @@ const ScratchCardComponent = ({
   const handleComplete = () => {
     setIsRevealed(true);
     onReveal();
+
+    setTimeout(() => {
+      setIsRevealed(false);
+    }, 5000);
   };
 
   return (
-    <div className="relative w-[300px] h-[100px]">
-      {isRevealed && <Confetti />}
+    <div className="relative w-[250px] h-[75px] rounded">
+      {isRevealed && (
+        <Confetti
+          width={250}
+          height={75}
+          // drawShape={(ctx) => {
+          //   ctx.beginPath();
+          //   for (let i = 0; i < 22; i++) {
+          //     const angle = 0.35 * i;
+          //     const x = (0.2 + 1.5 * angle) * Math.cos(angle);
+          //     const y = (0.2 + 1.5 * angle) * Math.sin(angle);
+          //     ctx.lineTo(x, y);
+          //   }
+          //   ctx.stroke();
+          //   ctx.closePath();
+          // }}
+        />
+      )}
       <ScratchCard
-        width={300}
-        height={100}
+        width={250}
+        height={75}
         finishPercent={50}
         onComplete={handleComplete}
-        customBrush={{
-          width: 40,
-          height: 40,
-          shape: "circle",
-        }}
+        image={
+          "https://st3.depositphotos.com/1022597/35608/i/450/depositphotos_356083076-stock-photo-grey-stone-texture-useful-background.jpg"
+        }
+        brushSize={10}
         brushColor="#808080" // This sets the scratch color to grey
         onScratch={(percentage) => setScratchedPercentage(percentage)}
       >
-        <div className="flex items-center justify-center w-full h-full bg-purple-500">
+        <div className="flex items-center justify-center w-full h-full bg-purple-500 rounded-lg p-4">
           <div className="text-center">
-            <p className="text-white text-4xl font-bold mb-4">YOU WIN</p>
-            <p className={`text-white font-bold ${prize.includes('£') ? 'text-green-500' : 'text-xl'}`}>{prize}</p>
+            <p className="text-white text-2xl font-bold">YOU WIN</p>
+            <p
+              className={`text-white font-bold ${
+                prize.includes("£") ? "text-green-500" : "text-xl"
+              }`}
+            >
+              {prize}
+            </p>
           </div>
         </div>
       </ScratchCard>
@@ -78,7 +103,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
   ]);
   const [showGameHistory, setShowGameHistory] = useState(true);
   const [instantWinPrizes, setInstantWinPrizes] = useState<{
-    [key: number]: { type: 'money' | 'word'; value: string };
+    [key: number]: { type: "money" | "word"; value: string };
   }>({});
 
   useEffect(() => {
@@ -125,12 +150,15 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
   }, [game]);
 
   const getPartiallyHiddenWord = (word: string) => {
-    return word.split('').map((char, index) => {
-      if (index === 0 || index === word.length - 1 || Math.random() < 0.3) {
-        return char;
-      }
-      return '_';
-    }).join(' ');
+    return word
+      .split("")
+      .map((char, index) => {
+        if (index === 0 || index === word.length - 1 || Math.random() < 0.3) {
+          return char;
+        }
+        return "_";
+      })
+      .join(" ");
   };
 
   const handleSubmitAnswer = () => {
@@ -142,7 +170,9 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         alert("No more Lucky Dips available!");
         return;
       }
-      const randomIndex = Math.floor(Math.random() * game.luckyDipAnswers.length);
+      const randomIndex = Math.floor(
+        Math.random() * game.luckyDipAnswers.length
+      );
       submittedAnswer = game.luckyDipAnswers[randomIndex];
       setGame((prevGame) => ({
         ...prevGame!,
@@ -170,17 +200,22 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     if (isLuckyDip) {
       const isWordPrize = Math.random() < 0.4; // 20% chance of word prize (increased money prize probability)
       if (isWordPrize && game.validAnswers.length > 0) {
-        const randomWordIndex = Math.floor(Math.random() * game.validAnswers.length);
+        const randomWordIndex = Math.floor(
+          Math.random() * game.validAnswers.length
+        );
         const word = game.validAnswers[randomWordIndex];
-        setInstantWinPrizes(prev => ({
+        setInstantWinPrizes((prev) => ({
           ...prev,
-          [game!.answers.length]: { type: 'word', value: getPartiallyHiddenWord(word) }
+          [game!.answers.length]: {
+            type: "word",
+            value: getPartiallyHiddenWord(word),
+          },
         }));
       } else {
         const prizeAmount = Math.floor(Math.random() * 50) + 1;
-        setInstantWinPrizes(prev => ({
+        setInstantWinPrizes((prev) => ({
           ...prev,
-          [game!.answers.length]: { type: 'money', value: `£${prizeAmount}` }
+          [game!.answers.length]: { type: "money", value: `£${prizeAmount}` },
         }));
       }
     }
@@ -306,11 +341,21 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                       <td className="text-center text-xs">
                         {answer.instantWin === "REVEAL" ? (
                           <ScratchCardComponent
-                            prize={instantWinPrizes[game.answers.length - 1 - index] ? 
-                              (instantWinPrizes[game.answers.length - 1 - index].type === 'money' ? 
-                                instantWinPrizes[game.answers.length - 1 - index].value : 
-                                `${instantWinPrizes[game.answers.length - 1 - index].value}`
-                              ) : "£0"}
+                            prize={
+                              instantWinPrizes[game.answers.length - 1 - index]
+                                ? instantWinPrizes[
+                                    game.answers.length - 1 - index
+                                  ].type === "money"
+                                  ? instantWinPrizes[
+                                      game.answers.length - 1 - index
+                                    ].value
+                                  : `${
+                                      instantWinPrizes[
+                                        game.answers.length - 1 - index
+                                      ].value
+                                    }`
+                                : "£0"
+                            }
                             onReveal={() => {}}
                           />
                         ) : (
