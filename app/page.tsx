@@ -1,33 +1,86 @@
 "use client";
 
 import Link from "next/link";
-import { getCurrentGame, getAllGames } from "@/utils/dataHelpers";
+import { useState, useEffect } from "react";
+import { getCurrentGame, getAllGames, submitAnswer } from "@/utils/dataHelpers";
 import { motion } from "framer-motion";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useUser } from "@/utils/userHelpers";
 
 export default function LandingPage() {
-  const currentGame = getCurrentGame();
-  const pastGames = getAllGames().slice(1, 4); // Get 3 past games
+  const { user, updateUser } = useUser();
+  const [currentGame, setCurrentGame] = useState(getCurrentGame());
+  const [answer, setAnswer] = useState("");
+  const [isLuckyDip, setIsLuckyDip] = useState(false);
+  const [gameHistory, setGameHistory] = useState([]);
+  const [clue, setClue] = useState("");
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { 
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
+  useEffect(() => {
+    if (user) {
+      setGameHistory(user.gameHistory || []);
     }
+  }, [user]);
+
+  const generatePartialAnswer = (word: string) => {
+    const revealedCount = Math.floor(word.length / 2);
+    const revealedIndices = new Set();
+    while (revealedIndices.size < revealedCount) {
+      revealedIndices.add(Math.floor(Math.random() * word.length));
+    }
+    return word.split('').map((char, index) => 
+      revealedIndices.has(index) ? char : '_'
+    ).join(' ');
   };
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
-      opacity: 1,
-      transition: { 
-        type: "spring",
-        stiffness: 100
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (user && currentGame) {
+      const cost = isLuckyDip ? 5 : 1;
+      if (user.balance >= cost) {
+        let luckyDipAnswer = "";
+        if (isLuckyDip) {
+          if (Math.random() < 0.5) {
+            const uniqueAnswer = currentGame.validAnswers.find(a => 
+              !currentGame.answers.some(submittedAnswer => submittedAnswer.answer === a)
+            );
+            if (uniqueAnswer) {
+              const partialAnswer = generatePartialAnswer(uniqueAnswer);
+              setClue(`Clue: ${partialAnswer}`);
+              luckyDipAnswer = uniqueAnswer;
+            } else {
+              luckyDipAnswer = currentGame.luckyDipAnswers[Math.floor(Math.random() * currentGame.luckyDipAnswers.length)];
+              setClue(`Lucky Dip Answer: ${luckyDipAnswer}`);
+            }
+          } else {
+            luckyDipAnswer = currentGame.luckyDipAnswers[Math.floor(Math.random() * currentGame.luckyDipAnswers.length)];
+            setClue(`Lucky Dip Answer: ${luckyDipAnswer}`);
+          }
+        }
+
+        const result = submitAnswer(user.id, currentGame.id, isLuckyDip ? luckyDipAnswer : answer, isLuckyDip);
+        if (result) {
+          const updatedUser = { ...user, balance: user.balance - cost };
+          updateUser(updatedUser);
+
+          const updatedHistory = [...gameHistory, {
+            gameId: currentGame.id,
+            answer: isLuckyDip ? luckyDipAnswer : answer,
+            status: "PENDING",
+            instantWin: isLuckyDip ? "YES" : "NO"
+          }];
+          setGameHistory(updatedHistory);
+
+          setAnswer("");
+          setIsLuckyDip(false);
+
+          setCurrentGame(getCurrentGame());
+        }
+      } else {
+        alert("Insufficient balance");
       }
+    } else {
+      alert("Please log in to play");
     }
   };
 
@@ -35,81 +88,86 @@ export default function LandingPage() {
     <div className="bg-purple-300 min-h-screen">
       <motion.main 
         className="container mx-auto px-4 py-8 max-w-5xl"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
       >
         <motion.h1 
-          className="text-4xl font-bold mb-8 text-purple-800"
-          variants={itemVariants}
+          className="text-4xl font-bold mb-8 text-purple-800 text-center underline"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
         >
-          Welcome to UniqueWin
+          FIND A UNIQUE ANSWER & WIN!
         </motion.h1>
 
         <motion.div 
-          className="bg-purple-100 p-6 rounded-lg mb-8 shadow-md"
-          variants={itemVariants}
+          className="bg-purple-400 p-6 rounded-lg shadow-md mb-8"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
         >
-          <h2 className="text-2xl font-bold mb-4 text-purple-700">
-            Today's Game
+          <h2 className="text-2xl font-bold mb-4 text-white text-center">
+            {currentGame.question}
           </h2>
-          <p className="text-xl mb-2">{currentGame.question}</p>
-          <p className="mb-4">Jackpot: £{currentGame.jackpot}</p>
-          <Link
-            href={`/games/${currentGame.id}`}
-            className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition"
-          >
-            Play Now
-          </Link>
-        </motion.div>
-
-        <motion.div 
-          className="bg-purple-100 p-6 rounded-lg shadow-md mb-8"
-          variants={itemVariants}
-        >
-          <h2 className="text-2xl font-bold mb-4 text-purple-700">
-            How It Works
-          </h2>
-          <p className="mb-4">UniqueWin offers one exciting game every day. Be the first to submit a unique answer and win the jackpot!</p>
-          <Link
-            href="/how-it-works"
-            className="text-purple-600 hover:text-purple-800 transition"
-          >
-            Learn More
-          </Link>
-        </motion.div>
-
-        <motion.div 
-          className="bg-purple-100 p-6 rounded-lg shadow-md mb-8"
-          variants={itemVariants}
-        >
-          <h2 className="text-2xl font-bold mb-4 text-purple-700">
-            Recent Winners
-          </h2>
-          {pastGames.map((game, index) => (
-            <div key={index} className="mb-4">
-              <h3 className="font-bold">{game.question}</h3>
-              <p>Winner: {game.answers.find(a => a.status === "UNIQUE")?.answer || "No winner"}</p>
-              <p>Jackpot: £{game.jackpot}</p>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              placeholder="ENTER YOUR ANSWER"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              className="w-full py-2 px-4 rounded-md bg-white text-black placeholder-gray-500"
+            />
+            <div className="flex items-center justify-center space-x-2">
+              <input
+                type="checkbox"
+                id="luckyDip"
+                checked={isLuckyDip}
+                onChange={(e) => setIsLuckyDip(e.target.checked)}
+                className="form-checkbox h-5 w-5 text-orange-500"
+              />
+              <label htmlFor="luckyDip" className="text-white">LUCKY DIP</label>
             </div>
-          ))}
-          <Link
-            href="/winners"
-            className="text-purple-600 hover:text-purple-800 transition"
-          >
-            View All Winners
-          </Link>
+            <Button 
+              type="submit" 
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"
+            >
+              PLAY NOW/SUBMIT
+            </Button>
+          </form>
+          {clue && (
+            <div className="mt-4 p-2 bg-yellow-100 text-yellow-800 rounded">
+              {clue}
+            </div>
+          )}
         </motion.div>
 
-        <motion.div 
-          className="bg-purple-500 text-white p-4 text-center rounded-lg shadow-md"
-          variants={itemVariants}
-        >
-          <h2 className="text-2xl font-bold mb-2">
-            Don't Miss the 8PM Results Show
-          </h2>
-          <p>Every Night Live on Facebook</p>
-        </motion.div>
+        {user && (
+          <motion.div 
+            className="bg-purple-400 p-6 rounded-lg shadow-md mb-8"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+          >
+            <h2 className="text-2xl font-bold mb-4 text-white">Game History</h2>
+            <table className="w-full text-white">
+              <thead>
+                <tr>
+                  <th className="text-left">Your Answer</th>
+                  <th className="text-left">Status</th>
+                  <th className="text-left">Instant Win</th>
+                </tr>
+              </thead>
+              <tbody>
+                {gameHistory.map((entry, index) => (
+                  <tr key={index}>
+                    <td>{entry.answer}</td>
+                    <td>{entry.status}</td>
+                    <td>{entry.instantWin}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </motion.div>
+        )}
+
+        {/* ... (rest of the component remains the same) */}
       </motion.main>
     </div>
   );

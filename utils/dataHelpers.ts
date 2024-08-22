@@ -17,6 +17,7 @@ export interface Game {
   validAnswers: string[];
   answers: Answer[];
   luckyDipAnswers: string[];
+  hangmanWords: string[];
 }
 
 let currentGame: Game | null = null;
@@ -44,6 +45,7 @@ export function generateDailyGame(): Game {
     validAnswers,
     answers: [],
     luckyDipAnswers: validAnswers.slice(0, 5),
+    hangmanWords: [], // Initialize hangmanWords as an empty array
   };
 }
 
@@ -69,28 +71,37 @@ export function getGameById(gameId: number): Game | undefined {
   return undefined;
 }
 
-export function submitAnswer(userId: number, gameId: number, answer: string) {
+export function submitAnswer(userId: number, gameId: number, answer: string, isLuckyDip: boolean = false) {
   const user = getCurrentUser(userId);
   const game = getCurrentGame();
 
   if (user && game) {
-    // Update user's game history
-    const newAnswer: Answer = {
-      answer,
-      frequency: 1,
-      status: "PENDING", // This should be updated based on game logic
-      instantWin: "NO", // This should be updated based on game logic
-    };
+    const cost = isLuckyDip ? 5 : 1;
+    if (user.balance >= cost) {
+      // Update user's balance
+      user.balance -= cost;
 
-    // Add the new answer to the user's game history
-    user.gameHistory.push({
-      gameId,
-      answers: [newAnswer],
-    });
+      // Update user's game history
+      const newAnswer: Answer = {
+        answer,
+        frequency: 1,
+        status: "PENDING", // This should be updated based on game logic
+        instantWin: "NO", // This should be updated based on game logic
+      };
 
-    // Update the game's answers
-    game.answers.push(newAnswer);
+      // Add the new answer to the user's game history
+      user.gameHistory.push({
+        gameId,
+        answers: [newAnswer],
+      });
+
+      // Update the game's answers
+      game.answers.push(newAnswer);
+
+      return true; // Submission successful
+    }
   }
+  return false; // Submission failed
 }
 
 export function generateValidAnswers(question: string): string[] {

@@ -14,7 +14,7 @@ export default function NavBar() {
     <header className="bg-purple-700 text-white">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-2">
-          <Link href="/" className="text-2xl font-bold text-black">
+          <Link href="/" className="text-2xl font-bold">
             UNIQUEWIN.CO.UK
           </Link>
           <div className="text-right">

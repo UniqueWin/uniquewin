@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   getCurrentUser,
   getCurrentGame,
@@ -17,9 +17,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ScratchCard } from "next-scratchcard"; // Correct import
+import { ScratchCard } from "next-scratchcard";
 import { useRouter } from "next/navigation";
-import Confetti from "react-confetti"; // Import confetti
+import Confetti from "react-confetti";
 import { Game, Answer } from "@/utils/dataHelpers";
 
 const luckyDipNames = ["THEODRE", "TEDDY", "THOMAS", "TREVOR", "TAYTE"];
@@ -32,7 +32,7 @@ const ScratchCardComponent = ({
   onReveal: () => void;
 }) => {
   const [isRevealed, setIsRevealed] = useState(false);
-  const [scratchedPercentage, setScratchedPercentage] = useState(0); // Track scratched percentage
+  const [scratchedPercentage, setScratchedPercentage] = useState(0);
 
   const handleComplete = () => {
     setIsRevealed(true);
@@ -40,11 +40,11 @@ const ScratchCardComponent = ({
   };
 
   return (
-    <div className="relative w-[300px] h-[300px]">
+    <div className="relative w-[300px] h-[100px]">
       {isRevealed && <Confetti />}
       <ScratchCard
         width={300}
-        height={300}
+        height={100}
         finishPercent={50}
         onComplete={handleComplete}
         customBrush={{
@@ -52,25 +52,13 @@ const ScratchCardComponent = ({
           height: 40,
           shape: "circle",
         }}
+        brushColor="#808080" // This sets the scratch color to grey
         onScratch={(percentage) => setScratchedPercentage(percentage)}
       >
         <div className="flex items-center justify-center w-full h-full bg-purple-500">
           <div className="text-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-16 w-16 mx-auto mb-4 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
-              />
-            </svg>
-            <p className="text-white text-2xl font-bold">YOU WIN {prize}</p>
+            <p className="text-white text-4xl font-bold mb-4">YOU WIN</p>
+            <p className={`text-white font-bold ${prize.includes('£') ? 'text-green-500' : 'text-xl'}`}>{prize}</p>
           </div>
         </div>
       </ScratchCard>
@@ -88,10 +76,10 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
   const [availableLuckyDips, setAvailableLuckyDips] = useState([
     ...luckyDipNames,
   ]);
-  const [revealedPrizes, setRevealedPrizes] = useState<{
-    [key: number]: string;
-  }>({});
   const [showGameHistory, setShowGameHistory] = useState(true);
+  const [instantWinPrizes, setInstantWinPrizes] = useState<{
+    [key: number]: { type: 'money' | 'word'; value: string };
+  }>({});
 
   useEffect(() => {
     const userId = localStorage.getItem("currentUserId");
@@ -136,6 +124,15 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     }
   }, [game]);
 
+  const getPartiallyHiddenWord = (word: string) => {
+    return word.split('').map((char, index) => {
+      if (index === 0 || index === word.length - 1 || Math.random() < 0.3) {
+        return char;
+      }
+      return '_';
+    }).join(' ');
+  };
+
   const handleSubmitAnswer = () => {
     if (!game || (!answer.trim() && !isLuckyDip)) return;
 
@@ -145,14 +142,12 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         alert("No more Lucky Dips available!");
         return;
       }
-      const randomIndex = Math.floor(
-        Math.random() * game.luckyDipAnswers.length
-      );
+      const randomIndex = Math.floor(Math.random() * game.luckyDipAnswers.length);
       submittedAnswer = game.luckyDipAnswers[randomIndex];
       setGame((prevGame) => ({
         ...prevGame!,
         luckyDipAnswers: prevGame!.luckyDipAnswers.filter(
-          (_, index) => index !== randomIndex
+          (word) => word !== submittedAnswer
         ),
       }));
     }
@@ -171,6 +166,24 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
       ...prevGame!,
       answers: [newAnswer, ...prevGame!.answers],
     }));
+
+    if (isLuckyDip) {
+      const isWordPrize = Math.random() < 0.4; // 20% chance of word prize (increased money prize probability)
+      if (isWordPrize && game.validAnswers.length > 0) {
+        const randomWordIndex = Math.floor(Math.random() * game.validAnswers.length);
+        const word = game.validAnswers[randomWordIndex];
+        setInstantWinPrizes(prev => ({
+          ...prev,
+          [game!.answers.length]: { type: 'word', value: getPartiallyHiddenWord(word) }
+        }));
+      } else {
+        const prizeAmount = Math.floor(Math.random() * 50) + 1;
+        setInstantWinPrizes(prev => ({
+          ...prev,
+          [game!.answers.length]: { type: 'money', value: `£${prizeAmount}` }
+        }));
+      }
+    }
 
     setAnswer("");
     setIsLuckyDip(false);
@@ -193,19 +206,6 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     return uniqueAnswers.length
       ? (750 / uniqueAnswers.length).toFixed(2)
       : "0.00";
-  };
-
-  const handleReveal = (index: number) => {
-    if (revealedPrizes[index]) return;
-    const prize =
-      Math.random() < 0.5 ? "NO WIN" : `£${Math.floor(Math.random() * 50) + 1}`;
-    setRevealedPrizes((prev) => ({ ...prev, [index]: prize }));
-    setGame((prevGame) => ({
-      ...prevGame!,
-      answers: prevGame!.answers.map((answer, i) =>
-        i === index ? { ...answer, instantWin: prize } : answer
-      ),
-    }));
   };
 
   if (!user || !game) return <div>Loading...</div>;
@@ -288,7 +288,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {game.answers.map((answer, index) => (
+                  {[...game.answers].reverse().map((answer, index) => (
                     <tr key={index}>
                       <td>{answer.answer}</td>
                       <td>{answer.frequency}</td>
@@ -303,11 +303,15 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                       >
                         {answer.status}
                       </td>
-                      <td>
+                      <td className="text-center text-xs">
                         {answer.instantWin === "REVEAL" ? (
                           <ScratchCardComponent
-                            prize={revealedPrizes[index] || "£50.00!"}
-                            onReveal={() => handleReveal(index)}
+                            prize={instantWinPrizes[game.answers.length - 1 - index] ? 
+                              (instantWinPrizes[game.answers.length - 1 - index].type === 'money' ? 
+                                instantWinPrizes[game.answers.length - 1 - index].value : 
+                                `${instantWinPrizes[game.answers.length - 1 - index].value}`
+                              ) : "£0"}
+                            onReveal={() => {}}
                           />
                         ) : (
                           answer.instantWin
