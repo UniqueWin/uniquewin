@@ -22,9 +22,9 @@ export default function RootLayout({
     <html lang="en" className={GeistSans.className}>
       <body className="bg-background text-foreground">
         <GameProvider>
-          <NavBar />
+          {/* <NavBar /> */}
           <main className="min-h-screen flex flex-col items-center">
-            <div className="w-full max-w-5xl px-4">{children}</div>
+            <div className="w-full max-w5xl px4">{children}</div>
           </main>
         </GameProvider>
       </body>
