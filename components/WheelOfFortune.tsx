@@ -57,9 +57,11 @@ const WheelOfFortune = () => {
   return (
     <div className="flex flex-col items-center justify-center text-white p-8">
       <div className="relative w-96 h-96 mb-8 z-10">
+        {/* Wheel background */}
+        <div className="absolute w-full h-full rounded-full bg-gray-800"></div>
         {/* Wheel */}
         <div
-          className="absolute w-full h-full rounded-full border-8 border-yellow-400 transition-transform duration-5000 ease-out shadow-lg"
+          className="absolute w-full h-full rounded-full border-8 border-yellow-400 transition-transform duration-5000 ease-out shadow-lg overflow-hidden"
           style={{ transform: `rotate(${rotation}deg)` }}
         >
           {prizes.map((prize, index) => (
@@ -95,17 +97,17 @@ const WheelOfFortune = () => {
           {lights.map((on, index) => (
             <div
               key={index}
-              className={`absolute w-4 h-4 rounded-full transition-all duration-300 z-10 ${
-                on ? "scale-110 opacity-100" : "scale-90 opacity-50"
+              className={`absolute w-3 h-3 rounded-full transition-all duration-300 z-10 ${
+                on ? "opacity-100" : "opacity-50"
               }`}
               style={{
                 background: `rgb(${Math.random() * 255},${Math.random() * 255},${
                   Math.random() * 255
                 })`,
-                top: `${50 - 49 * Math.cos((index * Math.PI) / 10)}%`,
-                left: `${50 + 49 * Math.sin((index * Math.PI) / 10)}%`,
+                top: `${50 - 49.5 * Math.cos((index * Math.PI) / 10)}%`,
+                left: `${50 + 49.5 * Math.sin((index * Math.PI) / 10)}%`,
                 transform: "translate(-50%, -50%)",
-                boxShadow: on ? "0 0 10px 2px currentColor" : "none",
+                boxShadow: on ? "0 0 5px 1px currentColor" : "none",
               }}
             ></div>
           ))}
@@ -113,6 +115,15 @@ const WheelOfFortune = () => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
           <Disc className="text-yellow-400 w-16 h-16 drop-shadow-lg" />
         </div>
+        {/* Indicator triangle */}
+        <div
+          className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-0 h-0 z-30"
+          style={{
+            borderLeft: "10px solid transparent",
+            borderRight: "10px solid transparent",
+            borderBottom: "20px solid red",
+          }}
+        ></div>
       </div>
 
       {/* Stand */}
