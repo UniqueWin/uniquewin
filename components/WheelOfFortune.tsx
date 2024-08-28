@@ -17,8 +17,8 @@ const prizes = [
 const WheelOfFortune = () => {
   const [rotation, setRotation] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [winner, setWinner] = useState(null);
-  const [lights, setLights] = useState(Array(40).fill(false));
+  const [winner, setWinner] = useState<null | { name: string; color: string; icon: string }>(null);
+  const [lights, setLights] = useState(Array(20).fill(false));
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -31,41 +31,32 @@ const WheelOfFortune = () => {
     if (!isSpinning) {
       setIsSpinning(true);
       setWinner(null);
-      const newRotation = rotation + 1440 + Math.random() * 360;
-      setRotation(newRotation);
+      const spinDuration = 5000 + Math.random() * 2000; // 5-7 seconds
+      const totalRotation = 1440 + Math.random() * 1440; // 4-8 full rotations
+      const finalRotation = totalRotation + (360 / prizes.length) * Math.floor(Math.random() * prizes.length);
 
-      setTimeout(() => {
-        setIsSpinning(false);
-        const winningIndex = Math.floor(
-          (360 - (newRotation % 360)) / (360 / prizes.length)
-        );
-        setWinner(prizes[winningIndex]);
-      }, 5000);
+      const startTime = Date.now();
+      const animate = () => {
+        const elapsedTime = Date.now() - startTime;
+        if (elapsedTime < spinDuration) {
+          const progress = elapsedTime / spinDuration;
+          const easeOut = 1 - Math.pow(1 - progress, 3); // Cubic ease-out
+          setRotation(easeOut * finalRotation);
+          requestAnimationFrame(animate);
+        } else {
+          setRotation(finalRotation);
+          setIsSpinning(false);
+          const winningIndex = prizes.length - 1 - Math.floor((finalRotation % 360) / (360 / prizes.length));
+          setWinner(prizes[winningIndex]);
+        }
+      };
+      requestAnimationFrame(animate);
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center text-white p-8">
-      <div className="relative w-96 h-96 mb-8">
-        {/* Colored lights */}
-        {lights.map((on, index) => (
-          <div
-            key={index}
-            className={`absolute w-4 h-4 rounded-full transition-all duration-300 z-10 ${
-              on ? "scale-110 opacity-100" : "scale-90 opacity-50"
-            }`}
-            style={{
-              background: `rgb(${Math.random() * 255},${Math.random() * 255},${
-                Math.random() * 255
-              })`,
-              top: `${50 - 50 * Math.cos((index * Math.PI) / 20)}%`,
-              left: `${50 + 50 * Math.sin((index * Math.PI) / 20)}%`,
-              transform: "translate(-50%, -50%)",
-              boxShadow: on ? "0 0 10px 2px currentColor" : "none",
-            }}
-          ></div>
-        ))}
-
+      <div className="relative w-96 h-96 mb-8 z-10">
         {/* Wheel */}
         <div
           className="absolute w-full h-full rounded-full border-8 border-yellow-400 transition-transform duration-5000 ease-out shadow-lg"
@@ -88,7 +79,7 @@ const WheelOfFortune = () => {
                 }}
               ></div>
               <div
-                className="absolute top-8 left-1/2 transform -translate-x-1/2 text-[0.7rem] font-bold w-16 text-center"
+                className="absolute top-12 left-1/2 transform -translate-x-1/2 text-sm font-bold w-24 text-center"
                 style={{
                   transform: `rotate(${90 + 360 / prizes.length / 2}deg)`,
                 }}
@@ -98,6 +89,25 @@ const WheelOfFortune = () => {
                 {prize.name}
               </div>
             </div>
+          ))}
+          
+          {/* Colored lights */}
+          {lights.map((on, index) => (
+            <div
+              key={index}
+              className={`absolute w-4 h-4 rounded-full transition-all duration-300 z-10 ${
+                on ? "scale-110 opacity-100" : "scale-90 opacity-50"
+              }`}
+              style={{
+                background: `rgb(${Math.random() * 255},${Math.random() * 255},${
+                  Math.random() * 255
+                })`,
+                top: `${50 - 49 * Math.cos((index * Math.PI) / 10)}%`,
+                left: `${50 + 49 * Math.sin((index * Math.PI) / 10)}%`,
+                transform: "translate(-50%, -50%)",
+                boxShadow: on ? "0 0 10px 2px currentColor" : "none",
+              }}
+            ></div>
           ))}
         </div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
