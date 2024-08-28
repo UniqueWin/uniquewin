@@ -92,32 +92,33 @@ const WheelOfFortune = () => {
               </div>
             </div>
           ))}
-          
-          {/* Colored lights */}
-          {lights.map((on, index) => (
-            <div
-              key={index}
-              className={`absolute w-3 h-3 rounded-full transition-all duration-300 z-10 ${
-                on ? "opacity-100" : "opacity-50"
-              }`}
-              style={{
-                background: `rgb(${Math.random() * 255},${Math.random() * 255},${
-                  Math.random() * 255
-                })`,
-                top: `${50 - 49.5 * Math.cos((index * Math.PI) / 10)}%`,
-                left: `${50 + 49.5 * Math.sin((index * Math.PI) / 10)}%`,
-                transform: "translate(-50%, -50%)",
-                boxShadow: on ? "0 0 5px 1px currentColor" : "none",
-              }}
-            ></div>
-          ))}
         </div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
+        
+        {/* Colored lights */}
+        {lights.map((on, index) => (
+          <div
+            key={index}
+            className={`absolute w-3 h-3 rounded-full transition-all duration-300 z-20 ${
+              on ? "opacity-100" : "opacity-50"
+            }`}
+            style={{
+              background: `rgb(${Math.random() * 255},${Math.random() * 255},${
+                Math.random() * 255
+              })`,
+              top: `${50 - 51 * Math.cos((index * Math.PI) / 10)}%`,
+              left: `${50 + 51 * Math.sin((index * Math.PI) / 10)}%`,
+              transform: "translate(-50%, -50%)",
+              boxShadow: on ? "0 0 5px 1px currentColor" : "none",
+            }}
+          ></div>
+        ))}
+        
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
           <Disc className="text-yellow-400 w-16 h-16 drop-shadow-lg" />
         </div>
         {/* Indicator triangle */}
         <div
-          className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-0 h-0 z-30"
+          className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40"
           style={{
             borderLeft: "10px solid transparent",
             borderRight: "10px solid transparent",
@@ -126,8 +127,7 @@ const WheelOfFortune = () => {
         ></div>
       </div>
 
-      {/* Stand */}
-      <div className="w-64 h-64 -mt-32 bg-gradient-to-b from-yellow-600 to-yellow-800 rounded-t-full relative overflow-hidden">
+      <div className="w-64 h-64 -mt-32 bg-gradient-to-b from-yellow-600 to-yellow-800 rounded-t-full relative overflow-hidden z-0">
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-full bg-yellow-400"></div>
         <div className="absolute bottom-0 w-full h-12 bg-yellow-900"></div>
       </div>
