@@ -14,7 +14,7 @@ export const metadata = {
     images: ["https://uniquewin.vercel.app/opengraph-image.png"],
   },
   twitter: {
-    images: ["https:/uniquewin.vercel.app/twitter-image.png"],
+    images: ["https://uniquewin.vercel.app/twitter-image.png"],
   },
 };
 
