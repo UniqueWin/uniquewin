@@ -11,10 +11,10 @@ export const metadata = {
   title: "UniqueWin",
   description: "Play unique games and win big!",
   openGraph: {
-    images: ['/opengraph-image.png'],
+    images: ['https://uniquewin.vercel.app//opengraph-image.png'],
   },
   twitter: {
-    images: ['/twitter-image.png'],
+    images: ['https://uniquewin.vercel.app//twitter-image.png'],
   },
 };
 
