@@ -46,7 +46,7 @@ const WheelOfFortune = () => {
         } else {
           setRotation(finalRotation);
           setIsSpinning(false);
-          const winningIndex = prizes.length - 1 - Math.floor((finalRotation % 360) / (360 / prizes.length));
+          const winningIndex = Math.floor((finalRotation % 360) / (360 / prizes.length));
           setWinner(prizes[winningIndex]);
         }
       };
