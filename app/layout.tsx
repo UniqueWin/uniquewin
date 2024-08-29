@@ -10,6 +10,12 @@ export const metadata = {
   metadataBase: new URL(defaultUrl),
   title: "UniqueWin",
   description: "Play unique games and win big!",
+  openGraph: {
+    images: ['/ogimage.png'],
+  },
+  twitter: {
+    images: ['/twitter-image.png'],
+  },
 };
 
 export default function RootLayout({
