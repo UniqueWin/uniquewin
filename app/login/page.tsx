@@ -1,9 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useUser } from "@/utils/userHelpers";
 import { useRouter } from "next/navigation";
 
@@ -12,42 +9,62 @@ export default function LoginPage() {
   const { login } = useUser();
   const router = useRouter();
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Here you would typically validate the user credentials against your backend
     // For now, we'll just simulate a successful login
-    login({ id: 1, username: formData.username, balance: 100 });
+    login({
+      id: 1,
+      username: formData.username,
+      email: `${formData.username}@example.com`, // Add a dummy email
+      balance: 100
+    });
     router.push("/profile");
   };
 
   return (
-    <div className="bg-purple-300 min-h-screen">
-      <motion.div
-        className="container mx-auto px-4 py-8 max-w-md"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-4xl font-bold mb-8 text-purple-800">Login</h1>
-        <div className="bg-purple-100 p-6 rounded-lg shadow-md">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              placeholder="Username"
-              value={formData.username}
-              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-            />
-            <Input
-              type="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
-            <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600">
-              Sign In
-            </Button>
-          </form>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Login</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="username" className="block mb-1">
+            Username
+          </label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            required
+            className="w-full p-2 border rounded"
+          />
         </div>
-      </motion.div>
+        <div>
+          <label htmlFor="password" className="block mb-1">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Login
+        </button>
+      </form>
     </div>
   );
 }

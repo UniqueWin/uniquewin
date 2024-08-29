@@ -1,19 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { getCurrentUser } from "@/utils/dataHelpers";
+import { User } from "@/utils/userHelpers";
 
-const HistoryPage = () => {
-  const [user, setUser] = useState(null);
-  const [history, setHistory] = useState([]);
+// Define an extended User type that includes gameHistory
+interface ExtendedUser extends User {
+  gameHistory: {
+    gameId: number;
+    answers: { answer: string; status: string; instantWin: string }[];
+  }[];
+}
+
+export default function HistoryPage() {
+  const [user, setUser] = useState<ExtendedUser | null>(null);
+  const [history, setHistory] = useState<ExtendedUser['gameHistory']>([]);
 
   useEffect(() => {
     const userId = localStorage.getItem("currentUserId");
     if (userId) {
       const currentUser = getCurrentUser(parseInt(userId));
       if (currentUser) {
-        setUser(currentUser);
-        setHistory(currentUser.gameHistory); // Set the user's game history
+        setUser(currentUser as ExtendedUser);
+        setHistory(currentUser.gameHistory || []); // Set the user's game history
       }
     }
   }, []);
@@ -55,6 +64,4 @@ const HistoryPage = () => {
       </table>
     </div>
   );
-};
-
-export default HistoryPage;
+}

@@ -17,7 +17,11 @@ const prizes = [
 const WheelOfFortune = () => {
   const [rotation, setRotation] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [winner, setWinner] = useState<null | { name: string; color: string; icon: string }>(null);
+  const [winner, setWinner] = useState<null | {
+    name: string;
+    color: string;
+    icon: string;
+  }>(null);
   const [lights, setLights] = useState(Array(20).fill(false));
 
   useEffect(() => {
@@ -33,7 +37,9 @@ const WheelOfFortune = () => {
       setWinner(null);
       const spinDuration = 5000 + Math.random() * 2000; // 5-7 seconds
       const totalRotation = 1440 + Math.random() * 1440; // 4-8 full rotations
-      const finalRotation = totalRotation + (360 / prizes.length) * Math.floor(Math.random() * prizes.length);
+      const finalRotation =
+        totalRotation +
+        (360 / prizes.length) * Math.floor(Math.random() * prizes.length);
 
       const startTime = Date.now();
       const animate = () => {
@@ -46,7 +52,9 @@ const WheelOfFortune = () => {
         } else {
           setRotation(finalRotation);
           setIsSpinning(false);
-          const winningIndex = Math.floor((finalRotation % 360) / (360 / prizes.length));
+          const winningIndex = Math.floor(
+            (finalRotation % 360) / (360 / prizes.length)
+          );
           setWinner(prizes[winningIndex]);
         }
       };
@@ -93,7 +101,7 @@ const WheelOfFortune = () => {
             </div>
           ))}
         </div>
-        
+
         {/* Colored lights */}
         {lights.map((on, index) => (
           <div
@@ -112,7 +120,7 @@ const WheelOfFortune = () => {
             }}
           ></div>
         ))}
-        
+
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
           <Disc className="text-yellow-400 w-16 h-16 drop-shadow-lg" />
         </div>
@@ -127,10 +135,10 @@ const WheelOfFortune = () => {
         ></div>
       </div>
 
-      <div className="w-64 h-64 -mt-32 bg-gradient-to-b from-yellow-600 to-yellow-800 rounded-t-full relative overflow-hidden z-0">
+      {/* <div className="w-64 h-64 -mt-32 bg-gradient-to-b from-yellow-600 to-yellow-800 rounded-t-full relative overflow-hidden z-0">
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-full bg-yellow-400"></div>
         <div className="absolute bottom-0 w-full h-12 bg-yellow-900"></div>
-      </div>
+      </div> */}
 
       <button
         className="mt-8 px-8 py-4 bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 rounded-full font-bold text-xl hover:from-yellow-300 hover:to-yellow-500 transition-all transform hover:scale-105 shadow-lg"
@@ -140,14 +148,16 @@ const WheelOfFortune = () => {
         {isSpinning ? "Spinning..." : "SPIN!"}
       </button>
 
-      {winner && (
-        <div className="mt-6 text-center animate-bounce">
-          <h2 className="text-3xl font-bold text-yellow-400">You won:</h2>
-          <p className="text-4xl font-bold text-white mt-2">
-            {winner.icon} {winner.name}
-          </p>
-        </div>
-      )}
+      <div
+        className={`mt-6 text-center animate-bounce transition-opacity duration-1000 ${
+          winner ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        <h2 className="text-3xl font-bold text-yellow-400">You won:</h2>
+        <p className="text-4xl font-bold text-white mt-2">
+          {winner?.icon} {winner?.name}
+        </p>
+      </div>
     </div>
   );
 };

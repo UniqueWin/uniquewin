@@ -17,12 +17,32 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ScratchCard } from "next-scratchcard";
+import { ScratchCard } from 'next-scratchcard';
 import { useRouter } from "next/navigation";
 import Confetti from "react-confetti";
 import { Game, Answer } from "@/utils/dataHelpers";
+import { User } from "@/utils/userHelpers";
 
 const luckyDipNames = ["THEODRE", "TEDDY", "THOMAS", "TREVOR", "TAYTE"];
+
+// Define our own interface for ScratchCard props
+interface ScratchCardProps {
+  width: number;
+  height: number;
+  image: string;
+  finishPercent: number;
+  onComplete: () => void;
+  brushSize: number;
+  children: React.ReactNode;
+}
+
+// Extend the ScratchCardProps interface to include the brushColor and onScratch props
+interface ExtendedScratchCardProps extends ScratchCardProps {
+  brushColor?: string;
+  onScratch: (percentage: number) => void;
+}
+
+const ScratchCardWithBrushColor = ScratchCard as React.ComponentType<ExtendedScratchCardProps>;
 
 const ScratchCardComponent = ({
   prize,
@@ -62,7 +82,7 @@ const ScratchCardComponent = ({
           // }}
         />
       )}
-      <ScratchCard
+      <ScratchCardWithBrushColor
         width={250}
         height={75}
         finishPercent={50}
@@ -71,7 +91,7 @@ const ScratchCardComponent = ({
           "https://st3.depositphotos.com/1022597/35608/i/450/depositphotos_356083076-stock-photo-grey-stone-texture-useful-background.jpg"
         }
         brushSize={10}
-        brushColor="#808080" // This sets the scratch color to grey
+        brushColor="#808080"
         onScratch={(percentage) => setScratchedPercentage(percentage)}
       >
         <div className="flex items-center justify-center w-full h-full bg-purple-500 rounded-lg p-4">
@@ -86,14 +106,14 @@ const ScratchCardComponent = ({
             </p>
           </div>
         </div>
-      </ScratchCard>
+      </ScratchCardWithBrushColor>
     </div>
   );
 };
 
 export default function GamePage({ params }: { params: { gameId: string } }) {
   const router = useRouter();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [game, setGame] = useState<Game | null>(null);
   const [answer, setAnswer] = useState("");
   const [isLuckyDip, setIsLuckyDip] = useState(false);
@@ -111,7 +131,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     if (userId) {
       const currentUser = getCurrentUser(parseInt(userId));
       if (currentUser) {
-        setUser(currentUser);
+        setUser(currentUser as User);
         const currentGame = getGameById(parseInt(params.gameId));
         if (currentGame) {
           setGame(currentGame);

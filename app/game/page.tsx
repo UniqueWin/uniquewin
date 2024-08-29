@@ -1,19 +1,31 @@
 "use client";
 
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { getCurrentGame, getAllGames, submitAnswer } from "@/utils/dataHelpers";
-import { motion } from "framer-motion";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useUser } from "@/utils/userHelpers";
+import { Input } from "@/components/ui/input";
+import { getCurrentGame, submitAnswer } from "@/utils/dataHelpers";
+import { User, useUser } from "@/utils/userHelpers";
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+
+// Keep this type definition
+type GameHistoryEntry = {
+  gameId: number;
+  answer: string;
+  status: string;
+  instantWin: string;
+};
+
+// Extend the User type from userHelpers
+interface ExtendedUser extends User {
+  gameHistory?: GameHistoryEntry[];
+}
 
 export default function LandingPage() {
-  const { user, updateUser } = useUser();
+  const { user, updateUser } = useUser<ExtendedUser>();
   const [currentGame, setCurrentGame] = useState(getCurrentGame());
   const [answer, setAnswer] = useState("");
   const [isLuckyDip, setIsLuckyDip] = useState(false);
-  const [gameHistory, setGameHistory] = useState([]);
+  const [gameHistory, setGameHistory] = useState<GameHistoryEntry[]>([]);
   const [clue, setClue] = useState("");
 
   useEffect(() => {
@@ -28,9 +40,10 @@ export default function LandingPage() {
     while (revealedIndices.size < revealedCount) {
       revealedIndices.add(Math.floor(Math.random() * word.length));
     }
-    return word.split('').map((char, index) => 
-      revealedIndices.has(index) ? char : '_'
-    ).join(' ');
+    return word
+      .split("")
+      .map((char, index) => (revealedIndices.has(index) ? char : "_"))
+      .join(" ");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,34 +54,54 @@ export default function LandingPage() {
         let luckyDipAnswer = "";
         if (isLuckyDip) {
           if (Math.random() < 0.5) {
-            const uniqueAnswer = currentGame.validAnswers.find(a => 
-              !currentGame.answers.some(submittedAnswer => submittedAnswer.answer === a)
+            const uniqueAnswer = currentGame.validAnswers.find(
+              (a) =>
+                !currentGame.answers.some(
+                  (submittedAnswer) => submittedAnswer.answer === a
+                )
             );
             if (uniqueAnswer) {
               const partialAnswer = generatePartialAnswer(uniqueAnswer);
               setClue(`Clue: ${partialAnswer}`);
               luckyDipAnswer = uniqueAnswer;
             } else {
-              luckyDipAnswer = currentGame.luckyDipAnswers[Math.floor(Math.random() * currentGame.luckyDipAnswers.length)];
+              luckyDipAnswer =
+                currentGame.luckyDipAnswers[
+                  Math.floor(Math.random() * currentGame.luckyDipAnswers.length)
+                ];
               setClue(`Lucky Dip Answer: ${luckyDipAnswer}`);
             }
           } else {
-            luckyDipAnswer = currentGame.luckyDipAnswers[Math.floor(Math.random() * currentGame.luckyDipAnswers.length)];
+            luckyDipAnswer =
+              currentGame.luckyDipAnswers[
+                Math.floor(Math.random() * currentGame.luckyDipAnswers.length)
+              ];
             setClue(`Lucky Dip Answer: ${luckyDipAnswer}`);
           }
         }
 
-        const result = submitAnswer(user.id, currentGame.id, isLuckyDip ? luckyDipAnswer : answer, isLuckyDip);
+        const result = submitAnswer(
+          user.id, // Remove .toString()
+          currentGame.id,
+          isLuckyDip ? luckyDipAnswer : answer,
+          isLuckyDip
+        );
         if (result) {
-          const updatedUser = { ...user, balance: user.balance - cost };
+          const updatedUser: ExtendedUser = {
+            ...user,
+            balance: user.balance - cost,
+          };
           updateUser(updatedUser);
 
-          const updatedHistory = [...gameHistory, {
-            gameId: currentGame.id,
-            answer: isLuckyDip ? luckyDipAnswer : answer,
-            status: "PENDING",
-            instantWin: isLuckyDip ? "YES" : "NO"
-          }];
+          const updatedHistory: GameHistoryEntry[] = [
+            ...gameHistory,
+            {
+              gameId: currentGame.id,
+              answer: isLuckyDip ? luckyDipAnswer : answer,
+              status: "PENDING",
+              instantWin: isLuckyDip ? "YES" : "NO",
+            },
+          ];
           setGameHistory(updatedHistory);
 
           setAnswer("");
@@ -86,13 +119,13 @@ export default function LandingPage() {
 
   return (
     <div className="bg-purple-300 min-h-screen">
-      <motion.main 
+      <motion.main
         className="container mx-auto px-4 py-8 max-w-5xl"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <motion.h1 
+        <motion.h1
           className="text-4xl font-bold mb-8 text-purple-800 text-center underline"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -100,7 +133,7 @@ export default function LandingPage() {
           FIND A UNIQUE ANSWER & WIN!
         </motion.h1>
 
-        <motion.div 
+        <motion.div
           className="bg-purple-400 p-6 rounded-lg shadow-md mb-8"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -123,10 +156,12 @@ export default function LandingPage() {
                 onChange={(e) => setIsLuckyDip(e.target.checked)}
                 className="form-checkbox h-5 w-5 text-orange-500"
               />
-              <label htmlFor="luckyDip" className="text-white">LUCKY DIP</label>
+              <label htmlFor="luckyDip" className="text-white">
+                LUCKY DIP
+              </label>
             </div>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"
             >
               PLAY NOW/SUBMIT
@@ -140,7 +175,7 @@ export default function LandingPage() {
         </motion.div>
 
         {user && (
-          <motion.div 
+          <motion.div
             className="bg-purple-400 p-6 rounded-lg shadow-md mb-8"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}

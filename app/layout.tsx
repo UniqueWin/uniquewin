@@ -1,7 +1,6 @@
+import { GameProvider } from "@/contexts/GameContext";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
-import NavBar from "@/components/NavBar";
-import { GameProvider } from "@/contexts/GameContext";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`

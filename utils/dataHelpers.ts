@@ -17,7 +17,7 @@ export interface Game {
   validAnswers: string[];
   answers: Answer[];
   luckyDipAnswers: string[];
-  hangmanWords: string[];
+  hangmanWords?: string[]; // Make hangmanWords optional
 }
 
 let currentGame: Game | null = null;

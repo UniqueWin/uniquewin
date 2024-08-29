@@ -2,31 +2,33 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useUser } from "@/utils/userHelpers";
+import { useUser, User } from "@/utils/userHelpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getAllGames } from "@/utils/dataHelpers";
+import { Game } from "@/utils/dataHelpers";
 
 export default function ProfilePage() {
   const { user, addCredits, updateUser } = useUser();
   const [editMode, setEditMode] = useState(false);
-  const [editedUser, setEditedUser] = useState(user);
-  const [gameHistory, setGameHistory] = useState([]);
+  const [editedUser, setEditedUser] = useState<User | null>(null);
+  const [gameHistory, setGameHistory] = useState<Game[]>([]);
 
   useEffect(() => {
     if (user) {
       setEditedUser(user);
-      // This is a placeholder. In a real app, you'd fetch the user's game history from your backend.
       const allGames = getAllGames();
-      setGameHistory(allGames.slice(0, 5)); // Just showing last 5 games for now
+      setGameHistory(allGames.slice(0, 5));
     }
   }, [user]);
 
   if (!user) return <div>Loading...</div>;
 
   const handleSave = () => {
-    updateUser(editedUser);
-    setEditMode(false);
+    if (editedUser) {
+      updateUser(editedUser);
+      setEditMode(false);
+    }
   };
 
   return (
@@ -39,7 +41,7 @@ export default function ProfilePage() {
       >
         <h1 className="text-4xl font-bold mb-8 text-purple-800">My Profile</h1>
         <div className="bg-purple-100 p-6 rounded-lg shadow-md mb-8">
-          {editMode ? (
+          {editMode && editedUser ? (
             <>
               <Input
                 className="mb-4"
@@ -113,7 +115,7 @@ export default function ProfilePage() {
   );
 }
 
-function calculateProfitLoss(game) {
+function calculateProfitLoss(game: Game) {
   // This is a placeholder function. You'd need to implement the actual logic based on your game rules.
   const winningAnswer = game.answers.find(a => a.status === "UNIQUE");
   const instantWin = game.answers.find(a => a.instantWin !== "NO");
