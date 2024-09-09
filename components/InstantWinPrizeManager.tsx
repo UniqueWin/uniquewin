@@ -17,7 +17,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 interface InstantWinPrize {
   id: string;
   prize_type: 'CASH' | 'CREDITS' | 'LUCKY_DIP' | 'HANGMAN';
-  prize_amount: number;
+  prize_amount: number | null;
   probability: number;
   prize_details?: {
     expiry_date?: string;
@@ -56,7 +56,11 @@ export default function InstantWinPrizeManager() {
   };
 
   const handleAddPrize = async () => {
-    const { data, error } = await supabase.from("instant_win_prizes").insert([newPrize]);
+    const prizeToAdd = {
+      ...newPrize,
+      prize_amount: newPrize.prize_type === 'LUCKY_DIP' ? 1 : newPrize.prize_amount
+    };
+    const { data, error } = await supabase.from("instant_win_prizes").insert([prizeToAdd]);
     if (error) console.error("Error adding instant win prize:", error);
     else {
       fetchPrizes();
@@ -71,9 +75,13 @@ export default function InstantWinPrizeManager() {
 
   const handleUpdatePrize = async () => {
     if (!editingPrize) return;
+    const prizeToUpdate = {
+      ...editingPrize,
+      prize_amount: editingPrize.prize_type === 'LUCKY_DIP' ? 1 : editingPrize.prize_amount
+    };
     const { error } = await supabase
       .from("instant_win_prizes")
-      .update(editingPrize)
+      .update(prizeToUpdate)
       .eq("id", editingPrize.id);
     if (error) console.error("Error updating instant win prize:", error);
     else {
@@ -100,10 +108,14 @@ export default function InstantWinPrizeManager() {
             <Label htmlFor="prize-type">Prize Type</Label>
             <Select
               value={editingPrize ? editingPrize.prize_type : newPrize.prize_type}
-              onValueChange={(value: InstantWinPrize['prize_type']) => editingPrize 
-                ? setEditingPrize({...editingPrize, prize_type: value})
-                : setNewPrize({...newPrize, prize_type: value})
-              }
+              onValueChange={(value: InstantWinPrize['prize_type']) => {
+                const updatedPrize = {
+                  ...(editingPrize || newPrize),
+                  prize_type: value,
+                  prize_amount: value === 'LUCKY_DIP' ? 1 : (editingPrize || newPrize).prize_amount
+                };
+                editingPrize ? setEditingPrize(updatedPrize as InstantWinPrize) : setNewPrize(updatedPrize);
+              }}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select prize type" />
@@ -124,14 +136,19 @@ export default function InstantWinPrizeManager() {
                 id="prize-amount"
                 className="text-black bg-white"
                 type="number"
-                value={editingPrize ? editingPrize.prize_amount : newPrize.prize_amount || ''}
+                value={editingPrize ? editingPrize.prize_amount || '' : newPrize.prize_amount || ''}
                 onChange={(e) => {
-                  const value = e.target.value === '' ? 0 : Number(e.target.value);
+                  const value = e.target.value === '' ? null : Number(e.target.value);
                   editingPrize 
                     ? setEditingPrize({...editingPrize, prize_amount: value})
                     : setNewPrize({...newPrize, prize_amount: value});
                 }}
               />
+            </div>
+          )}
+          {(editingPrize?.prize_type === 'LUCKY_DIP' || newPrize.prize_type === 'LUCKY_DIP') && (
+            <div className="text-sm text-gray-600">
+              Lucky Dip prize amount is always 1 (one lucky dip from unique answers)
             </div>
           )}
           <div>
@@ -211,7 +228,9 @@ export default function InstantWinPrizeManager() {
           <div key={prize.id} className="bg-purple-100 p-4 rounded-lg shadow-md flex justify-between items-center">
             <div>
               <p>Type: {prize.prize_type}</p>
-              {prize.prize_amount !== null && <p>Amount: {prize.prize_type === 'CASH' ? `£${prize.prize_amount}` : `${prize.prize_amount} credits`}</p>}
+              {prize.prize_type === 'CASH' && <p>Amount: £{prize.prize_amount}</p>}
+              {prize.prize_type === 'CREDITS' && <p>Amount: {prize.prize_amount} credits</p>}
+              {prize.prize_type === 'LUCKY_DIP' && <p>Amount: 1 lucky dip</p>}
               <p>Probability: {(prize.probability * 100).toFixed(1)}%</p>
             </div>
             <div>

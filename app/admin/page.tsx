@@ -5,21 +5,59 @@ import { createClient } from "@/utils/supabase/client";
 import { GameCard } from "@/components/GameCard";
 import { AddInstantWinPrizeModal } from "@/components/AddInstantWinPrizeModal";
 import { AddGameModal } from "@/components/AddGameModal";
+import { EditGameModal } from "@/components/EditGameModal";
+import { LoginModal } from "@/components/LoginModal";
 
 export default function AdminPage() {
   const [games, setGames] = useState<any[]>([]);
   const [instantWinPrizes, setInstantWinPrizes] = useState<any[]>([]);
   const [isAddPrizeModalOpen, setIsAddPrizeModalOpen] = useState(false);
   const [isAddGameModalOpen, setIsAddGameModalOpen] = useState(false);
+  const [isEditGameModalOpen, setIsEditGameModalOpen] = useState(false);
+  const [selectedGame, setSelectedGame] = useState<any>(null);
+  const [quickStats, setQuickStats] = useState({
+    activeGames: 0,
+    totalPlayers: 0,
+    totalPrizeAwarded: 0,
+    gamesLast24Hours: 0,
+    instantWinsToday: 0,
+    totalLuckyDips: 0,
+  });
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
     fetchGames();
     fetchInstantWinPrizes();
+    fetchQuickStats();
+    fetchUserId();
   }, []);
 
+  const fetchUserId = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setUserId(user.id);
+    } else {
+      setUserId(null);
+    }
+  };
+
   const fetchGames = async () => {
-    const { data, error } = await supabase.from("games").select("*");
+    const { data, error } = await supabase
+      .from("games")
+      .select(`
+        *,
+        game_instant_win_prizes (
+          instant_win_prize_id,
+          quantity,
+          custom_probability,
+          instant_win_prizes (
+            prize_type,
+            prize_amount
+          )
+        )
+      `);
     if (error) console.error("Error fetching games:", error);
     else setGames(data || []);
   };
@@ -32,73 +70,94 @@ export default function AdminPage() {
     else setInstantWinPrizes(data || []);
   };
 
-  const handleGameStatusChange = async (gameId: string, newStatus: boolean) => {
+  const fetchQuickStats = async () => {
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+    const { data: activeGames } = await supabase
+      .from('games')
+      .select('count', { count: 'exact' })
+      .eq('status', 'active');
+
+    const { data: totalPlayers } = await supabase
+      .from('profiles')
+      .select('count', { count: 'exact' });
+
+    const { data: totalPrizeAwarded } = await supabase
+      .from('game_history')
+      .select('sum(prize_amount)')
+      .single();
+
+    const { data: gamesLast24Hours } = await supabase
+      .from('game_history')
+      .select('count', { count: 'exact' })
+      .gte('created_at', yesterday);
+
+    const { data: instantWinsToday } = await supabase
+      .from('answers')
+      .select('count', { count: 'exact' })
+      .eq('is_instant_win', true)
+      .gte('submitted_at', today);
+
+    const { data: totalLuckyDips } = await supabase
+      .from('answers')
+      .select('count', { count: 'exact' })
+      .eq('is_lucky_dip', true);
+
+    setQuickStats({
+      activeGames: activeGames?.[0]?.count || 0,
+      totalPlayers: totalPlayers?.[0]?.count || 0,
+      totalPrizeAwarded: totalPrizeAwarded?.sum || 0,
+      gamesLast24Hours: gamesLast24Hours?.[0]?.count || 0,
+      instantWinsToday: instantWinsToday?.[0]?.count || 0,
+      totalLuckyDips: totalLuckyDips?.[0]?.count || 0,
+    });
+  };
+
+  const handleEditGame = (game: any) => {
+    setSelectedGame(game);
+    setIsEditGameModalOpen(true);
+  };
+
+  const handleGameStatusChange = async (gameId: string, newStatus: string) => {
     const { error } = await supabase
       .from("games")
-      .update({ status: newStatus ? "active" : "pending" })
+      .update({ status: newStatus })
       .eq("id", gameId);
 
     if (error) console.error("Error updating game status:", error);
     else fetchGames();
   };
 
+  const handleLogin = async () => {
+    await fetchUserId();
+    fetchGames();
+    fetchInstantWinPrizes();
+    fetchQuickStats();
+  };
+
   return (
     <div className="p-6 bg-gray-100 text-gray-900">
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Games Overview Card */}
-        <div className="col-span-2 bg-white p-4 rounded-lg shadow">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800">Games Overview</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {games.slice(0, 4).map((game) => (
-              <GameCard key={game.id} game={game} onUpdate={fetchGames} />
-            ))}
-          </div>
-          <button 
-            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            onClick={() => setIsAddGameModalOpen(true)}
+      {userId ? (
+        // ... existing JSX for logged-in state ...
+      ) : (
+        <div className="text-center">
+          <p className="mb-4">Please log in to access the admin dashboard.</p>
+          <button
+            onClick={() => setIsLoginModalOpen(true)}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
-            Add New Game
+            Log In
           </button>
         </div>
+      )}
 
-        {/* Quick Stats Card */}
-        <div className="bg-white p-4 rounded-lg shadow">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800">Quick Stats</h2>
-          {/* Add quick stats here */}
-        </div>
-
-        {/* Instant Win Prizes Table Card */}
-        <div className="col-span-3 bg-white p-4 rounded-lg shadow">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800">Instant Win Prizes</h2>
-          <table className="w-full text-gray-700">
-            <thead className="bg-gray-200">
-              <tr>
-                <th className="p-2 text-left">Prize Type</th>
-                <th className="p-2 text-left">Amount</th>
-                <th className="p-2 text-left">Probability</th>
-                <th className="p-2 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {instantWinPrizes.map((prize) => (
-                <tr key={prize.id} className="border-b">
-                  <td className="p-2">{prize.prize_type}</td>
-                  <td className="p-2">{prize.prize_amount}</td>
-                  <td className="p-2">{prize.probability}</td>
-                  <td className="p-2">{/* Add edit and delete buttons */}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <button 
-            className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-            onClick={() => setIsAddPrizeModalOpen(true)}
-          >
-            Add New Prize
-          </button>
-        </div>
-      </div>
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLogin={handleLogin}
+      />
 
       <AddInstantWinPrizeModal
         isOpen={isAddPrizeModalOpen}
@@ -110,6 +169,14 @@ export default function AdminPage() {
         isOpen={isAddGameModalOpen}
         onClose={() => setIsAddGameModalOpen(false)}
         onAddGame={fetchGames}
+      />
+
+      <EditGameModal
+        isOpen={isEditGameModalOpen}
+        onClose={() => setIsEditGameModalOpen(false)}
+        onEditGame={fetchGames}
+        game={selectedGame}
+        allInstantWinPrizes={instantWinPrizes}
       />
     </div>
   );
