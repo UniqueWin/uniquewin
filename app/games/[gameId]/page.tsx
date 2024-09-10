@@ -22,6 +22,8 @@ import { useRouter } from "next/navigation";
 import Confetti from "react-confetti";
 import { Game, Answer } from "@/utils/dataHelpers";
 import { User } from "@/utils/userHelpers";
+import Header from "@/components/Header"; // Import Header
+import Footer from "@/components/Footer"; // Import Footer
 
 const luckyDipNames = ["THEODRE", "TEDDY", "THOMAS", "TREVOR", "TAYTE"];
 
@@ -266,184 +268,172 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
   if (!user || !game) return <div>Loading...</div>;
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="bg-purple-300 min-h-screen"
-    >
-      <div className="container mx-auto p-4">
+    <div className="bg-purple-300 min-h-screen flex flex-col">
+      <Header /> {/* Add Header */}
+      <div className="container mx-auto p-4 flex-grow">
         <motion.div
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="flex flex-wrap justify-between items-center mb-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
         >
-          <h1 className="text-3xl font-bold">UNIQUEWIN.CO.UK</h1>
-          <div>
-            <p>LIVE: JACKPOT: £{game.jackpot}</p>
-            <p>GAME ENDS IN {countdown}</p>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-        >
-          <h2 className="text-2xl font-bold mb-4">
-            FIND A UNIQUE ANSWER & WIN!
-          </h2>
-          <p className="text-xl mb-4">{game.question}</p>
-
-          <Input
-            type="text"
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            placeholder="ENTER YOUR ANSWER"
-            className="mb-4"
-            disabled={isLuckyDip}
-          />
-          <div className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              checked={isLuckyDip}
-              onChange={() => setIsLuckyDip(!isLuckyDip)}
-              className="mr-2"
-              disabled={availableLuckyDips.length === 0}
-            />
-            <label>LUCKY DIP ({availableLuckyDips.length} left)</label>
-          </div>
-          <Button
-            onClick={handleSubmitAnswer}
-            className="bg-orange-500 w-full mb-8"
-          >
-            PLAY NOW/SUBMIT
-          </Button>
-        </motion.div>
-
-        {showGameHistory && (
           <motion.div
-            initial={{ y: 50, opacity: 0 }}
+            initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="flex flex-wrap justify-between items-center mb-4"
           >
-            <h3 className="text-xl font-bold mb-4">GAME HISTORY</h3>
-            <p className="mb-4">
-              YOU ARE CURRENTLY WINNING: £{calculateWinnings()}
-            </p>
-            <div className="overflow-x-auto">
-              <table className="w-full mb-8">
-                <thead>
-                  <tr>
-                    <th className="text-left">YOUR ANSWER</th>
-                    <th className="text-left">ANSWER FREQUENCY</th>
-                    <th className="text-left">ANSWER STATUS</th>
-                    <th className="text-left">INSTANT WIN</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...game.answers].reverse().map((answer, index) => (
-                    <tr key={index}>
-                      <td>{answer.answer}</td>
-                      <td>{answer.frequency}</td>
-                      <td
-                        className={
-                          answer.status === "UNIQUE"
-                            ? "text-green-500"
-                            : answer.status === "NOT UNIQUE"
-                            ? "text-red-500"
-                            : "text-orange-500"
-                        }
-                      >
-                        {answer.status}
-                      </td>
-                      <td className="text-center text-xs">
-                        {answer.instantWin === "REVEAL" ? (
-                          <ScratchCardComponent
-                            prize={
-                              instantWinPrizes[game.answers.length - 1 - index]
-                                ? instantWinPrizes[
-                                    game.answers.length - 1 - index
-                                  ].type === "money"
-                                  ? instantWinPrizes[
-                                      game.answers.length - 1 - index
-                                    ].value
-                                  : `${
-                                      instantWinPrizes[
-                                        game.answers.length - 1 - index
-                                      ].value
-                                    }`
-                                : "£0"
-                            }
-                            onReveal={() => {}}
-                          />
-                        ) : (
-                          answer.instantWin
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <h1 className="text-3xl font-bold">UNIQUEWIN.CO.UK</h1>
+            <div>
+              <p>LIVE: JACKPOT: £{game.jackpot}</p>
+              <p>GAME ENDS IN {countdown}</p>
             </div>
           </motion.div>
-        )}
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.5 }}
-          className="bg-purple-500 text-white p-4 text-center mb-8"
-        >
-          <h3 className="text-xl font-bold">DON'T MISS THE 8PM RESULTS SHOW</h3>
-          <p>EVERY MONDAY NIGHT LIVE ON FACEBOOK</p>
-        </motion.div>
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <h2 className="text-2xl font-bold mb-4">
+              FIND A UNIQUE ANSWER & WIN!
+            </h2>
+            <p className="text-xl mb-4">{game.question}</p>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.5 }}
-          className="flex flex-wrap justify-between items-center mb-8"
-        >
-          <div className="w-full md:w-1/2 bg-purple-400 h-32 mb-4 md:mb-0">
-            <p className="text-white p-4">
-              "I won £500 last week with UniqueWin! It's so exciting!" - Sarah
-              T.
+            <Input
+              type="text"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              placeholder="ENTER YOUR ANSWER"
+              className="mb-4"
+              disabled={isLuckyDip}
+            />
+            <div className="flex items-center mb-4">
+              <input
+                type="checkbox"
+                checked={isLuckyDip}
+                onChange={() => setIsLuckyDip(!isLuckyDip)}
+                className="mr-2"
+                disabled={availableLuckyDips.length === 0}
+              />
+              <label>LUCKY DIP ({availableLuckyDips.length} left)</label>
+            </div>
+            <Button
+              onClick={handleSubmitAnswer}
+              className="bg-orange-500 w-full mb-8"
+            >
+              PLAY NOW/SUBMIT
+            </Button>
+          </motion.div>
+
+          {showGameHistory && (
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              <h3 className="text-xl font-bold mb-4">GAME HISTORY</h3>
+              <p className="mb-4">
+                YOU ARE CURRENTLY WINNING: £{calculateWinnings()}
+              </p>
+              <div className="overflow-x-auto">
+                <table className="w-full mb-8">
+                  <thead>
+                    <tr>
+                      <th className="text-left">YOUR ANSWER</th>
+                      <th className="text-left">ANSWER FREQUENCY</th>
+                      <th className="text-left">ANSWER STATUS</th>
+                      <th className="text-left">INSTANT WIN</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...game.answers].reverse().map((answer, index) => (
+                      <tr key={index}>
+                        <td>{answer.answer}</td>
+                        <td>{answer.frequency}</td>
+                        <td
+                          className={
+                            answer.status === "UNIQUE"
+                              ? "text-green-500"
+                              : answer.status === "NOT UNIQUE"
+                              ? "text-red-500"
+                              : "text-orange-500"
+                          }
+                        >
+                          {answer.status}
+                        </td>
+                        <td className="text-center text-xs">
+                          {answer.instantWin === "REVEAL" ? (
+                            <ScratchCardComponent
+                              prize={
+                                instantWinPrizes[game.answers.length - 1 - index]
+                                  ? instantWinPrizes[
+                                      game.answers.length - 1 - index
+                                    ].type === "money"
+                                    ? instantWinPrizes[
+                                        game.answers.length - 1 - index
+                                      ].value
+                                    : `${
+                                        instantWinPrizes[
+                                          game.answers.length - 1 - index
+                                        ].value
+                                      }`
+                                  : "£0"
+                              }
+                              onReveal={() => {}}
+                            />
+                          ) : (
+                            answer.instantWin
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </motion.div>
+          )}
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.5 }}
+            className="bg-purple-500 text-white p-4 text-center mb-8"
+          >
+            <h3 className="text-xl font-bold">DON'T MISS THE 8PM RESULTS SHOW</h3>
+            <p>EVERY MONDAY NIGHT LIVE ON FACEBOOK</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.5 }}
+            className="flex flex-wrap justify-between items-center mb-8"
+          >
+            <div className="w-full md:w-1/2 bg-purple-400 h-32 mb-4 md:mb-0">
+              <p className="text-white p-4">
+                "I won £500 last week with UniqueWin! It's so exciting!" - Sarah
+                T.
+              </p>
+            </div>
+            <div className="w-full md:w-1/2 md:pl-4">
+              <h3 className="text-xl font-bold">NEW WINNERS EVERYDAY</h3>
+              <p>WILL YOU BE NEXT?</p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2, duration: 0.5 }}
+            className="bg-purple-400 p-4 text-center"
+          >
+            <p className="text-white">
+              Trustpilot Rating: 4.8/5 from 1000+ reviews
             </p>
-          </div>
-          <div className="w-full md:w-1/2 md:pl-4">
-            <h3 className="text-xl font-bold">NEW WINNERS EVERYDAY</h3>
-            <p>WILL YOU BE NEXT?</p>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.5 }}
-          className="bg-purple-400 p-4 text-center"
-        >
-          <p className="text-white">
-            Trustpilot Rating: 4.8/5 from 1000+ reviews
-          </p>
+          </motion.div>
         </motion.div>
       </div>
-
-      <footer className="bg-purple-700 text-white p-4 text-center mt-8">
-        <a href="#" className="mx-2">
-          Terms & Conditions
-        </a>
-        <a href="#" className="mx-2">
-          Privacy Policy
-        </a>
-        <a href="#" className="mx-2">
-          Responsible Gaming
-        </a>
-        <a href="#" className="mx-2">
-          Contact Us
-        </a>
-      </footer>
-    </motion.div>
+      <Footer /> {/* Add Footer */}
+    </div>
   );
 }

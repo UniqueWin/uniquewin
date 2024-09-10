@@ -10,6 +10,7 @@ import { LoginModal } from "@/components/LoginModal";
 import { QuickStatsBox } from "@/components/QuickStatsBox";
 import { useRouter } from "next/navigation";
 import { Play, Pause, Square, Edit } from "lucide-react";
+import GameOverviewCard from "@/components/GameOverviewCard";
 
 export default function AdminPage() {
   const [games, setGames] = useState<any[]>([]);
@@ -271,37 +272,20 @@ export default function AdminPage() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Games Overview Card */}
-        <div className="col-span-2 bg-white p-4 rounded-lg shadow">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-            Games Overview
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {games.slice(0, 4).map((game) => (
-              <GameCard
-                key={game.id}
-                game={game}
-                onUpdate={fetchGames}
-                onEdit={() => handleEditGame(game)}
-                onStatusChange={(newStatus) =>
-                  handleGameStatusChange(game.id, newStatus)
-                }
-                userId={user.id}
-                icons={{
-                  play: <Play size={18} />,
-                  pause: <Pause size={18} />,
-                  stop: <Square size={18} />,
-                  edit: <Edit size={18} />,
-                }}
-              />
-            ))}
-          </div>
-          <button
-            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            onClick={() => setIsAddGameModalOpen(true)}
-          >
-            Add New Game
-          </button>
-        </div>
+        <GameOverviewCard
+          games={games}
+          onUpdate={fetchGames}
+          onEdit={handleEditGame}
+          onStatusChange={handleGameStatusChange}
+          userId={user.id}
+          icons={{
+            play: <Play size={18} />,
+            pause: <Pause size={18} />,
+            stop: <Square size={18} />,
+            edit: <Edit size={18} />,
+          }}
+          setIsAddGameModalOpen={setIsAddGameModalOpen}
+        />
 
         {/* Quick Stats Card */}
         <QuickStatsBox

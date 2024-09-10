@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link'; // Import Link from Next.js
 import { LucideIcon } from 'lucide-react';
 
 interface GameCardProps {
@@ -31,7 +32,9 @@ export const GameCard: React.FC<GameCardProps> = ({
 
   return (
     <div className="bg-white p-4 rounded-lg shadow">
-      <h3 className="text-lg font-semibold mb-2">{game.question}</h3>
+      <h3 className="text-lg font-semibold mb-2">
+        <Link href={`/games/${game.id}`}>{game.question}</Link> {/* Link to game details */}
+      </h3>
       <p>Status: {game.status}</p>
       <p>Current Prize: £{game.current_prize.toFixed(2)}</p>
       <div className="mt-4 flex space-x-2">
