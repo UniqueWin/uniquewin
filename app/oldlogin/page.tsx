@@ -16,13 +16,14 @@ export default function Login({
     const password = formData.get("password") as string;
     const supabase = createClient();
 
+    console.log({ email, password });
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      return redirect("/login?message=Could not authenticate user");
+      return redirect("/oldlogin?message=Could not authenticate user");
     }
 
     return redirect("/protected");
@@ -36,6 +37,7 @@ export default function Login({
     const password = formData.get("password") as string;
     const supabase = createClient();
 
+    console.log({ email, password, origin });
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -44,11 +46,15 @@ export default function Login({
       },
     });
 
+    console.log({ error });
+
     if (error) {
-      return redirect("/login?message=Could not authenticate user");
+      return redirect("/oldlogin?message=Could not authenticate user");
     }
 
-    return redirect("/login?message=Check email to continue sign in process");
+    return redirect(
+      "/oldlogin?message=Check email to continue sign in process"
+    );
   };
 
   return (

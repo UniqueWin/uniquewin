@@ -7,6 +7,9 @@ import { AddInstantWinPrizeModal } from "@/components/AddInstantWinPrizeModal";
 import { AddGameModal } from "@/components/AddGameModal";
 import { EditGameModal } from "@/components/EditGameModal";
 import { LoginModal } from "@/components/LoginModal";
+import { QuickStatsBox } from "@/components/QuickStatsBox";
+import { useRouter } from "next/navigation";
+import { Play, Pause, Square, Edit } from "lucide-react";
 
 export default function AdminPage() {
   const [games, setGames] = useState<any[]>([]);
@@ -23,30 +26,37 @@ export default function AdminPage() {
     instantWinsToday: 0,
     totalLuckyDips: 0,
   });
-  const [userId, setUserId] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [allPlayers, setAllPlayers] = useState<any[]>([]);
+  const [allGames, setAllGames] = useState<any[]>([]);
+  const [recentPlayers, setRecentPlayers] = useState<string[]>([]);
+  const [recentPlayerActivities, setRecentPlayerActivities] = useState<any[]>(
+    []
+  );
   const supabase = createClient();
+  const router = useRouter();
 
   useEffect(() => {
-    fetchGames();
-    fetchInstantWinPrizes();
-    fetchQuickStats();
-    fetchUserId();
+    fetchUserAndData();
   }, []);
 
-  const fetchUserId = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+  const fetchUserAndData = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    setUser(user);
     if (user) {
-      setUserId(user.id);
-    } else {
-      setUserId(null);
+      fetchGames();
+      fetchInstantWinPrizes();
+      fetchQuickStats();
+      fetchAllPlayers();
+      fetchAllGames();
     }
   };
 
   const fetchGames = async () => {
-    const { data, error } = await supabase
-      .from("games")
-      .select(`
+    const { data, error } = await supabase.from("games").select(`
         *,
         game_instant_win_prizes (
           instant_win_prize_id,
@@ -71,47 +81,133 @@ export default function AdminPage() {
   };
 
   const fetchQuickStats = async () => {
-    const today = new Date().toISOString().split('T')[0];
-    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
+    const yesterday = new Date(Date.now() - 86400000)
+      .toISOString()
+      .split("T")[0];
 
     const { data: activeGames } = await supabase
-      .from('games')
-      .select('count', { count: 'exact' })
-      .eq('status', 'active');
+      .from("games")
+      .select("count", { count: "exact" })
+      .eq("status", "active");
 
     const { data: totalPlayers } = await supabase
-      .from('profiles')
-      .select('count', { count: 'exact' });
+      .from("profiles")
+      .select("count", { count: "exact" });
 
-    const { data: totalPrizeAwarded } = await supabase
-      .from('game_history')
-      .select('sum(prize_amount)')
-      .single();
+    const { data: winnersPrizes } = await supabase
+      .from("winners")
+      .select("prize_amount");
+
+    const totalPrizeAwarded =
+      winnersPrizes?.reduce(
+        (sum, winner) => sum + (winner.prize_amount || 0),
+        0
+      ) || 0;
 
     const { data: gamesLast24Hours } = await supabase
-      .from('game_history')
-      .select('count', { count: 'exact' })
-      .gte('created_at', yesterday);
+      .from("answers")
+      .select("count", { count: "exact" })
+      .gte("submitted_at", yesterday);
 
     const { data: instantWinsToday } = await supabase
-      .from('answers')
-      .select('count', { count: 'exact' })
-      .eq('is_instant_win', true)
-      .gte('submitted_at', today);
+      .from("answers")
+      .select("count", { count: "exact" })
+      .eq("is_instant_win", true)
+      .gte("submitted_at", today);
 
     const { data: totalLuckyDips } = await supabase
-      .from('answers')
-      .select('count', { count: 'exact' })
-      .eq('is_lucky_dip', true);
+      .from("answers")
+      .select("count", { count: "exact" })
+      .eq("is_lucky_dip", true);
+
+    // Fetch recent answers
+    const { data: recentAnswers, error: answersError } = await supabase
+      .from("answers")
+      .select(
+        `
+        id,
+        submitted_at,
+        answer_text,
+        user_id,
+        game_id
+      `
+      )
+      .order("submitted_at", { ascending: false })
+      .limit(5);
+
+    if (answersError) {
+      console.error("Error fetching recent answers:", answersError);
+      return;
+    }
+
+    // Fetch usernames for the recent answers
+    const userIds = recentAnswers.map((answer) => answer.user_id);
+    const { data: userProfiles, error: profilesError } = await supabase
+      .from("profiles")
+      .select("id, username")
+      .in("id", userIds);
+
+    if (profilesError) {
+      console.error("Error fetching user profiles:", profilesError);
+      return;
+    }
+
+    // Fetch game questions for the recent answers
+    const gameIds = recentAnswers.map((answer) => answer.game_id);
+    const { data: games, error: gamesError } = await supabase
+      .from("games")
+      .select("id, question")
+      .in("id", gameIds);
+
+    if (gamesError) {
+      console.error("Error fetching games:", gamesError);
+      return;
+    }
+
+    // Combine the data
+    const recentPlayerActivitiesData = recentAnswers.map((answer) => ({
+      ...answer,
+      username:
+        userProfiles.find((profile) => profile.id === answer.user_id)
+          ?.username || "Unknown User",
+      gameQuestion:
+        games.find((game) => game.id === answer.game_id)?.question ||
+        "Unknown Game",
+    }));
 
     setQuickStats({
       activeGames: activeGames?.[0]?.count || 0,
       totalPlayers: totalPlayers?.[0]?.count || 0,
-      totalPrizeAwarded: totalPrizeAwarded?.sum || 0,
+      totalPrizeAwarded: totalPrizeAwarded,
       gamesLast24Hours: gamesLast24Hours?.[0]?.count || 0,
       instantWinsToday: instantWinsToday?.[0]?.count || 0,
       totalLuckyDips: totalLuckyDips?.[0]?.count || 0,
     });
+
+    setRecentPlayerActivities(recentPlayerActivitiesData);
+  };
+
+  const fetchAllPlayers = async () => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(10);
+
+    if (error) console.error("Error fetching players:", error);
+    else setAllPlayers(data || []);
+  };
+
+  const fetchAllGames = async () => {
+    const { data, error } = await supabase
+      .from("games")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(10);
+
+    if (error) console.error("Error fetching games:", error);
+    else setAllGames(data || []);
   };
 
   const handleEditGame = (game: any) => {
@@ -130,18 +226,20 @@ export default function AdminPage() {
   };
 
   const handleLogin = async () => {
-    await fetchUserId();
-    fetchGames();
-    fetchInstantWinPrizes();
-    fetchQuickStats();
+    await fetchUserAndData();
+    router.refresh();
   };
 
-  return (
-    <div className="p-6 bg-gray-100 text-gray-900">
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-      {userId ? (
-        // ... existing JSX for logged-in state ...
-      ) : (
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    router.refresh();
+  };
+
+  if (!user) {
+    return (
+      <div className="p-6 bg-gray-100 text-gray-900">
+        <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
         <div className="text-center">
           <p className="mb-4">Please log in to access the admin dashboard.</p>
           <button
@@ -151,33 +249,157 @@ export default function AdminPage() {
             Log In
           </button>
         </div>
-      )}
+        <LoginModal
+          isOpen={isLoginModalOpen}
+          onClose={() => setIsLoginModalOpen(false)}
+          onLogin={handleLogin}
+        />
+      </div>
+    );
+  }
 
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
-        onLogin={handleLogin}
-      />
+  return (
+    <div className="p-6 bg-gray-100 text-gray-900">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        >
+          Log Out
+        </button>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Games Overview Card */}
+        <div className="col-span-2 bg-white p-4 rounded-lg shadow">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+            Games Overview
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {games.slice(0, 4).map((game) => (
+              <GameCard
+                key={game.id}
+                game={game}
+                onUpdate={fetchGames}
+                onEdit={() => handleEditGame(game)}
+                onStatusChange={(newStatus) =>
+                  handleGameStatusChange(game.id, newStatus)
+                }
+                userId={user.id}
+                icons={{
+                  play: <Play size={18} />,
+                  pause: <Pause size={18} />,
+                  stop: <Square size={18} />,
+                  edit: <Edit size={18} />,
+                }}
+              />
+            ))}
+          </div>
+          <button
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            onClick={() => setIsAddGameModalOpen(true)}
+          >
+            Add New Game
+          </button>
+        </div>
 
-      <AddInstantWinPrizeModal
-        isOpen={isAddPrizeModalOpen}
-        onClose={() => setIsAddPrizeModalOpen(false)}
-        onAddPrize={fetchInstantWinPrizes}
-      />
+        {/* Quick Stats Card */}
+        <QuickStatsBox
+          quickStats={quickStats}
+          recentPlayerActivities={recentPlayerActivities}
+        />
 
-      <AddGameModal
-        isOpen={isAddGameModalOpen}
-        onClose={() => setIsAddGameModalOpen(false)}
-        onAddGame={fetchGames}
-      />
+        {/* Instant Win Prizes Table Card */}
+        <div className="col-span-3 bg-white p-4 rounded-lg shadow">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+            Instant Win Prizes
+          </h2>
+          <table className="w-full text-gray-700">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="p-2 text-left">Prize Type</th>
+                <th className="p-2 text-left">Amount</th>
+                <th className="p-2 text-left">Probability</th>
+                <th className="p-2 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {instantWinPrizes.map((prize) => (
+                <tr key={prize.id} className="border-b">
+                  <td className="p-2">{prize.prize_type}</td>
+                  <td className="p-2">{prize.prize_amount}</td>
+                  <td className="p-2">{prize.probability}</td>
+                  <td className="p-2">{/* Add edit and delete buttons */}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button
+            className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            onClick={() => setIsAddPrizeModalOpen(true)}
+          >
+            Add New Prize
+          </button>
+        </div>
 
-      <EditGameModal
-        isOpen={isEditGameModalOpen}
-        onClose={() => setIsEditGameModalOpen(false)}
-        onEditGame={fetchGames}
-        game={selectedGame}
-        allInstantWinPrizes={instantWinPrizes}
-      />
+        {/* Players List Card */}
+        <div className="col-span-3 bg-white p-4 rounded-lg shadow mt-6">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+            Recent Players
+          </h2>
+          <table className="w-full text-gray-700">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="p-2 text-left">Username</th>
+                <th className="p-2 text-left">Email</th>
+                <th className="p-2 text-left">Account Balance</th>
+                <th className="p-2 text-left">Joined Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {allPlayers.map((player) => (
+                <tr key={player.id} className="border-b">
+                  <td className="p-2">{player.username}</td>
+                  <td className="p-2">{player.email}</td>
+                  <td className="p-2">£{player.account_balance.toFixed(2)}</td>
+                  <td className="p-2">
+                    {new Date(player.created_at).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Games List Card */}
+        <div className="col-span-3 bg-white p-4 rounded-lg shadow mt-6">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+            Recent Games
+          </h2>
+          <table className="w-full text-gray-700">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="p-2 text-left">Question</th>
+                <th className="p-2 text-left">Status</th>
+                <th className="p-2 text-left">Current Prize</th>
+                <th className="p-2 text-left">Created Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {allGames.map((game) => (
+                <tr key={game.id} className="border-b">
+                  <td className="p-2">{game.question}</td>
+                  <td className="p-2">{game.status}</td>
+                  <td className="p-2">£{game.current_prize.toFixed(2)}</td>
+                  <td className="p-2">
+                    {new Date(game.created_at).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

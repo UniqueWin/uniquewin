@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -9,26 +10,70 @@ interface LoginModalProps {
   onLogin: () => void;
 }
 
-export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export const LoginModal: React.FC<LoginModalProps> = ({
+  isOpen,
+  onClose,
+  onLogin,
+}) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const supabase = createClient();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setMessage(null);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    if (isSignUp) {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username: email.split("@")[0], // Use part of email as username
+            full_name: "", // You might want to add a field for this in your form
+            email: email,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
 
-    if (error) {
-      setError(error.message);
+      if (error) {
+        console.log({ error });
+        setError(error.message);
+      } else if (data?.user) {
+        // Create a profile for the new user
+        const { error: profileError } = await supabase.from("profiles").insert({
+          id: data.user.id,
+          username: email.split("@")[0], // Use part of email as username
+          email: email,
+        });
+
+        if (profileError) {
+          console.error("Error creating profile:", profileError);
+          setError("Error creating user profile");
+        } else {
+          setMessage("Check your email to continue sign up process");
+          onClose();
+        }
+      }
     } else {
-      onLogin();
-      onClose();
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        setError("Could not authenticate user");
+      } else {
+        onLogin();
+        onClose();
+        router.refresh();
+      }
     }
   };
 
@@ -37,10 +82,15 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-4">Login</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+        <h2 className="text-2xl font-bold mb-4">
+          {isSignUp ? "Sign Up" : "Login"}
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
@@ -52,8 +102,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin
               required
             />
           </div>
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -65,21 +118,33 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin
               required
             />
           </div>
-          {error && <p className="text-red-500 mb-4">{error}</p>}
-          <div className="flex justify-end">
+          {error && <p className="text-red-500">{error}</p>}
+          {message && <p className="text-green-500">{message}</p>}
+          <div className="flex justify-between items-center">
             <button
               type="button"
-              onClick={onClose}
-              className="mr-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500"
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="text-sm text-blue-600 hover:underline"
             >
-              Cancel
+              {isSignUp
+                ? "Already have an account? Login"
+                : "Need an account? Sign Up"}
             </button>
-            <button
-              type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-            >
-              Login
-            </button>
+            <div>
+              <button
+                type="button"
+                onClick={onClose}
+                className="mr-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+              >
+                {isSignUp ? "Sign Up" : "Login"}
+              </button>
+            </div>
           </div>
         </form>
       </div>
