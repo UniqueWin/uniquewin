@@ -23,10 +23,15 @@ export interface Game {
 }
 
 export async function getCurrentGame(): Promise<Game | null> {
+  const now = new Date();
+
   const { data, error } = await supabase
     .from("games")
     .select("*")
+    .gte("end_time", now.toISOString())
     .eq("status", "active")
+    .order("end_time", { ascending: true })
+    .limit(1)
     .single();
 
   if (error) {
@@ -37,10 +42,16 @@ export async function getCurrentGame(): Promise<Game | null> {
 }
 
 export async function getAllGames(): Promise<Game[]> {
+  const now = new Date();
+  const today8PM = new Date(now);
+  today8PM.setHours(20, 0, 0, 0);
+
   const { data, error } = await supabase
     .from("games")
     .select("*")
-    .neq("status", "active"); // Fetch past games
+    .lt("end_time", today8PM.toISOString())
+    .order("end_time", { ascending: false })
+    .limit(10);
 
   if (error) {
     console.error("Error fetching all games:", error);

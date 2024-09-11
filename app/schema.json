@@ -4,629 +4,889 @@
     "column_name": "id",
     "data_type": "uuid",
     "is_nullable": "NO",
-    "column_default": "gen_random_uuid()"
+    "column_default": "gen_random_uuid()",
+    "key": "PK",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "admin_actions",
     "column_name": "admin_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "users",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "admin_actions",
     "column_name": "action_type",
     "data_type": "text",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "admin_actions",
     "column_name": "target_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "admin_actions",
     "column_name": "details",
     "data_type": "text",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "admin_actions",
     "column_name": "action_timestamp",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "answers",
     "column_name": "id",
     "data_type": "uuid",
     "is_nullable": "NO",
-    "column_default": "gen_random_uuid()"
+    "column_default": "gen_random_uuid()",
+    "key": "PK",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "answers",
     "column_name": "game_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "games",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "answers",
     "column_name": "user_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "users",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "answers",
     "column_name": "answer_text",
     "data_type": "text",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "answers",
     "column_name": "status",
     "data_type": "text",
     "is_nullable": "YES",
-    "column_default": "'pending'::text"
+    "column_default": "'pending'::text",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "answers",
     "column_name": "is_instant_win",
     "data_type": "boolean",
     "is_nullable": "YES",
-    "column_default": "false"
+    "column_default": "false",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "answers",
     "column_name": "is_lucky_dip",
     "data_type": "boolean",
     "is_nullable": "YES",
-    "column_default": "false"
+    "column_default": "false",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "answers",
     "column_name": "instant_win_amount",
     "data_type": "numeric",
     "is_nullable": "YES",
-    "column_default": "0"
+    "column_default": "0",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "answers",
     "column_name": "submitted_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "answers",
     "column_name": "updated_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "game_history",
     "column_name": "id",
     "data_type": "uuid",
     "is_nullable": "NO",
-    "column_default": "gen_random_uuid()"
+    "column_default": "gen_random_uuid()",
+    "key": "PK",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "game_history",
     "column_name": "game_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "games",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "game_history",
     "column_name": "user_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "users",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "game_history",
     "column_name": "answer_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "answers",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "game_history",
     "column_name": "status",
     "data_type": "text",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "game_history",
     "column_name": "prize_amount",
     "data_type": "numeric",
     "is_nullable": "YES",
-    "column_default": "0"
+    "column_default": "0",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "game_history",
     "column_name": "created_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "game_instant_win_prizes",
     "column_name": "id",
     "data_type": "uuid",
     "is_nullable": "NO",
-    "column_default": "gen_random_uuid()"
+    "column_default": "gen_random_uuid()",
+    "key": "PK",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "game_instant_win_prizes",
     "column_name": "game_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "games",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "game_instant_win_prizes",
     "column_name": "instant_win_prize_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "instant_win_prizes",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "game_instant_win_prizes",
     "column_name": "quantity",
     "data_type": "integer",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "game_instant_win_prizes",
     "column_name": "custom_probability",
     "data_type": "numeric",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "game_settings",
     "column_name": "id",
     "data_type": "uuid",
     "is_nullable": "NO",
-    "column_default": "gen_random_uuid()"
+    "column_default": "gen_random_uuid()",
+    "key": "PK",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "game_settings",
     "column_name": "setting_name",
     "data_type": "text",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "game_settings",
     "column_name": "setting_value",
     "data_type": "text",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "game_settings",
     "column_name": "created_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "game_settings",
     "column_name": "updated_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "games",
     "column_name": "id",
     "data_type": "uuid",
     "is_nullable": "NO",
-    "column_default": "gen_random_uuid()"
+    "column_default": "gen_random_uuid()",
+    "key": "PK",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "games",
     "column_name": "question",
     "data_type": "text",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "games",
     "column_name": "start_time",
     "data_type": "timestamp with time zone",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "games",
     "column_name": "end_time",
     "data_type": "timestamp with time zone",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "games",
     "column_name": "valid_answers",
     "data_type": "ARRAY",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "games",
     "column_name": "price",
     "data_type": "integer",
     "is_nullable": "NO",
-    "column_default": "1"
+    "column_default": "1",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "games",
     "column_name": "status",
     "data_type": "text",
     "is_nullable": "YES",
-    "column_default": "'pending'::text"
+    "column_default": "'pending'::text",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "games",
     "column_name": "current_prize",
     "data_type": "numeric",
     "is_nullable": "YES",
-    "column_default": "0"
+    "column_default": "0",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "games",
     "column_name": "lucky_dip_price",
     "data_type": "numeric",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "games",
     "column_name": "created_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "games",
     "column_name": "updated_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "instant_win_prizes",
     "column_name": "id",
     "data_type": "uuid",
     "is_nullable": "NO",
-    "column_default": "gen_random_uuid()"
+    "column_default": "gen_random_uuid()",
+    "key": "PK",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "instant_win_prizes",
     "column_name": "prize_amount",
     "data_type": "numeric",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "instant_win_prizes",
     "column_name": "probability",
     "data_type": "numeric",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "instant_win_prizes",
     "column_name": "created_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "instant_win_prizes",
     "column_name": "updated_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "instant_win_prizes",
     "column_name": "prize_type",
     "data_type": "text",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "instant_win_prizes",
     "column_name": "prize_details",
     "data_type": "jsonb",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "pending_validation",
     "column_name": "id",
     "data_type": "uuid",
     "is_nullable": "NO",
-    "column_default": "gen_random_uuid()"
+    "column_default": "gen_random_uuid()",
+    "key": "PK",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "pending_validation",
     "column_name": "game_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "games",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "pending_validation",
     "column_name": "user_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "users",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "pending_validation",
     "column_name": "answer_text",
     "data_type": "text",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "pending_validation",
     "column_name": "validation_status",
     "data_type": "text",
     "is_nullable": "YES",
-    "column_default": "'pending'::text"
+    "column_default": "'pending'::text",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "pending_validation",
     "column_name": "validated_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "pending_validation",
     "column_name": "created_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "profiles",
     "column_name": "id",
     "data_type": "uuid",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "PK",
+    "foreign_table_name": "users",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "profiles",
     "column_name": "username",
     "data_type": "text",
     "is_nullable": "NO",
-    "column_default": null
-  },
-  {
-    "table_name": "profiles",
-    "column_name": "password_hash",
-    "data_type": "text",
-    "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "profiles",
     "column_name": "full_name",
     "data_type": "text",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "profiles",
     "column_name": "dob",
     "data_type": "date",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "profiles",
     "column_name": "address",
     "data_type": "text",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "profiles",
     "column_name": "postcode",
     "data_type": "text",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "profiles",
     "column_name": "country",
     "data_type": "text",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "profiles",
     "column_name": "phone_number",
     "data_type": "text",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "profiles",
     "column_name": "email",
     "data_type": "text",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "profiles",
     "column_name": "account_balance",
     "data_type": "numeric",
     "is_nullable": "YES",
-    "column_default": "0"
+    "column_default": "0",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "profiles",
     "column_name": "credit_balance",
     "data_type": "integer",
     "is_nullable": "YES",
-    "column_default": "0"
+    "column_default": "0",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "profiles",
     "column_name": "is_verified",
     "data_type": "boolean",
     "is_nullable": "YES",
-    "column_default": "false"
+    "column_default": "false",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "profiles",
     "column_name": "is_active",
     "data_type": "boolean",
     "is_nullable": "YES",
-    "column_default": "true"
+    "column_default": "true",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "profiles",
     "column_name": "created_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "profiles",
     "column_name": "updated_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "raffle_entries",
     "column_name": "id",
     "data_type": "uuid",
     "is_nullable": "NO",
-    "column_default": "gen_random_uuid()"
+    "column_default": "gen_random_uuid()",
+    "key": "PK",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "raffle_entries",
     "column_name": "game_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "games",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "raffle_entries",
     "column_name": "user_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "users",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "raffle_entries",
     "column_name": "entry_timestamp",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "transactions",
     "column_name": "id",
     "data_type": "uuid",
     "is_nullable": "NO",
-    "column_default": "gen_random_uuid()"
+    "column_default": "gen_random_uuid()",
+    "key": "PK",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "transactions",
     "column_name": "user_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "users",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "transactions",
     "column_name": "transaction_type",
     "data_type": "text",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "transactions",
     "column_name": "amount",
     "data_type": "numeric",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "transactions",
     "column_name": "transaction_date",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "transactions",
     "column_name": "status",
     "data_type": "text",
     "is_nullable": "YES",
-    "column_default": "'pending'::text"
+    "column_default": "'pending'::text",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "winners",
     "column_name": "id",
     "data_type": "uuid",
     "is_nullable": "NO",
-    "column_default": "gen_random_uuid()"
+    "column_default": "gen_random_uuid()",
+    "key": "PK",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "winners",
     "column_name": "game_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "games",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "winners",
     "column_name": "user_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "users",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "winners",
     "column_name": "answer_id",
     "data_type": "uuid",
     "is_nullable": "YES",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": "answers",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "winners",
     "column_name": "prize_amount",
     "data_type": "numeric",
     "is_nullable": "NO",
-    "column_default": null
+    "column_default": null,
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   },
   {
     "table_name": "winners",
     "column_name": "announced_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
-    "column_default": "now()"
+    "column_default": "now()",
+    "key": "",
+    "foreign_table_name": null,
+    "foreign_column_name": null
   }
 ]
