@@ -237,6 +237,12 @@ export default function AdminPage() {
     router.refresh();
   };
 
+  const handleAddGameModalOpen = () => setIsAddGameModalOpen(true);
+  const handleEditGameModalOpen = (game: any) => {
+    setSelectedGame(game);
+    setIsEditGameModalOpen(true);
+  };
+
   if (!user) {
     return (
       <div className="p-6 bg-gray-100 text-gray-900">
@@ -275,7 +281,7 @@ export default function AdminPage() {
         <GameOverviewCard
           games={games}
           onUpdate={fetchGames}
-          onEdit={handleEditGame}
+          onEdit={handleEditGameModalOpen}
           onStatusChange={handleGameStatusChange}
           userId={user.id}
           icons={{
@@ -284,7 +290,7 @@ export default function AdminPage() {
             stop: <Square size={18} />,
             edit: <Edit size={18} />,
           }}
-          setIsAddGameModalOpen={setIsAddGameModalOpen}
+          setIsAddGameModalOpen={handleAddGameModalOpen}
         />
 
         {/* Quick Stats Card */}

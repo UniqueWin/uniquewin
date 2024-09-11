@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 interface AddGameModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddGame: () => void;
+  onAddGame: () => void; // Ensure this is used to refresh the game list if needed
 }
 
 export function AddGameModal({ isOpen, onClose, onAddGame }: AddGameModalProps) {
@@ -39,7 +39,7 @@ export function AddGameModal({ isOpen, onClose, onAddGame }: AddGameModalProps) 
     if (error) {
       console.error('Error adding game:', error);
     } else {
-      onAddGame();
+      onAddGame(); // Call this to refresh the game list if needed
       onClose();
     }
   };

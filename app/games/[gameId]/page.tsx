@@ -135,6 +135,8 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
       if (currentUser) {
         setUser(currentUser as User);
         const currentGame = getGameById(parseInt(params.gameId));
+        console.log("Game ID:", params.gameId);
+        console.log("Current Game:", currentGame);
         if (currentGame) {
           setGame(currentGame);
         } else {

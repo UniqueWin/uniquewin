@@ -1,5 +1,7 @@
-import users from "../data/users.json";
-import { pastGames } from "@/data/pastGames";
+import users from "../data/users.json"; // Keep this if you still need user data
+import { createClient } from "@/utils/supabase/client"; // Import Supabase client
+
+const supabase = createClient();
 
 export interface Answer {
   answer: string;
@@ -17,58 +19,52 @@ export interface Game {
   validAnswers: string[];
   answers: Answer[];
   luckyDipAnswers: string[];
-  hangmanWords?: string[]; // Make hangmanWords optional
+  hangmanWords?: string[];
 }
 
-let currentGame: Game | null = null;
+export async function getCurrentGame(): Promise<Game | null> {
+  const { data, error } = await supabase
+    .from("games")
+    .select("*")
+    .eq("status", "active")
+    .single();
 
-export function generateDailyGame(): Game {
-  const questions = [
-    "NAME A BOYS NAME BEGINNING WITH 'T'",
-    "NAME A FRUIT THAT STARTS WITH 'A'",
-    "NAME A COUNTRY IN EUROPE",
-    "NAME A COLOR OF THE RAINBOW",
-    "NAME A PLANET IN OUR SOLAR SYSTEM",
-  ];
-
-  const question = questions[Math.floor(Math.random() * questions.length)];
-  const validAnswers = generateValidAnswers(question);
-  const now = new Date();
-  const endTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // End in 24 hours
-
-  return {
-    id: 1,
-    question,
-    jackpot: 1000 + Math.floor(Math.random() * 1000),
-    startTime: now.toISOString(),
-    endTime: endTime.toISOString(),
-    validAnswers,
-    answers: [],
-    luckyDipAnswers: validAnswers.slice(0, 5),
-    hangmanWords: [], // Initialize hangmanWords as an empty array
-  };
-}
-
-export function getCurrentGame(): Game {
-  if (!currentGame || new Date(currentGame.endTime) < new Date()) {
-    currentGame = generateDailyGame();
+  if (error) {
+    console.error("Error fetching current game:", error);
+    return null;
   }
-  return currentGame;
+  return data;
+}
+
+export async function getAllGames(): Promise<Game[]> {
+  const { data, error } = await supabase
+    .from("games")
+    .select("*")
+    .neq("status", "active"); // Fetch past games
+
+  if (error) {
+    console.error("Error fetching all games:", error);
+    return [];
+  }
+  return data;
+}
+
+export async function getGameById(gameId: number): Promise<Game | null> {
+  const { data, error } = await supabase
+    .from("games")
+    .select("*")
+    .eq("id", gameId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching game by ID:", error);
+    return null;
+  }
+  return data;
 }
 
 export function getCurrentUser(userId: number) {
   return users.find((user) => user.id === userId);
-}
-
-export function getAllGames(): Game[] {
-  return [getCurrentGame(), ...pastGames];
-}
-
-export function getGameById(gameId: number): Game | undefined {
-  if (gameId === 1) {
-    return getCurrentGame();
-  }
-  return undefined;
 }
 
 export function submitAnswer(userId: number, gameId: number, answer: string, isLuckyDip: boolean = false) {
