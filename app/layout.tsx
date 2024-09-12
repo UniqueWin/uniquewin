@@ -2,6 +2,7 @@ import { GameProvider } from "@/contexts/GameContext";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import NavBar from "@/components/Navbar";
+import { Toaster } from "@/components/ui/sonner";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -32,6 +33,7 @@ export default function RootLayout({
             <div className="w-full max-w5xl px4">{children}</div>
           </main>
         </GameProvider>
+        <Toaster />
       </body>
     </html>
   );

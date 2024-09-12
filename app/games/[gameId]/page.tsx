@@ -1,37 +1,17 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import {
-  getCurrentUser,
-  getCurrentGame,
-  getGameById,
-  submitAnswer,
-} from "@/utils/dataHelpers";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
+import { getGameById } from "@/utils/dataHelpers";
 import { motion } from "framer-motion";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { ScratchCard } from "next-scratchcard";
 import { useRouter } from "next/navigation";
-import Confetti from "react-confetti";
-import { Game, Answer } from "@/utils/dataHelpers";
-import { User } from "@/utils/userHelpers";
-import Header from "@/components/Header"; // Import Header
-import Footer from "@/components/Footer"; // Import Footer
+import { Game } from "@/utils/dataHelpers";
+import { User } from "@supabase/supabase-js";
+import Footer from "@/components/Footer";
 import Banner from "./Banner";
 import TrustPilot from "./Trustpilot";
-import ScratchCardComponent from "./ScratchcardComponent";
 import History from "./History";
 import Question from "./Question";
-import { Bell, Trophy } from "lucide-react";
-
-const luckyDipNames = ["THEODRE", "TEDDY", "THOMAS", "TREVOR", "TAYTE"];
+import { createClient } from "@/utils/supabase/client";
 
 export default function GamePage({ params }: { params: { gameId: string } }) {
   const router = useRouter();
@@ -43,35 +23,30 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     [key: number]: { type: "money" | "word"; value: string };
   }>({});
   const [countdown, setCountdown] = useState("");
+  const supabase = createClient();
 
   useEffect(() => {
-    const userId = localStorage.getItem("currentUserId");
-    if (userId) {
-      const currentUser = getCurrentUser(parseInt(userId));
-      if (currentUser) {
-        setUser(currentUser as User);
-        getGameById(params.gameId).then((currentGame) => {
-          console.log("Game ID:", params.gameId);
-          console.log("Current Game:", currentGame);
-          if (currentGame) {
-            setGame(currentGame);
-            // Initialize answers if it doesn't exist
-            if (!currentGame.answers) {
-              currentGame.answers = [];
-            }
-            // Set available Lucky Dips from validAnswers
-            setAvailableLuckyDips([...(currentGame.validAnswers || [])]);
-          } else {
-            router.push("/games");
+    const fetchUserAndGame = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUser(user);
+        const currentGame = await getGameById(params.gameId);
+        if (currentGame) {
+          setGame(currentGame);
+          if (!currentGame.answers) {
+            currentGame.answers = [];
           }
-        });
+          setAvailableLuckyDips([...(currentGame.validAnswers || [])]);
+        } else {
+          router.push("/games");
+        }
       } else {
         router.push("/login");
       }
-    } else {
-      router.push("/login");
-    }
-  }, [router, params.gameId]);
+    };
+
+    fetchUserAndGame();
+  }, [router, params.gameId, supabase]);
 
   useEffect(() => {
     if (game) {
@@ -108,6 +83,11 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
       .join(" ");
   };
 
+  const updateNavbarCredits = () => {
+    // This function should be passed down from a parent component
+    // that has access to the Navbar's fetchUserAndCredits function
+  };
+
   if (!user || !game) return <div>Loading...</div>;
 
   return (
@@ -127,6 +107,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
             setAvailableLuckyDips={setAvailableLuckyDips}
             setInstantWinPrizes={setInstantWinPrizes}
             getPartiallyHiddenWord={getPartiallyHiddenWord}
+            updateNavbarCredits={updateNavbarCredits}
           />
           {showGameHistory && (
             <History game={game} instantWinPrizes={instantWinPrizes} />

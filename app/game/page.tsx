@@ -50,7 +50,7 @@ export default function LandingPage() {
     e.preventDefault();
     if (user && currentGame) {
       const cost = isLuckyDip ? 5 : 1;
-      if (user.balance >= cost) {
+      if (user.credit_balance >= cost) {
         let luckyDipAnswer = "";
         if (isLuckyDip) {
           if (Math.random() < 0.5) {
@@ -89,7 +89,7 @@ export default function LandingPage() {
         if (result) {
           const updatedUser: ExtendedUser = {
             ...user,
-            balance: user.balance - cost,
+            credit_balance: user.credit_balance - cost,
           };
           updateUser(updatedUser);
 

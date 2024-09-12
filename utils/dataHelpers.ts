@@ -1,5 +1,4 @@
-import users from "../data/users.json"; // Keep this if you still need user data
-import { createClient } from "@/utils/supabase/client"; // Import Supabase client
+import { createClient } from "@/utils/supabase/client";
 
 const supabase = createClient();
 
@@ -62,20 +61,17 @@ export async function getAllGames(): Promise<Game[]> {
 
 export async function getGameById(gameId: string): Promise<Game | null> {
   try {
-    console.log({ gameId });
     const { data, error } = await supabase
       .from('games')
       .select('*')
       .eq('id', gameId)
       .single();
-      console.log({ data });  
 
     if (error) {
       console.error('Error fetching game:', error);
       throw error;
     }
     
-    console.log('Fetched game data:', data);
     return data as Game;
   } catch (error) {
     console.error('Error in getGameById:', error);
@@ -83,42 +79,54 @@ export async function getGameById(gameId: string): Promise<Game | null> {
   }
 }
 
-export function getCurrentUser(userId: number) {
-  return users.find((user) => user.id === userId);
-}
+export const submitAnswer = async (
+  gameId: string,
+  userId: string,
+  answer: string,
+  isLuckyDip: boolean
+) => {
+  try {
+    // Fetch user's current credits
+    const { data: userData, error: userError } = await supabase
+      .from('profiles')
+      .select('credit_balance')
+      .eq('id', userId)
+      .single();
 
-export function submitAnswer(userId: number, gameId: number, answer: string, isLuckyDip: boolean = false) {
-  const user = getCurrentUser(userId);
-  const game = getCurrentGame();
+    if (userError) throw userError;
 
-  if (user && game) {
-    const cost = isLuckyDip ? 5 : 1;
-    if (user.balance >= cost) {
-      // Update user's balance
-      user.balance -= cost;
-
-      // Update user's game history
-      const newAnswer: Answer = {
-        answer,
-        frequency: 1,
-        status: "PENDING", // This should be updated based on game logic
-        instantWin: "NO", // This should be updated based on game logic
-      };
-
-      // Add the new answer to the user's game history
-      user.gameHistory.push({
-        gameId,
-        answers: [newAnswer],
-      });
-
-      // Update the game's answers
-      game.answers.push(newAnswer);
-
-      return true; // Submission successful
+    if (!userData || userData.credit_balance < 1) {
+      throw new Error('Insufficient credits');
     }
+
+    // Deduct credits from the user
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ credit_balance: userData.credit_balance - 1 })
+      .eq('id', userId);
+
+    if (updateError) throw updateError;
+
+    // Submit the answer
+    const { data, error } = await supabase
+      .from('answers')
+      .insert({
+        game_id: gameId,
+        user_id: userId,
+        answer_text: answer,
+        is_lucky_dip: isLuckyDip,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return data;
+  } catch (error) {
+    console.error('Error submitting answer:', error);
+    throw error;
   }
-  return false; // Submission failed
-}
+};
 
 export function generateValidAnswers(question: string): string[] {
   // This is a simplified version. In a real application, you'd have a more comprehensive list.

@@ -336,7 +336,8 @@ export default function AdminPage() {
               <tr>
                 <th className="p-2 text-left">Username</th>
                 <th className="p-2 text-left">Email</th>
-                <th className="p-2 text-left">Account Balance</th>
+                <th className="p-2 text-left">Account Cash</th>
+                <th className="p-2 text-left">Account Credits</th>
                 <th className="p-2 text-left">Joined Date</th>
               </tr>
             </thead>
@@ -346,6 +347,7 @@ export default function AdminPage() {
                   <td className="p-2">{player.username}</td>
                   <td className="p-2">{player.email}</td>
                   <td className="p-2">£{player.account_balance.toFixed(2)}</td>
+                  <td className="p-2">£{player.credit_balance.toFixed(2)}</td>
                   <td className="p-2">
                     {new Date(player.created_at).toLocaleDateString()}
                   </td>

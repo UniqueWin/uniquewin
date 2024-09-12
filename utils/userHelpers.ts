@@ -6,7 +6,7 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  balance: number;
+  credit_balance: number;
 }
 
 const STORAGE_KEY = "currentUser";
@@ -33,7 +33,7 @@ export function useUser<T extends User>() {
 
   const addCredits = (amount: number) => {
     if (user) {
-      const updatedUser = { ...user, balance: user.balance + amount } as T;
+      const updatedUser = { ...user, credit_balance: user.credit_balance + amount } as T;
       setUser(updatedUser);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
     }
@@ -61,7 +61,7 @@ export function emulateLogin(
     id: userId,
     username,
     email,
-    balance: initialBalance,
+    credit_balance: initialBalance,
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
 }

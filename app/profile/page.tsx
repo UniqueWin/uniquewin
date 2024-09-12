@@ -66,7 +66,7 @@ export default function ProfilePage() {
             <>
               <h2 className="text-2xl font-bold mb-4 text-purple-700">{user.username}</h2>
               <p className="mb-2">Email: {user.email}</p>
-              <p className="mb-4">Balance: £{user.balance}</p>
+              <p className="mb-4">Credits: £{user.credit_balance}</p>
               <Button 
                 onClick={() => setEditMode(true)}
                 className="bg-blue-500 hover:bg-blue-600 mr-2"

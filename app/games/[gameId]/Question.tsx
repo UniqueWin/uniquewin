@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Game, Answer } from "@/utils/dataHelpers";
+import { Game, Answer, submitAnswer } from "@/utils/dataHelpers";
 import { User } from "@/utils/userHelpers";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { createClient } from "@/utils/supabase/client";
+import { toast } from "sonner";
 
 type QuestionProps = {
   game: Game;
@@ -16,10 +18,13 @@ type QuestionProps = {
   setGame: React.Dispatch<React.SetStateAction<Game | null>>;
   availableLuckyDips: string[];
   setAvailableLuckyDips: React.Dispatch<React.SetStateAction<string[]>>;
-  setInstantWinPrizes: React.Dispatch<React.SetStateAction<{
-    [key: number]: { type: "money" | "word"; value: string };
-  }>>;
+  setInstantWinPrizes: React.Dispatch<
+    React.SetStateAction<{
+      [key: number]: { type: "money" | "word"; value: string };
+    }>
+  >;
   getPartiallyHiddenWord: (word: string) => string;
+  updateNavbarCredits: () => void;
 };
 
 function Question({
@@ -31,75 +36,67 @@ function Question({
   setAvailableLuckyDips,
   setInstantWinPrizes,
   getPartiallyHiddenWord,
+  updateNavbarCredits,
 }: QuestionProps) {
   const [answer, setAnswer] = useState("");
   const [isLuckyDip, setIsLuckyDip] = useState(false);
+  const supabase = createClient();
 
-  const handleSubmitAnswer = () => {
-    if (!game || (!answer.trim() && !isLuckyDip)) return;
-
-    let submittedAnswer = answer.toUpperCase();
-    if (isLuckyDip) {
-      if (availableLuckyDips.length === 0) {
-        alert("No more Lucky Dips available!");
-        return;
-      }
-      const randomIndex = Math.floor(Math.random() * availableLuckyDips.length);
-      submittedAnswer = availableLuckyDips[randomIndex];
-      setAvailableLuckyDips((prev) =>
-        prev.filter((word) => word !== submittedAnswer)
+  const handleSubmitAnswer = async (answer: string, isLuckyDip: boolean) => {
+    try {
+      const result = await submitAnswer(
+        game.id.toString(),
+        user.id,
+        answer,
+        isLuckyDip
       );
-    }
 
-    // Check if the answer is in the validAnswers list
-    const isValidAnswer = game.validAnswers.includes(submittedAnswer);
+      // Update local user state
+      // Note: You'll need to fetch the updated user data from Supabase
+      // after submitting the answer, as the User type from Supabase
+      // doesn't include the credits field.
+      const { data: updatedUser, error } = await supabase
+        .from("profiles")
+        .select("credit_balance")
+        .eq("id", user.id)
+        .single();
 
-    const newAnswer: Answer = {
-      answer: submittedAnswer,
-      frequency: 1,
-      status: isLuckyDip ? "UNIQUE" : isValidAnswer ? "PENDING" : "NOT UNIQUE",
-      instantWin: isLuckyDip ? "REVEAL" : "PENDING",
-    };
+      if (error) throw error;
 
-    setGame((prevGame) => ({
-      ...prevGame!,
-      answers: [newAnswer, ...(prevGame!.answers || [])],
-    }));
+      setUser((prevUser) => {
+        if (prevUser) {
+          return {
+            ...prevUser,
+            user_metadata: {
+              ...prevUser.user_metadata,
+              credit_balance: updatedUser.credit_balance,
+            },
+          };
+        }
+        return prevUser;
+      });
 
-    if (isLuckyDip) {
-      const isWordPrize = Math.random() < 0.4;
-      if (isWordPrize && game.validAnswers.length > 0) {
-        const randomWordIndex = Math.floor(
-          Math.random() * game.validAnswers.length
-        );
-        const word = game.validAnswers[randomWordIndex];
-        setInstantWinPrizes((prev) => ({
-          ...prev,
-          [game.answers.length]: {
-            type: "word",
-            value: getPartiallyHiddenWord(word),
-          },
-        }));
+      // Update game answers
+      setGame((prevGame) => {
+        if (prevGame) {
+          return {
+            ...prevGame,
+            answers: [...(prevGame.answers || []), result],
+          };
+        }
+        return prevGame;
+      });
+
+      updateNavbarCredits();
+
+      toast("Answer submitted successfully!");
+    } catch (error) {
+      if (error instanceof Error && error.message === "Insufficient credits") {
+        toast("You don't have enough credits to play. Please buy more credits.");
       } else {
-        const prizeAmount = Math.floor(Math.random() * 50) + 1;
-        setInstantWinPrizes((prev) => ({
-          ...prev,
-          [game.answers.length]: { type: "money", value: `£${prizeAmount}` },
-        }));
+        toast("Failed to submit answer. Please try again.");
       }
-    }
-
-    setAnswer("");
-    setIsLuckyDip(false);
-    setUser((prev) => ({
-      ...prev!,
-      balance: prev!.balance - (isLuckyDip ? 5 : 1),
-    }));
-
-    if (!isValidAnswer) {
-      alert(
-        "Your answer is not in the list of valid answers. It will be reviewed manually."
-      );
+      console.error("Error submitting answer:", error);
     }
   };
 
@@ -111,7 +108,9 @@ function Question({
       className="bg-card text-card-foreground p-6 rounded-lg shadow-md mb-6"
     >
       <h2 className="text-3xl font-bold mb-4 text-primary">{game.question}</h2>
-      <p className="mb-4 text-lg">Your Balance: £{user.balance.toFixed(2)}</p>
+      <p className="mb-4 text-lg">
+        Your Credits: £{user.credit_balance?.toFixed(2)}
+      </p>
 
       <div className="flex space-x-4 mb-4">
         <Input
@@ -123,7 +122,7 @@ function Question({
           disabled={isLuckyDip}
         />
         <Button
-          onClick={handleSubmitAnswer}
+          onClick={() => handleSubmitAnswer(answer, isLuckyDip)}
           className="bg-primary text-primary-foreground hover:bg-primary/90"
         >
           Answer!
