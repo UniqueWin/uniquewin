@@ -60,18 +60,27 @@ export async function getAllGames(): Promise<Game[]> {
   return data;
 }
 
-export async function getGameById(gameId: number): Promise<Game | null> {
-  const { data, error } = await supabase
-    .from("games")
-    .select("*")
-    .eq("id", gameId)
-    .single();
+export async function getGameById(gameId: string): Promise<Game | null> {
+  try {
+    console.log({ gameId });
+    const { data, error } = await supabase
+      .from('games')
+      .select('*')
+      .eq('id', gameId)
+      .single();
+      console.log({ data });  
 
-  if (error) {
-    console.error("Error fetching game by ID:", error);
+    if (error) {
+      console.error('Error fetching game:', error);
+      throw error;
+    }
+    
+    console.log('Fetched game data:', data);
+    return data as Game;
+  } catch (error) {
+    console.error('Error in getGameById:', error);
     return null;
   }
-  return data;
 }
 
 export function getCurrentUser(userId: number) {
