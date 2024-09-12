@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 
@@ -8,16 +8,18 @@ interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
   onLogin: () => void;
+  isSignUp: boolean;
 }
 
 export const LoginModal: React.FC<LoginModalProps> = ({
   isOpen,
   onClose,
   onLogin,
+  isSignUp: initialIsSignUp,
 }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(initialIsSignUp);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const supabase = createClient();
@@ -76,6 +78,10 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       }
     }
   };
+
+  useEffect(() => {
+    setIsSignUp(initialIsSignUp);
+  }, [initialIsSignUp]);
 
   if (!isOpen) return null;
 

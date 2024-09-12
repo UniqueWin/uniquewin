@@ -5,10 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Bell, Trophy } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
+import { LoginModal } from "@/components/LoginModal";
 
 const Navbar = () => {
   const [user, setUser] = useState<any>(null);
   const [credits, setCredits] = useState(0);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -34,20 +37,24 @@ const Navbar = () => {
     }
   };
 
-  const handleSignIn = async () => {
-    // Implement your sign-in logic here
-    // For example, redirect to a sign-in page or open a modal
+  const handleSignIn = () => {
+    setIsSignUp(false);
+    setIsLoginModalOpen(true);
   };
 
-  const handleSignUp = async () => {
-    // Implement your sign-up logic here
-    // For example, redirect to a sign-up page or open a modal
+  const handleSignUp = () => {
+    setIsSignUp(true);
+    setIsLoginModalOpen(true);
   };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
     setCredits(0);
+  };
+
+  const handleLoginSuccess = () => {
+    fetchUserAndCredits();
   };
 
   return (
@@ -156,6 +163,13 @@ const Navbar = () => {
           )}
         </div>
       </div>
+
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLogin={handleLoginSuccess}
+        isSignUp={isSignUp}
+      />
     </>
   );
 };
