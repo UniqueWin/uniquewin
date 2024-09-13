@@ -106,6 +106,13 @@ export default function AdminPage() {
     }
   };
 
+  const handleAddGame = async () => {
+    // Fetch the updated games list after a new game is added
+    const updatedGames = await fetchGames();
+    setGames(updatedGames);
+    setIsAddGameModalOpen(false);
+  };
+
   if (!user) {
     return (
       <div className="p-6 bg-gray-100 text-gray-900">
@@ -294,7 +301,7 @@ export default function AdminPage() {
       <AddGameModal
         isOpen={isAddGameModalOpen}
         onClose={() => setIsAddGameModalOpen(false)}
-        onAddGame={fetchGames}
+        onAddGame={handleAddGame}
         allInstantWinPrizes={instantWinPrizes}
       />
 
