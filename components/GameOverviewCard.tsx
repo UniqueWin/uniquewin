@@ -13,20 +13,23 @@ interface GameOverviewCardProps {
     pause: React.ReactNode;
     stop: React.ReactNode;
     edit: React.ReactNode;
+    delete: React.ReactNode;
   };
   setIsAddGameModalOpen: (isOpen: boolean) => void;
+  onDelete: (gameId: string) => void;
 }
 
-const GameOverviewCard: React.FC<GameOverviewCardProps> = ({ 
+export default function GameOverviewCard({
   title,
-  games, 
-  onUpdate, 
-  onEdit, 
-  onStatusChange, 
-  userId, 
-  icons, 
-  setIsAddGameModalOpen 
-}) => {
+  games,
+  onUpdate,
+  onEdit,
+  onStatusChange,
+  userId,
+  icons,
+  setIsAddGameModalOpen,
+  onDelete,
+}: GameOverviewCardProps) {
   return (
     <div className="col-span-1 bg-white p-4 rounded-lg shadow">
       <h2 className="text-2xl font-semibold mb-4 text-gray-800">{title}</h2>
@@ -53,6 +56,4 @@ const GameOverviewCard: React.FC<GameOverviewCardProps> = ({
       )}
     </div>
   );
-};
-
-export default GameOverviewCard;
+}

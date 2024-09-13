@@ -9,7 +9,7 @@ import { EditGameModal } from "@/components/EditGameModal";
 import { LoginModal } from "@/components/LoginModal";
 import { QuickStatsBox, QuickStatsProps } from "@/components/QuickStatsBox";
 import { useRouter } from "next/navigation";
-import { Play, Pause, Square, Edit } from "lucide-react";
+import { Play, Pause, Square, Edit, Trash2 } from "lucide-react";
 import GameOverviewCard from "@/components/GameOverviewCard";
 import {
   fetchGames,
@@ -79,6 +79,22 @@ export default function AdminPage() {
     router.refresh();
   };
 
+  const handleDeleteGame = async (gameId: string) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this game? This action cannot be undone.");
+    if (confirmDelete) {
+      const { error } = await supabase
+        .from('games')
+        .delete()
+        .eq('id', gameId);
+
+      if (error) {
+        console.error('Error deleting game:', error);
+      } else {
+        fetchGames();
+      }
+    }
+  };
+
   if (!user) {
     return (
       <div className="p-6 bg-gray-100 text-gray-900">
@@ -125,6 +141,7 @@ export default function AdminPage() {
             games={activeGames}
             onUpdate={fetchGames}
             onEdit={handleEditGame}
+            onDelete={handleDeleteGame}
             onStatusChange={handleGameStatusChange}
             userId={user.id}
             icons={{
@@ -132,6 +149,7 @@ export default function AdminPage() {
               pause: <Pause size={18} />,
               stop: <Square size={18} />,
               edit: <Edit size={18} />,
+              delete: <Trash2 size={18} />,
             }}
             setIsAddGameModalOpen={setIsAddGameModalOpen}
           />
@@ -142,6 +160,7 @@ export default function AdminPage() {
             games={historicGames}
             onUpdate={fetchGames}
             onEdit={handleEditGame}
+            onDelete={handleDeleteGame}
             onStatusChange={handleGameStatusChange}
             userId={user.id}
             icons={{
@@ -149,6 +168,7 @@ export default function AdminPage() {
               pause: <Pause size={18} />,
               stop: <Square size={18} />,
               edit: <Edit size={18} />,
+              delete: <Trash2 size={18} />,
             }}
             setIsAddGameModalOpen={setIsAddGameModalOpen}
           />

@@ -13,17 +13,32 @@ import History from "./History";
 import Question from "./Question";
 import { createClient } from "@/utils/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import ScratchCardComponent from "./ScratchcardComponent";
 
 interface UserAnswer {
   answer: string;
   status: string;
+  isInstantWin: boolean;
   instantWin: string;
   submittedAt: string;
 }
 
 export default function GamePage({ params }: { params: { gameId: string } }) {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  // const [user, setUser] = useState<User | null>(null);
+  //extended user with credit balance and id
+  const [user, setUser] = useState<
+    (User & { credit_balance: number; id: string }) | null
+  >(null);
   const [game, setGame] = useState<Game | null>(null);
   const [availableLuckyDips, setAvailableLuckyDips] = useState<string[]>([]);
   const [showGameHistory, setShowGameHistory] = useState(true);
@@ -41,7 +56,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         data: { user },
       } = await supabase.auth.getUser();
       if (user) {
-        setUser(user);
+        setUser(user as User & { credit_balance: number; id: string });
         const currentGame = await getGameById(params.gameId);
         if (currentGame) {
           setGame(currentGame);
@@ -132,40 +147,51 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
           {userAnswersLoading ? (
             <div>Loading your answers...</div>
           ) : userAnswers.length > 0 ? (
-            <div className="mt-8">
-              <h3 className="text-xl font-bold mb-4">Your Answers</h3>
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="bg-gray-200">
-                    <th className="border p-2">Your Answer</th>
-                    <th className="border p-2">Answer Status</th>
-                    <th className="border p-2">Instant Win</th>
-                    <th className="border p-2">Submitted At</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {userAnswers.map((answer, index) => (
-                    <tr
-                      key={index}
-                      className={index % 2 === 0 ? "bg-gray-100" : ""}
-                    >
-                      <td className="border p-2">{answer.answer}</td>
-                      <td className={`border p-2 ${
-                        answer.status === "UNIQUE"
-                          ? "text-green-600"
-                          : answer.status === "NOT UNIQUE"
-                          ? "text-red-600"
-                          : "text-orange-600"
-                      }`}>
-                        {answer.status}
-                      </td>
-                      <td className="border p-2">{answer.instantWin}</td>
-                      <td className="border p-2">{new Date(answer.submittedAt).toLocaleString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <Card className="my-8">
+              <CardHeader>
+                <CardTitle className="text-xl text-black font-bold mb-4">
+                  Your Answers
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableCaption>Answers</TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[100px]">Answer</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Instant Win</TableHead>
+                      <TableHead>Instant Win Prize</TableHead>
+                      <TableHead className="text-right">Submitted At</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {userAnswers.map((answer, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">
+                          {answer.answer}
+                        </TableCell>
+                        <TableCell>{answer.status}</TableCell>
+                        <TableCell>{answer.isInstantWin ? "Yes" : "No"}</TableCell>
+                        <TableCell>
+                          {answer.instantWin !== "NO" ? (
+                            <ScratchCardComponent
+                              prize={answer.instantWin}
+                              onReveal={() => {}}
+                            />
+                          ) : (
+                            "No"
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {new Date(answer.submittedAt).toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
           ) : (
             <Card className="my-8 text-black">
               <CardHeader>

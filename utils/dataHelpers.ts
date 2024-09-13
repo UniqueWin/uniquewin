@@ -7,6 +7,7 @@ export interface Answer {
   frequency: number;
   status: "UNIQUE" | "NOT UNIQUE" | "PENDING";
   instantWin: string;
+  submittedAt: string;
 }
 
 export interface Game {
@@ -19,6 +20,24 @@ export interface Game {
   answers: Answer[];
   lucky_dip_answers: string[];
   hangmanWords?: string[];
+  instant_win_probability: number;
+  instant_win_prizes?: GameInstantWinPrize[];
+}
+
+export interface InstantWinPrize {
+  id: string;
+  prize_amount: number;
+  probability: number;
+  prize_type: 'cash' | 'item';
+  prize_details: any;
+}
+
+export interface GameInstantWinPrize {
+  id: string;
+  game_id: string;
+  instant_win_prize_id: string;
+  quantity: number;
+  prize: InstantWinPrize;
 }
 
 export async function getCurrentGame(): Promise<Game | null> {
@@ -79,11 +98,32 @@ export async function getGameById(gameId: string): Promise<Game | null> {
   }
 }
 
+export async function getGameInstantWinPrizes(gameId: string): Promise<GameInstantWinPrize[]> {
+  const { data, error } = await supabase
+    .from('game_instant_win_prizes')
+    .select(`
+      id,
+      game_id,
+      instant_win_prize_id,
+      quantity,
+      prize:instant_win_prizes (*)
+    `)
+    .eq('game_id', gameId);
+
+  if (error) {
+    console.error('Error fetching game instant win prizes:', error);
+    return [];
+  }
+
+  return data as GameInstantWinPrize[];
+}
+
 export const submitAnswer = async (
   gameId: string,
   userId: string,
   answer: string,
-  isLuckyDip: boolean
+  isLuckyDip: boolean,
+  instantWinPrize?: GameInstantWinPrize | null
 ) => {
   try {
     console.log("Submitting answer:", gameId, userId, answer, isLuckyDip);
@@ -118,11 +158,17 @@ export const submitAnswer = async (
         user_id: userId,
         answer_text: answer,
         is_lucky_dip: isLuckyDip,
+        is_instant_win: !!instantWinPrize,
+        instant_win_amount: instantWinPrize ? instantWinPrize.prize.prize_amount : 0,
       })
       .select()
       .single();
 
     if (error) throw error;
+
+    if (instantWinPrize) {
+      await updateInstantWinPrizeQuantity(instantWinPrize.id);
+    }
 
     return data;
   } catch (error) {
@@ -130,6 +176,47 @@ export const submitAnswer = async (
     throw error;
   }
 };
+
+export function checkForInstantWin(prizes: GameInstantWinPrize[]): GameInstantWinPrize | null {
+  const totalProbability = prizes.reduce((sum, prize) => sum + (prize.prize.probability * prize.quantity), 0);
+  if (totalProbability === 0) return null;
+
+  const randomNumber = Math.random() * totalProbability;
+  let cumulativeProbability = 0;
+
+  for (const prize of prizes) {
+    cumulativeProbability += prize.prize.probability * prize.quantity;
+    if (randomNumber < cumulativeProbability && prize.quantity > 0) {
+      return prize;
+    }
+  }
+
+  return null;
+}
+
+async function updateInstantWinPrizeQuantity(prizeId: string) {
+  const { data, error } = await supabase
+    .from('game_instant_win_prizes')
+    .select('quantity')
+    .eq('id', prizeId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching prize quantity:', error);
+    return;
+  }
+
+  if (data && data.quantity > 0) {
+    const { error: updateError } = await supabase
+      .from('game_instant_win_prizes')
+      .update({ quantity: data.quantity - 1 })
+      .eq('id', prizeId);
+
+    if (updateError) {
+      console.error('Error updating instant win prize quantity:', updateError);
+    }
+  }
+}
 
 export function generateValidAnswers(question: string): string[] {
   // This is a simplified version. In a real application, you'd have a more comprehensive list.
@@ -203,6 +290,7 @@ export async function getUserAnswers(userId: string, gameId: string): Promise<An
     return data.map(answer => ({
       answer: answer.answer_text,
       status: answer.status || 'PENDING',
+      isInstantWin: answer.is_instant_win,
       instantWin: answer.is_instant_win ? `£${answer.instant_win_amount}` : 'NO',
       submittedAt: answer.submitted_at
     }));

@@ -11,7 +11,6 @@ interface InstantWinPrize {
   id: string;
   prize_type: string;
   prize_amount: number;
-  probability: number;
 }
 
 interface AddGameModalProps {
@@ -58,21 +57,21 @@ export function AddGameModal({ isOpen, onClose, onAddGame, allInstantWinPrizes }
       return;
     }
 
-    // Add instant win prizes
-    const newPrizes = selectedPrizes.map((prizeId) => ({
-      game_id: newGame.id,
-      instant_win_prize_id: prizeId,
-      quantity: prizeQuantities[prizeId] || 0,
-      // custom_probability has been removed
-    }));
+    if (newGame) {
+      const instantWinPrizes = selectedPrizes.map(prizeId => ({
+        game_id: newGame.id,
+        instant_win_prize_id: prizeId,
+        quantity: prizeQuantities[prizeId] || 0
+      }));
 
-    const { error: insertError } = await supabase
-      .from("game_instant_win_prizes")
-      .insert(newPrizes);
+      const { error: prizeError } = await supabase
+        .from('game_instant_win_prizes')
+        .insert(instantWinPrizes);
 
-    if (insertError) {
-      console.error("Error inserting new instant win prizes:", insertError);
-      return;
+      if (prizeError) {
+        console.error('Error adding instant win prizes:', prizeError);
+        return;
+      }
     }
 
     onAddGame();
