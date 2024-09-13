@@ -7,13 +7,20 @@ import GameOverviewCard from "@/components/GameOverviewCard";
 import { LoginModal } from "@/components/LoginModal";
 import { QuickStatsBox, QuickStatsProps } from "@/components/QuickStatsBox";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   fetchAllGames,
   fetchAllPlayers,
   fetchGames,
   fetchInstantWinPrizes,
   fetchQuickStats,
   handleGameStatusChange,
-  handleLogout
+  handleLogout,
 } from "@/utils/adminFunctions";
 import { createClient } from "@/utils/supabase/client";
 import { Edit, Pause, Play, Square, Trash2 } from "lucide-react";
@@ -27,12 +34,15 @@ export default function AdminPage() {
   const [isAddGameModalOpen, setIsAddGameModalOpen] = useState(false);
   const [isEditGameModalOpen, setIsEditGameModalOpen] = useState(false);
   const [selectedGame, setSelectedGame] = useState<any>(null);
-  const [quickStats, setQuickStats] = useState<QuickStatsProps['quickStats']>(null);
+  const [quickStats, setQuickStats] =
+    useState<QuickStatsProps["quickStats"]>(null);
   const [user, setUser] = useState<any>(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [allPlayers, setAllPlayers] = useState<any[]>([]);
   const [allGames, setAllGames] = useState<any[]>([]);
-  const [recentPlayerActivities, setRecentPlayerActivities] = useState<any[]>([]);
+  const [recentPlayerActivities, setRecentPlayerActivities] = useState<any[]>(
+    []
+  );
   const supabase = createClient();
   const router = useRouter();
 
@@ -79,15 +89,14 @@ export default function AdminPage() {
   };
 
   const handleDeleteGame = async (gameId: string) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this game? This action cannot be undone.");
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this game? This action cannot be undone."
+    );
     if (confirmDelete) {
-      const { error } = await supabase
-        .from('games')
-        .delete()
-        .eq('id', gameId);
+      const { error } = await supabase.from("games").delete().eq("id", gameId);
 
       if (error) {
-        console.error('Error deleting game:', error);
+        console.error("Error deleting game:", error);
       } else {
         fetchGames();
       }
@@ -117,8 +126,8 @@ export default function AdminPage() {
     );
   }
 
-  const activeGames = games.filter(game => game.status === 'active');
-  const historicGames = games.filter(game => game.status !== 'active');
+  const activeGames = games.filter((game) => game.status === "active");
+  const historicGames = games.filter((game) => game.status !== "active");
 
   return (
     <div className="p-6 bg-gray-100 text-gray-900">
@@ -133,7 +142,7 @@ export default function AdminPage() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Games Overview Column */}
-        <div className="space-y-6">
+        <div>
           {/* Active Games Overview Card */}
           <GameOverviewCard
             games={activeGames}
@@ -141,6 +150,9 @@ export default function AdminPage() {
             onDelete={handleDeleteGame}
             onStatusChange={handleGameStatusChange}
             userId={user.id}
+            title="Active Games"
+            onUpdate={fetchGames}
+            setIsAddGameModalOpen={setIsAddGameModalOpen}
             icons={{
               play: <Play size={18} />,
               pause: <Pause size={18} />,
@@ -157,6 +169,9 @@ export default function AdminPage() {
             onDelete={handleDeleteGame}
             onStatusChange={handleGameStatusChange}
             userId={user.id}
+            title="Historic Games"
+            onUpdate={fetchGames}
+            setIsAddGameModalOpen={setIsAddGameModalOpen}
             icons={{
               play: <Play size={18} />,
               pause: <Pause size={18} />,
