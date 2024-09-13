@@ -6,25 +6,21 @@ const supabase = createClient();
 export interface Answer {
   answer: string;
   frequency: number;
-  status: "UNIQUE" | "NOT UNIQUE" | "PENDING";
-  isInstantWin: boolean;
+  status: string;
   instantWin: string;
+  isInstantWin: boolean;
   submittedAt: string;
 }
 
 export interface Game {
-  id: number;
+  id: string;
   question: string;
+  gameStatus: string;
   jackpot: number;
-  start_time: string;
-  end_time: string;
-  valid_answers: string[];
+  validAnswers: string[];
   answers: Answer[];
-  lucky_dip_answers: string[];
-  hangmanWords?: string[];
-  instant_win_probability: number;
-  instant_win_prizes?: GameInstantWinPrize[];
-  current_prize: number; // Add this line
+  endTime: string; // Add this line
+  // ... other properties
 }
 
 export interface InstantWinPrize {

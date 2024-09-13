@@ -136,9 +136,7 @@ export default function AdminPage() {
         <div className="space-y-6">
           {/* Active Games Overview Card */}
           <GameOverviewCard
-            title="Active Games"
             games={activeGames}
-            onUpdate={fetchGames}
             onEdit={handleEditGame}
             onDelete={handleDeleteGame}
             onStatusChange={handleGameStatusChange}
@@ -150,14 +148,11 @@ export default function AdminPage() {
               edit: <Edit size={18} />,
               delete: <Trash2 size={18} />,
             }}
-            setIsAddGameModalOpen={setIsAddGameModalOpen}
           />
 
           {/* Historic Games Overview Card */}
           <GameOverviewCard
-            title="Historic Games"
             games={historicGames}
-            onUpdate={fetchGames}
             onEdit={handleEditGame}
             onDelete={handleDeleteGame}
             onStatusChange={handleGameStatusChange}
@@ -169,7 +164,6 @@ export default function AdminPage() {
               edit: <Edit size={18} />,
               delete: <Trash2 size={18} />,
             }}
-            setIsAddGameModalOpen={setIsAddGameModalOpen}
           />
         </div>
 

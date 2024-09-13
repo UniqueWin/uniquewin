@@ -69,7 +69,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         if (!currentGame.answers) {
           currentGame.answers = [];
         }
-        setAvailableLuckyDips([...(currentGame.valid_answers || [])]);
+        setAvailableLuckyDips([...(currentGame.validAnswers || [])]);
 
         // Fetch user answers for this game
         setUserAnswersLoading(true);
@@ -101,7 +101,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     if (game) {
       const timer = setInterval(() => {
         const now = new Date();
-        const endTime = new Date(game.end_time);
+        const endTime = new Date(game.endTime); // Change this line
         const distance = endTime.getTime() - now.getTime();
 
         if (distance < 0) {

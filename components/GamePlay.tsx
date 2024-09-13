@@ -83,6 +83,7 @@ export const GamePlay: React.FC<GamePlayProps> = ({ game, userId }) => {
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
         onLogin={handleLogin}
+        isSignUp={false} // Add this line
       />
     </div>
   );
