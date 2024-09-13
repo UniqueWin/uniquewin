@@ -71,6 +71,23 @@ const Navbar = () => {
     fetchUserAndCredits();
   };
 
+  const handleBuyCredits = async () => {
+    if (user) {
+      const additionalCredits = 10; // You can adjust this value or make it dynamic
+      const { data, error } = await supabase
+        .from("profiles")
+        .update({ credit_balance: credits + additionalCredits })
+        .eq("id", user.id)
+        .select();
+
+      if (error) {
+        console.error("Error updating credits:", error);
+      } else {
+        setCredits(credits + additionalCredits);
+      }
+    }
+  };
+
   return (
     <>
       {/* Top Banner */}
@@ -104,6 +121,7 @@ const Navbar = () => {
                 variant="secondary"
                 size="sm"
                 className="bg-[#FFC700] text-black"
+                onClick={handleBuyCredits}
               >
                 Buy Credits
               </Button>
