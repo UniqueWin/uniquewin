@@ -34,6 +34,7 @@ const ScratchCardComponent = ({
 }) => {
   const [isRevealed, setIsRevealed] = useState(false);
   const [scratchedPercentage, setScratchedPercentage] = useState(0);
+  const [isClicked, setIsClicked] = useState(false);
 
   const handleComplete = () => {
     setIsRevealed(true);
@@ -45,7 +46,12 @@ const ScratchCardComponent = ({
   };
 
   return (
-    <div className="relative w-[250px] h-[75px] rounded">
+    <div
+      className={`relative w-[250px] h-[75px] rounded
+      ${isClicked ? "cursor-pointer" : "cursor-default"}`}
+      onMouseDown={() => setIsClicked(true)}
+      onMouseUp={() => setIsClicked(false)}
+    >
       {isRevealed && (
         <Confetti
           width={250}
@@ -75,7 +81,7 @@ const ScratchCardComponent = ({
         brushColor="#808080"
         onScratch={(percentage) => setScratchedPercentage(percentage)}
       >
-        <div className="flex items-center justify-center w-full h-full bg-purple-500 rounded-lg p-4">
+        <div className="flex items-center justify-center w-full h-full bg-purple-500 rounded-lg p-4 ">
           <div className="text-center">
             <p className="text-white text-2xl font-bold">YOU WIN</p>
             <p
