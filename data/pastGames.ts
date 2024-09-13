@@ -16,7 +16,7 @@ export const pastGames: Game[] = [
     ],
     lucky_dip_answers: [],
     hangmanWords: ["THOMAS", "TIMOTHY", "TYLER", "THEODORE", "TREVOR"],
-    endTime: new Date().toISOString(), // Add this line
+    end_time: new Date().toISOString(), // Add this line
     current_prize: 1000, // Add this line
   },
   {
@@ -31,7 +31,7 @@ export const pastGames: Game[] = [
     ],
     lucky_dip_answers: [],
     hangmanWords: ["APPLE", "APRICOT", "AVOCADO", "ACAI", "ACKEE"],
-    endTime: new Date().toISOString(), // Add this line
+    end_time: new Date().toISOString(), // Add this line
     current_prize: 1200, // Add this line
   },
   {
@@ -46,7 +46,7 @@ export const pastGames: Game[] = [
     ],
     lucky_dip_answers: [],
     hangmanWords: ["FRANCE", "GERMANY", "ITALY", "SPAIN", "POLAND"],
-    endTime: new Date().toISOString(), // Add this line
+    end_time: new Date().toISOString(), // Add this line
     current_prize: 2000, // Add this line
   },
 ];

@@ -18,7 +18,7 @@ export default function LoginPage() {
     // Here you would typically validate the user credentials against your backend
     // For now, we'll just simulate a successful login
     login({
-      id: 1,
+      id: "1",
       username: formData.username,
       email: `${formData.username}@example.com`, // Add a dummy email
       credit_balance: 100,
