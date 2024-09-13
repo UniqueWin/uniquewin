@@ -80,6 +80,7 @@ export default function Question({
         instantWinPrize
       );
 
+      console.log({ user });
       // Update local user state
       const { data: updatedUser, error } = await supabase
         .from("profiles")
