@@ -21,7 +21,7 @@ export default function LoginPage() {
       id: 1,
       username: formData.username,
       email: `${formData.username}@example.com`, // Add a dummy email
-      credit_balance: 100
+      credit_balance: 100,
     });
     router.push("/profile");
   };

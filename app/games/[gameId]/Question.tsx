@@ -16,11 +16,12 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
+import { ExtendedUser } from "@/utils/userHelpers"; // Add this import
 
 type QuestionProps = {
   game: Game;
-  user: User;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  user: ExtendedUser;
+  setUser: React.Dispatch<React.SetStateAction<ExtendedUser | null>>;
   setGame: React.Dispatch<React.SetStateAction<Game | null>>;
   availableLuckyDips: string[];
   setAvailableLuckyDips: React.Dispatch<React.SetStateAction<string[]>>;

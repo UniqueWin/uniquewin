@@ -23,6 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import ScratchCardComponent from "./ScratchCardComponent";
+import { ExtendedUser } from "@/utils/userHelpers"; // Add this import
 
 interface UserAnswer {
   answer: string;
@@ -36,9 +37,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
   const router = useRouter();
   // const [user, setUser] = useState<User | null>(null);
   //extended user with credit balance and id
-  const [user, setUser] = useState<
-    (User & { credit_balance: number; id: string }) | null
-  >(null);
+  const [user, setUser] = useState<ExtendedUser | null>(null); // Update the user state type
   const [game, setGame] = useState<Game | null>(null);
   const [availableLuckyDips, setAvailableLuckyDips] = useState<string[]>([]);
   const [showGameHistory, setShowGameHistory] = useState(true);
@@ -55,7 +54,13 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
       data: { user },
     } = await supabase.auth.getUser();
     if (user) {
-      setUser(user as User & { credit_balance: number; id: string });
+      const extendedUser: ExtendedUser = {
+        ...user,
+        is_admin: false, // Set a default value or fetch from somewhere
+        username: user.email?.split('@')[0] || '', // Use email as username or fetch from somewhere
+        credit_balance: 0, // Set a default value or fetch from somewhere
+      };
+      setUser(extendedUser);
       const currentGame = await getGameById(params.gameId);
       if (currentGame) {
         setGame(currentGame);
@@ -142,8 +147,8 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         >
           <Question
             game={game}
-            user={user}
-            setUser={setUser}
+            user={user as ExtendedUser} // Cast user to ExtendedUser
+            setUser={setUser as React.Dispatch<React.SetStateAction<ExtendedUser | null>>}
             setGame={setGame}
             availableLuckyDips={availableLuckyDips}
             setAvailableLuckyDips={setAvailableLuckyDips}

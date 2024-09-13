@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/client";
+import { ExtendedUser } from "./userHelpers";
 
 const supabase = createClient();
 
@@ -299,4 +300,33 @@ export async function getUserAnswers(userId: string, gameId: string): Promise<An
     console.error("Error in getUserAnswers:", error);
     return [];
   }
+}
+
+export async function getCurrentUser(userId: string): Promise<ExtendedUser | null> {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching user:', error);
+    return null;
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  // Transform the data into ExtendedUser format
+  const extendedUser: ExtendedUser = {
+    ...data,
+    is_admin: data.is_admin || false,
+    username: data.username || data.email?.split('@')[0] || '',
+    credit_balance: data.credit_balance || 0,
+  };
+
+  return extendedUser;
 }

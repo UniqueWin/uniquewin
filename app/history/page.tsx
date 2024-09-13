@@ -2,29 +2,25 @@
 
 import { useState, useEffect } from "react";
 import { getCurrentUser } from "@/utils/dataHelpers";
-import { User } from "@/utils/userHelpers";
-
-// Define an extended User type that includes gameHistory
-interface ExtendedUser extends User {
-  gameHistory: {
-    gameId: number;
-    answers: { answer: string; status: string; instantWin: string }[];
-  }[];
-}
+import { ExtendedUser } from "@/utils/userHelpers";
 
 export default function HistoryPage() {
   const [user, setUser] = useState<ExtendedUser | null>(null);
   const [history, setHistory] = useState<ExtendedUser['gameHistory']>([]);
 
   useEffect(() => {
-    const userId = localStorage.getItem("currentUserId");
-    if (userId) {
-      const currentUser = getCurrentUser(parseInt(userId));
-      if (currentUser) {
-        setUser(currentUser as ExtendedUser);
-        setHistory(currentUser.gameHistory || []); // Set the user's game history
+    const fetchUser = async () => {
+      const userId = localStorage.getItem("currentUserId");
+      if (userId) {
+        const currentUser = await getCurrentUser(userId);
+        if (currentUser) {
+          setUser(currentUser);
+          setHistory(currentUser.gameHistory || []); // Assuming gameHistory is part of ExtendedUser
+        }
       }
-    }
+    };
+
+    fetchUser();
   }, []);
 
   if (!user) return <div>Loading...</div>;
@@ -43,7 +39,7 @@ export default function HistoryPage() {
           </tr>
         </thead>
         <tbody>
-          {history.map((game) => (
+          {history?.map((game) => (
             <tr key={game.gameId}>
               <td>{game.gameId}</td>
               <td>
