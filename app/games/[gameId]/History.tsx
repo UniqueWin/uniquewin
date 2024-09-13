@@ -26,7 +26,7 @@ function History({ game, instantWinPrizes }: HistoryProps) {
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.6, duration: 0.5 }}
-      className="bg-white p-6 rounded-lg shadow-md mb-6"
+      className="bg-white text-black p-6 rounded-lg shadow-md mb-6"
     >
       <h3 className="text-xl font-bold mb-4">GAME HISTORY</h3>
       <p className="mb-4">YOU ARE CURRENTLY WINNING: £{calculateWinnings()}</p>

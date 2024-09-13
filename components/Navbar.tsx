@@ -116,7 +116,7 @@ const Navbar = () => {
           <nav>
             <ul className="flex space-x-4">
               <li>
-                <a href="#" className="hover:underline">
+                <a href="/games" className="hover:underline">
                   Home
                 </a>
               </li>

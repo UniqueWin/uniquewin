@@ -178,3 +178,36 @@ export function generateValidAnswers(question: string): string[] {
 
   return answers[question as keyof typeof answers] || [];
 }
+
+export async function getUserAnswers(userId: string, gameId: string): Promise<Answer[]> {
+  try {
+    const { data, error } = await supabase
+      .from('answers')
+      .select(`
+        id,
+        answer_text,
+        status,
+        is_instant_win,
+        instant_win_amount,
+        submitted_at
+      `)
+      .eq('user_id', userId)
+      .eq('game_id', gameId)
+      .order('submitted_at', { ascending: false });
+
+    if (error) {
+      console.error("Error fetching user answers:", error);
+      throw error;
+    }
+
+    return data.map(answer => ({
+      answer: answer.answer_text,
+      status: answer.status || 'PENDING',
+      instantWin: answer.is_instant_win ? `£${answer.instant_win_amount}` : 'NO',
+      submittedAt: answer.submitted_at
+    }));
+  } catch (error) {
+    console.error("Error in getUserAnswers:", error);
+    return [];
+  }
+}
