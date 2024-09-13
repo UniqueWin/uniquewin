@@ -17,11 +17,13 @@ const Navbar = () => {
   useEffect(() => {
     fetchUserAndCredits();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
-        fetchUserAndCredits();
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+          fetchUserAndCredits();
+        }
       }
-    });
+    );
 
     return () => {
       authListener.subscription.unsubscribe();
@@ -29,14 +31,16 @@ const Navbar = () => {
   }, []);
 
   const fetchUserAndCredits = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     setUser(user);
 
     if (user) {
       const { data, error } = await supabase
-        .from('profiles')
-        .select('credit_balance')
-        .eq('id', user.id)
+        .from("profiles")
+        .select("credit_balance")
+        .eq("id", user.id)
         .single();
 
       if (error) {
@@ -74,13 +78,15 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           <Trophy className="text-yellow-400" />
           <div>Live jackpot £1,500</div>
-          <Button
-            variant="secondary"
-            size="sm"
-            className="bg-[#FFC700] text-black"
-          >
-            Play Now
-          </Button>
+          <Link href="/games">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="bg-[#FFC700] text-black"
+            >
+              Play Now
+            </Button>
+          </Link>
         </div>
         <div className="flex items-center space-x-4 border-l border-white pl-4">
           {user ? (
@@ -88,24 +94,23 @@ const Navbar = () => {
               <Bell className="mr-" />
               <div className="flex flex-col">
                 <span className="font-semibold">
-                  You have <span className="text-yellow-400">{credits} credits</span> left.
+                  You have{" "}
+                  <span className="text-yellow-400">{credits} credits</span>{" "}
+                  left.
                 </span>
                 <small className="text-xxs">Buy more credits</small>
               </div>
-              <Link href="/buy-credits" className="text-xs ml-1 underline">
-                Buy more credits
-              </Link>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="bg-[#FFC700] text-black"
+              >
+                Buy Credits
+              </Button>
             </div>
           ) : (
             <div>Sign in to see your credits</div>
           )}
-          <Button
-            variant="secondary"
-            size="sm"
-            className="bg-[#FFC700] text-black"
-          >
-            Buy Credits
-          </Button>
         </div>
       </div>
 
@@ -141,7 +146,9 @@ const Navbar = () => {
         <div className="flex space-x-4 items-center">
           {user ? (
             <>
-              <span className="text-sm font-semibold text-black">Welcome, {user.email}</span>
+              <span className="text-sm font-semibold text-black">
+                Welcome, {user.email}
+              </span>
               <Button
                 variant="outline"
                 size="sm"
