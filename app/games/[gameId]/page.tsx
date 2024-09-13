@@ -56,8 +56,10 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     if (user) {
       const extendedUser: ExtendedUser = {
         ...user,
+        id: parseInt(user.id, 10), // Convert string id to number
+        username: "", // Provide a default value if username is missing
         is_admin: false, // Set a default value or fetch from somewhere
-        username: user.email?.split('@')[0] || '', // Use email as username or fetch from somewhere
+        email: user.email || "", // Provide a default value for email
         credit_balance: 0, // Set a default value or fetch from somewhere
       };
       setUser(extendedUser);
@@ -148,7 +150,11 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
           <Question
             game={game}
             user={user as ExtendedUser} // Cast user to ExtendedUser
-            setUser={setUser as React.Dispatch<React.SetStateAction<ExtendedUser | null>>}
+            setUser={
+              setUser as React.Dispatch<
+                React.SetStateAction<ExtendedUser | null>
+              >
+            }
             setGame={setGame}
             availableLuckyDips={availableLuckyDips}
             setAvailableLuckyDips={setAvailableLuckyDips}

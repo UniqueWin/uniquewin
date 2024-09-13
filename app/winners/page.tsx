@@ -1,12 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { getAllGames } from "@/utils/dataHelpers";
+import { getAllGames, Game } from "@/utils/dataHelpers";
 
 export default function WinnersPage() {
-  const [activeTab, setActiveTab] = useState("LAST MONTH");
-  const games = getAllGames();
+  const [games, setGames] = useState<Game[]>([]);
+
+  useEffect(() => {
+    const fetchGames = async () => {
+      const allGames = await getAllGames();
+      setGames(allGames);
+    };
+
+    fetchGames();
+  }, []);
 
   return (
     <div className="bg-purple-300 min-h-screen">
@@ -17,34 +25,16 @@ export default function WinnersPage() {
         transition={{ duration: 0.5 }}
       >
         <h1 className="text-4xl font-bold mb-8 text-purple-800">Winners</h1>
-        <div className="bg-purple-100 p-6 rounded-lg shadow-md">
-          <div className="flex mb-4">
-            <button
-              className={`mr-2 px-4 py-2 rounded ${
-                activeTab === "LAST MONTH" ? "bg-purple-500 text-white" : "bg-purple-200"
-              }`}
-              onClick={() => setActiveTab("LAST MONTH")}
-            >
-              LAST MONTH
-            </button>
-            <button
-              className={`px-4 py-2 rounded ${
-                activeTab === "STATUS" ? "bg-purple-500 text-white" : "bg-purple-200"
-              }`}
-              onClick={() => setActiveTab("STATUS")}
-            >
-              STATUS
-            </button>
-          </div>
+        <div className="bg-purple-100 p-6 rounded-lg shadow-md overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr>
                 <th className="text-left">Game ID</th>
                 <th className="text-left">Question</th>
-                <th className="text-left">Entries</th>
-                <th className="text-left">Win/Lose</th>
+                <th className="text-left">Winner</th>
+                <th className="text-left">Winning Answer</th>
+                <th className="text-left">Prize</th>
                 <th className="text-left">Instant Win</th>
-                <th className="text-left">Profit/Loss</th>
               </tr>
             </thead>
             <tbody>
@@ -54,18 +44,14 @@ export default function WinnersPage() {
                 let profit = 0;
                 if (winningAnswer) profit += game.jackpot;
                 if (instantWin) profit += parseInt(instantWin.instantWin.replace('£', ''));
-                profit -= game.answers.length; // Assuming each entry costs £1
-
                 return (
                   <tr key={game.id}>
                     <td>{game.id}</td>
                     <td>{game.question}</td>
-                    <td>{game.answers.length}</td>
-                    <td>{winningAnswer ? "WIN" : "LOSE"}</td>
-                    <td>{instantWin ? instantWin.instantWin : "NO"}</td>
-                    <td className={profit >= 0 ? "text-green-500" : "text-red-500"}>
-                      {profit >= 0 ? `+£${profit}` : `-£${Math.abs(profit)}`}
-                    </td>
+                    <td>{winningAnswer ? winningAnswer.answer : "No winner"}</td>
+                    <td>{winningAnswer ? winningAnswer.answer : "N/A"}</td>
+                    <td>£{profit}</td>
+                    <td>{instantWin ? "Yes" : "No"}</td>
                   </tr>
                 );
               })}

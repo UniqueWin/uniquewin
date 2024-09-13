@@ -24,6 +24,7 @@ export interface Game {
   hangmanWords?: string[];
   instant_win_probability: number;
   instant_win_prizes?: GameInstantWinPrize[];
+  current_prize: number; // Add this line
 }
 
 export interface InstantWinPrize {

@@ -71,7 +71,7 @@ export const GameCard: React.FC<GameCardProps> = ({
           {icons.edit}
         </button>
       </div>
-      {isPlaying && <GamePlay game={game} userId={userId} />}
+      {/* {isPlaying && <GamePlay game={game} userId={userId} />} */}
     </div>
   );
 };

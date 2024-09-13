@@ -68,7 +68,7 @@ export default function Question({
 
       const result = await submitAnswer(
         game.id.toString(),
-        user.id,
+        user.id.toString(), // Convert user.id to string
         isLuckyDip
           ? getPartiallyHiddenWord(
               availableLuckyDips[

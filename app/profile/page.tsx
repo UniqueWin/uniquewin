@@ -15,11 +15,15 @@ export default function ProfilePage() {
   const [gameHistory, setGameHistory] = useState<Game[]>([]);
 
   useEffect(() => {
-    if (user) {
-      setEditedUser(user);
-      const allGames = getAllGames();
-      setGameHistory(allGames.slice(0, 5));
-    }
+    const fetchUserAndGames = async () => {
+      if (user) {
+        setEditedUser(user);
+        const allGames = await getAllGames();
+        setGameHistory(allGames.slice(0, 5));
+      }
+    };
+
+    fetchUserAndGames();
   }, [user]);
 
   if (!user) return <div>Loading...</div>;
