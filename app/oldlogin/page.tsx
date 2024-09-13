@@ -26,7 +26,7 @@ export default function Login({
       return redirect("/oldlogin?message=Could not authenticate user");
     }
 
-    return redirect("/protected");
+    return redirect("/games");
   };
 
   const signUp = async (formData: FormData) => {
