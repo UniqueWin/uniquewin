@@ -140,7 +140,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
   if (!user || !game) return <div>Loading...</div>;
 
   return (
-    <div className="bg-red-50 min-h-screen flex flex-col">
+    <div className="bg-red-800 min-h-screen flex flex-col">
       <div className="container mx-auto p-4 flex-grow">
         <motion.div
           initial={{ opacity: 0 }}
@@ -236,7 +236,6 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
           <TrustPilot />
         </motion.div>
       </div>
-      <Footer />
     </div>
   );
 }

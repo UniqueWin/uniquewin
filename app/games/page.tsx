@@ -54,7 +54,7 @@ export default function GamesListPage() {
   };
 
   return (
-    <div className="bg-red-50 min-h-screen flex flex-col">
+    <div className="bg-red-800 min-h-screen flex flex-col">
       <div className="container mx-auto p-4 flex-grow">
         <motion.div
           initial={{ opacity: 0 }}
@@ -224,7 +224,6 @@ export default function GamesListPage() {
           </motion.div>
         </motion.div>
       </div>
-      <Footer />
     </div>
   );
 }

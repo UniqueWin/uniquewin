@@ -8,7 +8,6 @@ import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-van
 import { TextRevealCard } from "@/components/ui/text-reveal-card";
 import { createClient } from "@/utils/supabase/client";
 import { Game } from "@/utils/dataHelpers";
-import Footer from "@/components/Footer";
 
 export default function Home() {
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
@@ -296,8 +295,6 @@ export default function Home() {
           ))}
         </ul>
       </div>
-
-      <Footer />
     </div>
   );
 }

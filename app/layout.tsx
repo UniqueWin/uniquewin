@@ -2,6 +2,7 @@ import { GameProvider } from "@/contexts/GameContext";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import NavBar from "@/components/Navbar";
+import Footer from "@/components/Footer";  // Footer is imported here
 import { Toaster } from "@/components/ui/sonner";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -32,6 +33,7 @@ export default function RootLayout({
           <main className="min-h-screen flex flex-col items-center">
             <div className="w-full max-w5xl px4">{children}</div>
           </main>
+          <Footer />  {/* Footer is placed here */}
         </GameProvider>
         <Toaster />
       </body>

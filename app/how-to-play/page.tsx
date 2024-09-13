@@ -22,7 +22,7 @@ export default function HowToPlayPage() {
       initial="hidden"
       animate="visible"
     >
-      <h1 className="text-4xl font-bold mb-8 text-purple-800">How to Play UniqueWin</h1>
+      <h1 className="text-4xl font-bold mb-8 text-white">How to Play UniqueWin</h1>
       
       <motion.div variants={itemVariants}>
         <Card className="mb-8">
