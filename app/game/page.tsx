@@ -47,6 +47,10 @@ export default function LandingPage() {
   };
 
   const handleSubmit = (e: React.FormEvent) => {
+    console.log("User:", user);
+    console.log("Current game:", currentGame);
+    console.log("Answer:", answer);
+    console.log("Is lucky dip:", isLuckyDip);
     e.preventDefault();
     if (user && currentGame) {
       const cost = isLuckyDip ? 5 : 1;
@@ -66,15 +70,15 @@ export default function LandingPage() {
               luckyDipAnswer = uniqueAnswer;
             } else {
               luckyDipAnswer =
-                currentGame.luckyDipAnswers[
-                  Math.floor(Math.random() * currentGame.luckyDipAnswers.length)
+                currentGame.lucky_dip_answers[
+                  Math.floor(Math.random() * currentGame.lucky_dip_answers.length)
                 ];
               setClue(`Lucky Dip Answer: ${luckyDipAnswer}`);
             }
           } else {
             luckyDipAnswer =
-              currentGame.luckyDipAnswers[
-                Math.floor(Math.random() * currentGame.luckyDipAnswers.length)
+              currentGame.lucky_dip_answers[
+                Math.floor(Math.random() * currentGame.lucky_dip_answers.length)
               ];
             setClue(`Lucky Dip Answer: ${luckyDipAnswer}`);
           }

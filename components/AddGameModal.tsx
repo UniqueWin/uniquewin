@@ -47,7 +47,7 @@ export function AddGameModal({ isOpen, onClose, onAddGame, allInstantWinPrizes }
         valid_answers: validAnswers.split(',').map(answer => answer.trim()),
         price: parseInt(price),
         lucky_dip_price: parseFloat(luckyDipPrice),
-        status: 'pending',
+        status: 'active',
         current_prize: 0
       })
       .select()
@@ -63,6 +63,7 @@ export function AddGameModal({ isOpen, onClose, onAddGame, allInstantWinPrizes }
       game_id: newGame.id,
       instant_win_prize_id: prizeId,
       quantity: prizeQuantities[prizeId] || 0,
+      // custom_probability has been removed
     }));
 
     const { error: insertError } = await supabase
@@ -164,7 +165,7 @@ export function AddGameModal({ isOpen, onClose, onAddGame, allInstantWinPrizes }
                       onCheckedChange={() => handlePrizeSelection(prize.id)}
                     />
                     <Label htmlFor={`prize-${prize.id}`} className="flex-grow">
-                      {prize.prize_type} - £{prize.prize_amount} ({(prize.probability * 100).toFixed()}%)
+                      {prize.prize_type} - £{prize.prize_amount}
                     </Label>
                     {selectedPrizes.includes(prize.id) && (
                       <Input

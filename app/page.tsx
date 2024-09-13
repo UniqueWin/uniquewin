@@ -5,8 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { createClient } from "@/utils/supabase/client"; // Ensure you have the Supabase client
 import { Game } from "@/utils/dataHelpers"; // Import Game type if needed
-import AddGameModal from "@/components/AddGameModal"; // Import your modal component
-import AddInstantWinPrizeModal from "@/components/AddInstantWinPrizeModal"; // Import your modal component
+import Navbar from "@/components/Navbar";
 
 export default function Component() {
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
@@ -45,15 +44,14 @@ export default function Component() {
   }, [supabase]);
 
   return (
-    <div>
-      <Header />
-      <main>
+    <div className="flex flex-col items-center justify-start h-[90vh]">
+      <main className="flex flex-col items-center justify-bewteen self-stretch h-full">
         {/* Render current game and past games */}
         {currentGame && (
-          <div>
-            <h1>{currentGame.question}</h1>
-            <p>Jackpot: £{currentGame.jackpot}</p>
-            <p>Ends: {new Date(currentGame.endTime).toLocaleString()}</p>
+          <div className="flex flex-col items-center justify-center p-10">
+            <h1 className="text-2xl font-bold">{currentGame.question}</h1>
+            <p className="text-lg">Jackpot: £{currentGame.current_prize}</p>
+            <p className="text-lg">Ends: {new Date(currentGame.end_time).toLocaleString()}</p>
           </div>
         )}
         <h2>Past Games</h2>
@@ -62,20 +60,6 @@ export default function Component() {
             <li key={game.id}>{game.question}</li>
           ))}
         </ul>
-
-        {/* Buttons to open modals */}
-        <button onClick={() => setIsAddGameModalOpen(true)}>Add New Game</button>
-        <button onClick={() => setIsAddPrizeModalOpen(true)}>Add Instant Win Prize</button>
-
-        {/* Modals */}
-        <AddGameModal
-          isOpen={isAddGameModalOpen}
-          onClose={() => setIsAddGameModalOpen(false)}
-        />
-        <AddInstantWinPrizeModal
-          isOpen={isAddPrizeModalOpen}
-          onClose={() => setIsAddPrizeModalOpen(false)}
-        />
       </main>
       <Footer />
     </div>

@@ -11,6 +11,15 @@ import { QuickStatsBox } from "@/components/QuickStatsBox";
 import { useRouter } from "next/navigation";
 import { Play, Pause, Square, Edit } from "lucide-react";
 import GameOverviewCard from "@/components/GameOverviewCard";
+import {
+  fetchGames,
+  fetchInstantWinPrizes,
+  fetchQuickStats,
+  fetchAllPlayers,
+  fetchAllGames,
+  handleGameStatusChange,
+  handleLogout
+} from "@/utils/adminFunctions";
 
 export default function AdminPage() {
   const [games, setGames] = useState<any[]>([]);
@@ -19,22 +28,12 @@ export default function AdminPage() {
   const [isAddGameModalOpen, setIsAddGameModalOpen] = useState(false);
   const [isEditGameModalOpen, setIsEditGameModalOpen] = useState(false);
   const [selectedGame, setSelectedGame] = useState<any>(null);
-  const [quickStats, setQuickStats] = useState({
-    activeGames: 0,
-    totalPlayers: 0,
-    totalPrizeAwarded: 0,
-    gamesLast24Hours: 0,
-    instantWinsToday: 0,
-    totalLuckyDips: 0,
-  });
+  const [quickStats, setQuickStats] = useState<QuickStatsProps['quickStats']>(null);
   const [user, setUser] = useState<any>(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [allPlayers, setAllPlayers] = useState<any[]>([]);
   const [allGames, setAllGames] = useState<any[]>([]);
-  const [recentPlayers, setRecentPlayers] = useState<string[]>([]);
-  const [recentPlayerActivities, setRecentPlayerActivities] = useState<any[]>(
-    []
-  );
+  const [recentPlayerActivities, setRecentPlayerActivities] = useState<any[]>([]);
   const supabase = createClient();
   const router = useRouter();
 
@@ -48,167 +47,20 @@ export default function AdminPage() {
     } = await supabase.auth.getUser();
     setUser(user);
     if (user) {
-      fetchGames();
-      fetchInstantWinPrizes();
-      fetchQuickStats();
-      fetchAllPlayers();
-      fetchAllGames();
+      const gamesData = await fetchGames();
+      setGames(gamesData);
+      const prizesData = await fetchInstantWinPrizes();
+      setInstantWinPrizes(prizesData);
+      const statsData = await fetchQuickStats();
+      if (statsData) {
+        setQuickStats(statsData.quickStats);
+        setRecentPlayerActivities(statsData.recentPlayerActivities);
+      }
+      const playersData = await fetchAllPlayers();
+      setAllPlayers(playersData);
+      const allGamesData = await fetchAllGames();
+      setAllGames(allGamesData);
     }
-  };
-
-  const fetchGames = async () => {
-    const { data, error } = await supabase.from("games").select(`
-        *,
-        game_instant_win_prizes (
-          instant_win_prize_id,
-          quantity,
-          custom_probability,
-          instant_win_prizes (
-            prize_type,
-            prize_amount
-          )
-        )
-      `);
-    if (error) console.error("Error fetching games:", error);
-    else setGames(data || []);
-  };
-
-  const fetchInstantWinPrizes = async () => {
-    const { data, error } = await supabase
-      .from("instant_win_prizes")
-      .select("*");
-    if (error) console.error("Error fetching instant win prizes:", error);
-    else setInstantWinPrizes(data || []);
-  };
-
-  const fetchQuickStats = async () => {
-    const today = new Date().toISOString().split("T")[0];
-    const yesterday = new Date(Date.now() - 86400000)
-      .toISOString()
-      .split("T")[0];
-
-    const { data: activeGames } = await supabase
-      .from("games")
-      .select("count", { count: "exact" })
-      .eq("status", "active");
-
-    const { data: totalPlayers } = await supabase
-      .from("profiles")
-      .select("count", { count: "exact" });
-
-    const { data: winnersPrizes } = await supabase
-      .from("winners")
-      .select("prize_amount");
-
-    const totalPrizeAwarded =
-      winnersPrizes?.reduce(
-        (sum, winner) => sum + (winner.prize_amount || 0),
-        0
-      ) || 0;
-
-    const { data: gamesLast24Hours } = await supabase
-      .from("answers")
-      .select("count", { count: "exact" })
-      .gte("submitted_at", yesterday);
-
-    const { data: instantWinsToday } = await supabase
-      .from("answers")
-      .select("count", { count: "exact" })
-      .eq("is_instant_win", true)
-      .gte("submitted_at", today);
-
-    const { data: totalLuckyDips } = await supabase
-      .from("answers")
-      .select("count", { count: "exact" })
-      .eq("is_lucky_dip", true);
-
-    // Fetch recent answers
-    const { data: recentAnswers, error: answersError } = await supabase
-      .from("answers")
-      .select(
-        `
-        id,
-        submitted_at,
-        answer_text,
-        user_id,
-        game_id
-      `
-      )
-      .order("submitted_at", { ascending: false })
-      .limit(5);
-
-    if (answersError) {
-      console.error("Error fetching recent answers:", answersError);
-      return;
-    }
-
-    // Fetch usernames for the recent answers
-    const userIds = recentAnswers.map((answer) => answer.user_id);
-    const { data: userProfiles, error: profilesError } = await supabase
-      .from("profiles")
-      .select("id, username")
-      .in("id", userIds);
-
-    if (profilesError) {
-      console.error("Error fetching user profiles:", profilesError);
-      return;
-    }
-
-    // Fetch game questions for the recent answers
-    const gameIds = recentAnswers.map((answer) => answer.game_id);
-    const { data: games, error: gamesError } = await supabase
-      .from("games")
-      .select("id, question")
-      .in("id", gameIds);
-
-    if (gamesError) {
-      console.error("Error fetching games:", gamesError);
-      return;
-    }
-
-    // Combine the data
-    const recentPlayerActivitiesData = recentAnswers.map((answer) => ({
-      ...answer,
-      username:
-        userProfiles.find((profile) => profile.id === answer.user_id)
-          ?.username || "Unknown User",
-      gameQuestion:
-        games.find((game) => game.id === answer.game_id)?.question ||
-        "Unknown Game",
-    }));
-
-    setQuickStats({
-      activeGames: activeGames?.[0]?.count || 0,
-      totalPlayers: totalPlayers?.[0]?.count || 0,
-      totalPrizeAwarded: totalPrizeAwarded,
-      gamesLast24Hours: gamesLast24Hours?.[0]?.count || 0,
-      instantWinsToday: instantWinsToday?.[0]?.count || 0,
-      totalLuckyDips: totalLuckyDips?.[0]?.count || 0,
-    });
-
-    setRecentPlayerActivities(recentPlayerActivitiesData);
-  };
-
-  const fetchAllPlayers = async () => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(10);
-
-    if (error) console.error("Error fetching players:", error);
-    else setAllPlayers(data || []);
-  };
-
-  const fetchAllGames = async () => {
-    const { data, error } = await supabase
-      .from("games")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(10);
-
-    if (error) console.error("Error fetching games:", error);
-    else setAllGames(data || []);
   };
 
   const handleEditGame = (game: any) => {
@@ -216,23 +68,13 @@ export default function AdminPage() {
     setIsEditGameModalOpen(true);
   };
 
-  const handleGameStatusChange = async (gameId: string, newStatus: string) => {
-    const { error } = await supabase
-      .from("games")
-      .update({ status: newStatus })
-      .eq("id", gameId);
-
-    if (error) console.error("Error updating game status:", error);
-    else fetchGames();
-  };
-
   const handleLogin = async () => {
     await fetchUserAndData();
     router.refresh();
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogoutClick = async () => {
+    await handleLogout();
     setUser(null);
     router.refresh();
   };
@@ -264,7 +106,7 @@ export default function AdminPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         <button
-          onClick={handleLogout}
+          onClick={handleLogoutClick}
           className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
         >
           Log Out
@@ -303,7 +145,6 @@ export default function AdminPage() {
               <tr>
                 <th className="p-2 text-left">Prize Type</th>
                 <th className="p-2 text-left">Amount</th>
-                <th className="p-2 text-left">Probability</th>
                 <th className="p-2 text-left">Actions</th>
               </tr>
             </thead>
@@ -312,7 +153,6 @@ export default function AdminPage() {
                 <tr key={prize.id} className="border-b">
                   <td className="p-2">{prize.prize_type}</td>
                   <td className="p-2">{prize.prize_amount}</td>
-                  <td className="p-2">{prize.probability}</td>
                   <td className="p-2">{/* Add edit and delete buttons */}</td>
                 </tr>
               ))}

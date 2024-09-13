@@ -14,7 +14,7 @@ export const pastGames: Game[] = [
       { answer: "TYLER", frequency: 20, status: "NOT UNIQUE", instantWin: "NO" },
       { answer: "THEODORE", frequency: 1, status: "UNIQUE", instantWin: "NO" },
     ],
-    luckyDipAnswers: [],
+    lucky_dip_answers: [],
     hangmanWords: ["THOMAS", "TIMOTHY", "TYLER", "THEODORE", "TREVOR"], // Add this line
   },
   {
@@ -28,7 +28,7 @@ export const pastGames: Game[] = [
       { answer: "ACKEE", frequency: 1, status: "UNIQUE", instantWin: "NO" },
       { answer: "APPLE", frequency: 5, status: "NOT UNIQUE", instantWin: "NO" },
     ],
-    luckyDipAnswers: [],
+    lucky_dip_answers: [],
     hangmanWords: ["APPLE", "APRICOT", "AVOCADO", "ACAI", "ACKEE"], // Add this line
   },
   {
@@ -42,7 +42,7 @@ export const pastGames: Game[] = [
       { answer: "POLAND", frequency: 1, status: "UNIQUE", instantWin: "NO" },
       { answer: "FRANCE", frequency: 4, status: "NOT UNIQUE", instantWin: "NO" },
     ],
-    luckyDipAnswers: [],
+    lucky_dip_answers: [],
     hangmanWords: ["FRANCE", "GERMANY", "ITALY", "SPAIN", "POLAND"], // Add this line
   },
 ];
