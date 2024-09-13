@@ -32,10 +32,23 @@ export const GameCard: React.FC<GameCardProps> = ({
     onStatusChange(newStatus);
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'paused':
+        return 'text-orange-500';
+      case 'ended':
+        return 'text-red-500';
+      case 'completed':
+        return 'text-blue-500';
+      default:
+        return 'text-gray-500';
+    }
+  };
+
   return (
     <div className="bg-white p-4 rounded-lg shadow">
       <h3 className="text-lg font-semibold mb-2">{game.question}</h3>
-      <p>Status: {game.status}</p>
+      <p>Status: <span className={getStatusColor(game.status)}>{game.status}</span></p>
       <p>Current Prize: £{game.current_prize.toFixed(2)}</p>
       <div className="mt-4 flex space-x-2">
         {game.status !== 'active' && (
