@@ -19,8 +19,8 @@ import {
   fetchGames,
   fetchInstantWinPrizes,
   fetchQuickStats,
-  handleGameStatusChange,
   handleLogout,
+  handleGameStatusChange as updateGameStatusInDB,
 } from "@/utils/adminFunctions";
 import { createClient } from "@/utils/supabase/client";
 import { Edit, Pause, Play, Square, Trash2 } from "lucide-react";
@@ -111,6 +111,20 @@ export default function AdminPage() {
     const updatedGames = await fetchGames();
     setGames(updatedGames);
     setIsAddGameModalOpen(false);
+  };
+
+  const handleGameStatusChange = async (gameId: string, newStatus: string) => {
+    try {
+      // Call the function from adminFunctions to update the game status in the database
+      await updateGameStatusInDB(gameId, newStatus);
+      
+      // Update the local state without fetching all games again
+      setGames(prevGames => prevGames.map(game => 
+        game.id === gameId ? { ...game, status: newStatus } : game
+      ));
+    } catch (error) {
+      console.error("Error changing game status:", error);
+    }
   };
 
   if (!user) {
