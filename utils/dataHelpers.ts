@@ -19,7 +19,7 @@ export interface Game {
   jackpot: number;
   validAnswers: string[];
   answers: Answer[];
-  endTime: string; // Add this line
+  end_time: string; // Add this line
   current_prize: number; // Add this line
   lucky_dip_answers: string[]; // Add this line
   hangmanWords: string[]; // Add this line if it's not already there

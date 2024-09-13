@@ -291,7 +291,7 @@ export default function Home() {
             <li key={game.id} className="bg-[#C0163D] p-4 rounded-lg">
               <h3 className="font-bold">{game.question}</h3>
               <p>Jackpot: £{game.current_prize}</p>
-              <p>Ended: {new Date(game.endTime).toLocaleString()}</p>
+              <p>Ended: {new Date(game.end_time).toLocaleString()}</p>
             </li>
           ))}
         </ul>

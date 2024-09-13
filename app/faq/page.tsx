@@ -28,7 +28,7 @@ export default function FAQPage() {
       initial="hidden"
       animate="visible"
     >
-      <h1 className="text-4xl font-bold mb-8 text-purple-800">Frequently Asked Questions</h1>
+      <h1 className="text-4xl font-bold mb-8 text-white">Frequently Asked Questions</h1>
       <motion.div variants={itemVariants}>
         <Card>
           <CardHeader>
@@ -49,7 +49,7 @@ export default function FAQPage() {
                 <AccordionTrigger>How do I know if I've won?</AccordionTrigger>
                 <AccordionContent>
                   Check your game history or tune into our live results show
-                  every Monday at 8PM on Facebook. We'll announce all winners during the show.
+                  every day at 8PM on Facebook. We'll announce all winners during the show.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-3">
@@ -75,7 +75,7 @@ export default function FAQPage() {
               <AccordionItem value="item-6">
                 <AccordionTrigger>Can I play multiple times in one game?</AccordionTrigger>
                 <AccordionContent>
-                  No, each player is limited to one entry per game to keep things fair for everyone.
+                  Yes, you can play multiple times in one game.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-7">

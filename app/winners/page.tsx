@@ -17,7 +17,7 @@ const itemVariants = {
 export default function Winners() {
   // This would typically come from your database
   const recentWinners = [
-    { name: "John Doe", prize: "£1000", game: "Boys names starting with 'T'", answer: "Thaddeus" },
+    { name: "John Doe", prize: "100 UQ", game: "Boys names starting with 'T'", answer: "Thaddeus" },
     { name: "Jane Smith", prize: "£500", game: "Fruits starting with 'P'", answer: "Pomelo" },
     { name: "Bob Johnson", prize: "£250", game: "Countries starting with 'S'", answer: "San Marino" },
     { name: "Alice Brown", prize: "£100", game: "Animals starting with 'Z'", answer: "Zebu" },
@@ -31,12 +31,12 @@ export default function Winners() {
       initial="hidden"
       animate="visible"
     >
-      <h1 className="text-4xl font-bold mb-8 text-purple-800">Winners</h1>
+      <h1 className="text-4xl font-bold mb-8 text-white">Winners</h1>
       
       <motion.div variants={itemVariants}>
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-purple-700">
+            <CardTitle className="text-2xl font-bold text-red-700">
               Recent Winners
             </CardTitle>
           </CardHeader>
@@ -70,19 +70,19 @@ export default function Winners() {
       <motion.div variants={itemVariants}>
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-purple-700">
+            <CardTitle className="text-2xl font-bold text-red-700">
               Winner Testimonials
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <blockquote className="italic border-l-4 border-purple-500 pl-4">
+              <blockquote className="italic border-l-4 border-red-500 pl-4">
                 "I never thought I'd win with such a simple answer! UniqueWin is amazing!" - John D.
               </blockquote>
-              <blockquote className="italic border-l-4 border-purple-500 pl-4">
+              <blockquote className="italic border-l-4 border-red-500 pl-4">
                 "The thrill of seeing my answer was unique is unbeatable. Thanks, UniqueWin!" - Sarah T.
               </blockquote>
-              <blockquote className="italic border-l-4 border-purple-500 pl-4">
+              <blockquote className="italic border-l-4 border-red-500 pl-4">
                 "I've won twice now. This game is addictive and so much fun!" - Mike R.
               </blockquote>
             </div>

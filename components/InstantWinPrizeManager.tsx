@@ -98,9 +98,9 @@ export default function InstantWinPrizeManager() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold mb-4 text-purple-700">Manage Instant Win Prizes</h2>
-      <div className="bg-purple-100 p-6 rounded-lg shadow-md">
-        <h3 className="text-xl font-bold mb-2 text-purple-600">
+      <h2 className="text-2xl font-bold mb-4 text-red-700">Manage Instant Win Prizes</h2>
+      <div className="bg-red-100 p-6 rounded-lg shadow-md">
+        <h3 className="text-xl font-bold mb-2 text-red-600">
           {editingPrize ? "Edit Prize" : "Add New Prize"}
         </h3>
         <form className="space-y-4">
@@ -225,7 +225,7 @@ export default function InstantWinPrizeManager() {
       </div>
       <div className="space-y-4">
         {prizes.map((prize) => (
-          <div key={prize.id} className="bg-purple-100 p-4 rounded-lg shadow-md flex justify-between items-center">
+          <div key={prize.id} className="bg-red-100 p-4 rounded-lg shadow-md flex justify-between items-center">
             <div>
               <p>Type: {prize.prize_type}</p>
               {prize.prize_type === 'CASH' && <p>Amount: £{prize.prize_amount}</p>}
@@ -235,7 +235,7 @@ export default function InstantWinPrizeManager() {
             </div>
             <div>
               <Button
-                className="bg-purple-500 hover:bg-purple-600 mr-2"
+                className="bg-red-500 hover:bg-red-600 mr-2"
                 onClick={() => setEditingPrize(prize)}
               >
                 Edit
