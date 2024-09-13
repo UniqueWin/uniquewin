@@ -5,11 +5,11 @@ const supabase = createClient();
 
 export interface Answer {
   answer: string;
-  frequency: number;
   status: string;
   instantWin: string;
   isInstantWin: boolean;
   submittedAt: string;
+  frequency?: number; // Make frequency optional
 }
 
 export interface Game {
@@ -336,6 +336,7 @@ export async function getUserAnswers(
         ? `£${answer.instant_win_amount}`
         : "NO",
       submittedAt: answer.submitted_at,
+      // frequency is not included in the database query, so we omit it here
     }));
   } catch (error) {
     console.error("Error in getUserAnswers:", error);
