@@ -15,34 +15,38 @@ export const pastGames: Game[] = [
       { answer: "TREVOR", frequency: 1, status: "UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
     ],
     lucky_dip_answers: [],
-    hangmanWords: ["THOMAS", "TIMOTHY", "TYLER", "THEODORE", "TREVOR"], // Add this line
+    hangmanWords: ["THOMAS", "TIMOTHY", "TYLER", "THEODORE", "TREVOR"],
+    endTime: new Date().toISOString(), // Add this line
+    current_prize: 1000, // Add this line
   },
   {
-    id: 2,
+    id: "2", // Change to string
     question: "NAME A FRUIT THAT STARTS WITH 'A'",
+    gameStatus: "completed", // Add this line
     jackpot: 1200,
-    startTime: "2023-06-02T00:00:00Z",
-    endTime: "2023-06-02T23:59:59Z",
     validAnswers: ["APPLE", "APRICOT", "AVOCADO", "ACAI", "ACKEE"],
     answers: [
-      { answer: "ACKEE", frequency: 1, status: "UNIQUE", instantWin: "NO" },
-      { answer: "APPLE", frequency: 5, status: "NOT UNIQUE", instantWin: "NO" },
+      { answer: "ACKEE", frequency: 1, status: "UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
+      { answer: "APPLE", frequency: 5, status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
     ],
     lucky_dip_answers: [],
-    hangmanWords: ["APPLE", "APRICOT", "AVOCADO", "ACAI", "ACKEE"], // Add this line
+    hangmanWords: ["APPLE", "APRICOT", "AVOCADO", "ACAI", "ACKEE"],
+    endTime: new Date().toISOString(), // Add this line
+    current_prize: 1200, // Add this line
   },
   {
-    id: 3,
+    id: "3", // Change to string
     question: "NAME A COUNTRY IN EUROPE",
+    gameStatus: "completed", // Add this line
     jackpot: 2000,
-    startTime: "2023-06-03T00:00:00Z",
-    endTime: "2023-06-03T23:59:59Z",
     validAnswers: ["FRANCE", "GERMANY", "ITALY", "SPAIN", "POLAND"],
     answers: [
-      { answer: "POLAND", frequency: 1, status: "UNIQUE", instantWin: "NO" },
-      { answer: "FRANCE", frequency: 4, status: "NOT UNIQUE", instantWin: "NO" },
+      { answer: "POLAND", frequency: 1, status: "UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
+      { answer: "FRANCE", frequency: 4, status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
     ],
     lucky_dip_answers: [],
-    hangmanWords: ["FRANCE", "GERMANY", "ITALY", "SPAIN", "POLAND"], // Add this line
+    hangmanWords: ["FRANCE", "GERMANY", "ITALY", "SPAIN", "POLAND"],
+    endTime: new Date().toISOString(), // Add this line
+    current_prize: 2000, // Add this line
   },
 ];

@@ -20,6 +20,9 @@ export interface Game {
   validAnswers: string[];
   answers: Answer[];
   endTime: string; // Add this line
+  current_prize: number; // Add this line
+  lucky_dip_answers: string[]; // Add this line
+  hangmanWords: string[]; // Add this line if it's not already there
   // ... other properties
 }
 
@@ -27,7 +30,7 @@ export interface InstantWinPrize {
   id: string;
   prize_amount: number;
   probability: number;
-  prize_type: 'cash' | 'item';
+  prize_type: string;
   prize_details: any;
 }
 
@@ -36,6 +39,7 @@ export interface GameInstantWinPrize {
   game_id: string;
   instant_win_prize_id: string;
   quantity: number;
+  custom_probability: number;
   prize: InstantWinPrize;
 }
 
@@ -97,24 +101,50 @@ export async function getGameById(gameId: string): Promise<Game | null> {
   }
 }
 
-export async function getGameInstantWinPrizes(gameId: string): Promise<GameInstantWinPrize[]> {
+export async function getGameInstantWinPrizes(
+  gameId: string
+): Promise<GameInstantWinPrize[]> {
   const { data, error } = await supabase
-    .from('game_instant_win_prizes')
-    .select(`
+    .from("game_instant_win_prizes")
+    .select(
+      `
       id,
       game_id,
       instant_win_prize_id,
       quantity,
-      prize:instant_win_prizes (*)
-    `)
-    .eq('game_id', gameId);
+      prize:instant_win_prizes (
+        id,
+        prize_amount,
+        probability,
+        prize_type,
+        prize_details
+      )
+    `
+    )
+    .eq("game_id", gameId);
 
   if (error) {
-    console.error('Error fetching game instant win prizes:', error);
+    console.error("Error fetching game instant win prizes:", error);
     return [];
   }
 
-  return data as GameInstantWinPrize[];
+  // Transform the data to match the GameInstantWinPrize interface
+  const transformedData: GameInstantWinPrize[] = data.map((item: any) => ({
+    id: item.id,
+    game_id: item.game_id,
+    instant_win_prize_id: item.instant_win_prize_id,
+    quantity: item.quantity,
+    custom_probability: item.custom_probability,
+    prize: {
+      id: item.prize.id,
+      prize_amount: item.prize.prize_amount,
+      probability: item.prize.probability,
+      prize_type: item.prize.prize_type,
+      prize_details: item.prize.prize_details,
+    },
+  }));
+
+  return transformedData;
 }
 
 export const submitAnswer = async (
@@ -158,7 +188,9 @@ export const submitAnswer = async (
         answer_text: answer,
         is_lucky_dip: isLuckyDip,
         is_instant_win: !!instantWinPrize,
-        instant_win_amount: instantWinPrize ? instantWinPrize.prize.prize_amount : 0,
+        instant_win_amount: instantWinPrize
+          ? instantWinPrize.prize.prize_amount
+          : 0,
       })
       .select()
       .single();
@@ -176,8 +208,13 @@ export const submitAnswer = async (
   }
 };
 
-export function checkForInstantWin(prizes: GameInstantWinPrize[]): GameInstantWinPrize | null {
-  const totalProbability = prizes.reduce((sum, prize) => sum + (prize.prize.probability * prize.quantity), 0);
+export function checkForInstantWin(
+  prizes: GameInstantWinPrize[]
+): GameInstantWinPrize | null {
+  const totalProbability = prizes.reduce(
+    (sum, prize) => sum + prize.prize.probability * prize.quantity,
+    0
+  );
   if (totalProbability === 0) return null;
 
   const randomNumber = Math.random() * totalProbability;
@@ -195,24 +232,24 @@ export function checkForInstantWin(prizes: GameInstantWinPrize[]): GameInstantWi
 
 async function updateInstantWinPrizeQuantity(prizeId: string) {
   const { data, error } = await supabase
-    .from('game_instant_win_prizes')
-    .select('quantity')
-    .eq('id', prizeId)
+    .from("game_instant_win_prizes")
+    .select("quantity")
+    .eq("id", prizeId)
     .single();
 
   if (error) {
-    console.error('Error fetching prize quantity:', error);
+    console.error("Error fetching prize quantity:", error);
     return;
   }
 
   if (data && data.quantity > 0) {
     const { error: updateError } = await supabase
-      .from('game_instant_win_prizes')
+      .from("game_instant_win_prizes")
       .update({ quantity: data.quantity - 1 })
-      .eq('id', prizeId);
+      .eq("id", prizeId);
 
     if (updateError) {
-      console.error('Error updating instant win prize quantity:', updateError);
+      console.error("Error updating instant win prize quantity:", updateError);
     }
   }
 }
@@ -265,33 +302,40 @@ export function generateValidAnswers(question: string): string[] {
   return answers[question as keyof typeof answers] || [];
 }
 
-export async function getUserAnswers(userId: string, gameId: string): Promise<Answer[]> {
+export async function getUserAnswers(
+  userId: string,
+  gameId: string
+): Promise<Answer[]> {
   try {
     const { data, error } = await supabase
-      .from('answers')
-      .select(`
+      .from("answers")
+      .select(
+        `
         id,
         answer_text,
         status,
         is_instant_win,
         instant_win_amount,
         submitted_at
-      `)
-      .eq('user_id', userId)
-      .eq('game_id', gameId)
-      .order('submitted_at', { ascending: false });
+      `
+      )
+      .eq("user_id", userId)
+      .eq("game_id", gameId)
+      .order("submitted_at", { ascending: false });
 
     if (error) {
       console.error("Error fetching user answers:", error);
       throw error;
     }
 
-    return data.map(answer => ({
+    return data.map((answer) => ({
       answer: answer.answer_text,
-      status: answer.status || 'PENDING',
+      status: answer.status || "PENDING",
       isInstantWin: answer.is_instant_win,
-      instantWin: answer.is_instant_win ? `£${answer.instant_win_amount}` : 'NO',
-      submittedAt: answer.submitted_at
+      instantWin: answer.is_instant_win
+        ? `£${answer.instant_win_amount}`
+        : "NO",
+      submittedAt: answer.submitted_at,
     }));
   } catch (error) {
     console.error("Error in getUserAnswers:", error);
@@ -299,17 +343,19 @@ export async function getUserAnswers(userId: string, gameId: string): Promise<An
   }
 }
 
-export async function getCurrentUser(userId: string): Promise<ExtendedUser | null> {
+export async function getCurrentUser(
+  userId: string
+): Promise<ExtendedUser | null> {
   const supabase = createClient();
-  
+
   const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
     .single();
 
   if (error) {
-    console.error('Error fetching user:', error);
+    console.error("Error fetching user:", error);
     return null;
   }
 
@@ -321,7 +367,7 @@ export async function getCurrentUser(userId: string): Promise<ExtendedUser | nul
   const extendedUser: ExtendedUser = {
     ...data,
     is_admin: data.is_admin || false,
-    username: data.username || data.email?.split('@')[0] || '',
+    username: data.username || data.email?.split("@")[0] || "",
     credit_balance: data.credit_balance || 0,
   };
 

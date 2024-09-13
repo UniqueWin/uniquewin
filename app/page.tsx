@@ -51,7 +51,7 @@ export default function Component() {
           <div className="flex flex-col items-center justify-center p-10">
             <h1 className="text-2xl font-bold">{currentGame.question}</h1>
             <p className="text-lg">Jackpot: £{currentGame.current_prize}</p>
-            <p className="text-lg">Ends: {new Date(currentGame.end_time).toLocaleString()}</p>
+            <p className="text-lg">Ends: {new Date(currentGame.endTime).toLocaleString()}</p>
           </div>
         )}
         <h2>Past Games</h2>
