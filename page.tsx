@@ -20,7 +20,7 @@ interface ExtendedUser extends User {
   gameHistory?: GameHistoryEntry[];
 }
 
-export default function LandingPage() {
+export default function GamePage() {
   const { user, updateUser } = useUser<ExtendedUser>();
   const [currentGame, setCurrentGame] = useState(getCurrentGame());
   const [answer, setAnswer] = useState("");
@@ -58,7 +58,7 @@ export default function LandingPage() {
         let luckyDipAnswer = "";
         if (isLuckyDip) {
           if (Math.random() < 0.5) {
-            const uniqueAnswer = currentGame.validAnswers.find(
+            const uniqueAnswer = currentGame.valid_answers.find(
               (a) =>
                 !currentGame.answers.some(
                   (submittedAnswer) => submittedAnswer.answer === a

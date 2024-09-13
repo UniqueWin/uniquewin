@@ -22,7 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import ScratchCardComponent from "./ScratchcardComponent";
+import ScratchCardComponent from "./ScratchCardComponent";
 
 interface UserAnswer {
   answer: string;
@@ -50,34 +50,43 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
   const [userAnswersLoading, setUserAnswersLoading] = useState(true);
   const supabase = createClient();
 
-  useEffect(() => {
-    const fetchUserAndGame = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        setUser(user as User & { credit_balance: number; id: string });
-        const currentGame = await getGameById(params.gameId);
-        if (currentGame) {
-          setGame(currentGame);
-          if (!currentGame.answers) {
-            currentGame.answers = [];
-          }
-          setAvailableLuckyDips([...(currentGame.valid_answers || [])]);
-
-          // Fetch user answers for this game
-          setUserAnswersLoading(true);
-          const answers = await getUserAnswers(user.id, params.gameId);
-          setUserAnswers(answers);
-          setUserAnswersLoading(false);
-        } else {
-          router.push("/games");
+  const fetchUserAndGame = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      setUser(user as User & { credit_balance: number; id: string });
+      const currentGame = await getGameById(params.gameId);
+      if (currentGame) {
+        setGame(currentGame);
+        if (!currentGame.answers) {
+          currentGame.answers = [];
         }
-      } else {
-        router.push("/login");
-      }
-    };
+        setAvailableLuckyDips([...(currentGame.valid_answers || [])]);
 
+        // Fetch user answers for this game
+        setUserAnswersLoading(true);
+        const answers = await getUserAnswers(user.id, params.gameId);
+        // Map the answers to match the UserAnswer interface
+        setUserAnswers(
+          answers.map((answer) => ({
+            answer: answer.answer,
+            status: answer.status,
+            isInstantWin: answer.isInstantWin,
+            instantWin: answer.instantWin,
+            submittedAt: answer.submittedAt,
+          })) || []
+        );
+        setUserAnswersLoading(false);
+      } else {
+        router.push("/games");
+      }
+    } else {
+      router.push("/login");
+    }
+  };
+
+  useEffect(() => {
     fetchUserAndGame();
   }, [router, params.gameId, supabase]);
 
@@ -85,7 +94,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     if (game) {
       const timer = setInterval(() => {
         const now = new Date();
-        const endTime = new Date(game.endTime);
+        const endTime = new Date(game.end_time);
         const distance = endTime.getTime() - now.getTime();
 
         if (distance < 0) {
@@ -172,7 +181,9 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                           {answer.answer}
                         </TableCell>
                         <TableCell>{answer.status}</TableCell>
-                        <TableCell>{answer.isInstantWin ? "Yes" : "No"}</TableCell>
+                        <TableCell>
+                          {answer.isInstantWin ? "Yes" : "No"}
+                        </TableCell>
                         <TableCell>
                           {answer.instantWin !== "NO" ? (
                             <ScratchCardComponent

@@ -1,25 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { createClient } from "@/utils/supabase/client";
-import { GameCard } from "@/components/GameCard";
-import { AddInstantWinPrizeModal } from "@/components/AddInstantWinPrizeModal";
 import { AddGameModal } from "@/components/AddGameModal";
+import { AddInstantWinPrizeModal } from "@/components/AddInstantWinPrizeModal";
 import { EditGameModal } from "@/components/EditGameModal";
+import GameOverviewCard from "@/components/GameOverviewCard";
 import { LoginModal } from "@/components/LoginModal";
 import { QuickStatsBox, QuickStatsProps } from "@/components/QuickStatsBox";
-import { useRouter } from "next/navigation";
-import { Play, Pause, Square, Edit, Trash2 } from "lucide-react";
-import GameOverviewCard from "@/components/GameOverviewCard";
 import {
+  fetchAllGames,
+  fetchAllPlayers,
   fetchGames,
   fetchInstantWinPrizes,
   fetchQuickStats,
-  fetchAllPlayers,
-  fetchAllGames,
   handleGameStatusChange,
   handleLogout
 } from "@/utils/adminFunctions";
+import { createClient } from "@/utils/supabase/client";
+import { Edit, Pause, Play, Square, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function AdminPage() {
   const [games, setGames] = useState<any[]>([]);

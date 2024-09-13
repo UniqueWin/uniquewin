@@ -2,7 +2,13 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Game, Answer, submitAnswer, checkForInstantWin, getGameInstantWinPrizes } from "@/utils/dataHelpers";
+import {
+  Game,
+  Answer,
+  submitAnswer,
+  checkForInstantWin,
+  getGameInstantWinPrizes,
+} from "@/utils/dataHelpers";
 import { User } from "@/utils/userHelpers";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -54,13 +60,21 @@ export default function Question({
       setIsSubmitting(true);
 
       // Check for instant win
-      const instantWinPrizes = await getGameInstantWinPrizes(game.id.toString());
+      const instantWinPrizes = await getGameInstantWinPrizes(
+        game.id.toString()
+      );
       const instantWinPrize = checkForInstantWin(instantWinPrizes);
 
       const result = await submitAnswer(
         game.id.toString(),
         user.id,
-        isLuckyDip ? getPartiallyHiddenWord(availableLuckyDips[Math.floor(Math.random() * availableLuckyDips.length)]) : answer,
+        isLuckyDip
+          ? getPartiallyHiddenWord(
+              availableLuckyDips[
+                Math.floor(Math.random() * availableLuckyDips.length)
+              ]
+            )
+          : answer,
         isLuckyDip,
         instantWinPrize
       );
@@ -106,12 +120,15 @@ export default function Question({
       toast("Answer submitted successfully!");
 
       if (instantWinPrize) {
-        toast(`Congratulations! You won an instant prize: £${instantWinPrize.prize.prize_amount}`);
+        toast(
+          `Congratulations! You won an instant prize: £${instantWinPrize.prize.prize_amount}`
+        );
       }
-
     } catch (error) {
       if (error instanceof Error && error.message === "Insufficient credits") {
-        toast("You don't have enough credits to play. Please buy more credits.");
+        toast(
+          "You don't have enough credits to play. Please buy more credits."
+        );
       } else {
         toast("Failed to submit answer. Please try again.");
       }

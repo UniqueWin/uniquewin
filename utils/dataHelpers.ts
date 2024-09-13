@@ -6,6 +6,7 @@ export interface Answer {
   answer: string;
   frequency: number;
   status: "UNIQUE" | "NOT UNIQUE" | "PENDING";
+  isInstantWin: boolean;
   instantWin: string;
   submittedAt: string;
 }
@@ -88,7 +89,7 @@ export async function getGameById(gameId: string): Promise<Game | null> {
 
     if (error) {
       console.error("Error fetching game:", error);
-      throw error;
+      return null;
     }
 
     return data as Game;

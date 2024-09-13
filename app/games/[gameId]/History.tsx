@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import ScratchCardComponent from "./ScratchcardComponent";
+import ScratchCardComponent from "./ScratchCardComponent";
 import { Game } from "@/utils/dataHelpers";
 
 type HistoryProps = {
