@@ -12,7 +12,9 @@ interface GameCardProps {
     pause: React.ReactElement;
     stop: React.ReactElement;
     edit: React.ReactElement;
+    delete: React.ReactElement;
   };
+  onDelete: () => void;
 }
 
 export const GameCard: React.FC<GameCardProps> = ({
@@ -21,7 +23,8 @@ export const GameCard: React.FC<GameCardProps> = ({
   onEdit,
   onStatusChange,
   userId,
-  icons
+  icons,
+  onDelete
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -66,6 +69,13 @@ export const GameCard: React.FC<GameCardProps> = ({
           title="Edit"
         >
           {icons.edit}
+        </button>
+        <button
+          onClick={onDelete}
+          className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
+          title="Delete"
+        >
+          {icons.delete}
         </button>
       </div>
       {isPlaying && <GamePlay game={game} userId={userId} />}

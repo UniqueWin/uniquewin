@@ -43,6 +43,7 @@ export default function GameOverviewCard({
             onStatusChange={(newStatus) => onStatusChange(game.id, newStatus)}
             userId={userId}
             icons={icons}
+            onDelete={() => onDelete(game.id)}
           />
         ))}
       </div>

@@ -98,7 +98,10 @@ export default function AdminPage() {
       if (error) {
         console.error("Error deleting game:", error);
       } else {
-        fetchGames();
+        // Update the games state directly after successful deletion
+        setGames(prevGames => prevGames.filter(game => game.id !== gameId));
+        // Optionally, you can still call fetchGames to ensure consistency with the database
+        fetchGames().then(updatedGames => setGames(updatedGames));
       }
     }
   };
