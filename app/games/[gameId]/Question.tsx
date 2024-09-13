@@ -49,6 +49,7 @@ export default function Question({
   const [isLuckyDip, setIsLuckyDip] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const supabase = createClient();
+  console.log({ user });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

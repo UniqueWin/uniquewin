@@ -56,7 +56,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     if (user) {
       const extendedUser: ExtendedUser = {
         ...user,
-        id: parseInt(user.id, 10), // Convert string id to number
+        id: user.id, // Convert string id to number
         username: "", // Provide a default value if username is missing
         is_admin: false, // Set a default value or fetch from somewhere
         email: user.email || "", // Provide a default value for email

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 // import { User } from "@supabase/supabase-js";
 
 export interface User {
-  id: number;
+  id: string;
   username: string;
   email: string;
   credit_balance: number;
@@ -66,7 +66,7 @@ export function useUser<T extends User>() {
 
 // Emulate login function (for development purposes)
 export function emulateLogin(
-  userId: number,
+  userId: string,
   username: string,
   email: string,
   initialBalance: number
