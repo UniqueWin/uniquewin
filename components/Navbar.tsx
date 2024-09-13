@@ -116,24 +116,24 @@ const Navbar = () => {
           <nav>
             <ul className="flex space-x-4">
               <li>
-                <a href="/games" className="hover:underline">
+                <Link href="/games" className="hover:underline">
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:underline">
+                <Link href="/how-to-play" className="hover:underline">
                   How to Play
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:underline">
+                <Link href="/winners" className="hover:underline">
                   Winners
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:underline">
+                <Link href="/faq" className="hover:underline">
                   FAQ
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
