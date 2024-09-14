@@ -1,19 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Trophy } from "lucide-react";
-import Image from "next/image";
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
 import { TextRevealCard } from "@/components/ui/text-reveal-card";
-import { createClient } from "@/utils/supabase/client";
 import { Game } from "@/utils/dataHelpers";
+import { createClient } from "@/utils/supabase/client";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [currentGame, setCurrentGame] = useState<Game | null>(null);
-  const [pastGames, setPastGames] = useState<Game[]>([]);
   const supabase = createClient();
 
+  const [currentGame, setCurrentGame] = useState<Game | null>(null);
+  const [pastGames, setPastGames] = useState<Game[]>([]);
   const placeholders = [
     {
       question: "Name a boys name beginning with 'T':",
@@ -177,6 +176,45 @@ export default function Home() {
     console.log("submitted");
   };
 
+  useEffect(() => {
+    const checkAndCleanup = async () => {
+      try {
+        const { data: lastCleanup, error: cleanupError } = await supabase
+          .from("last_cleanup")
+          .select("last_run")
+          .single();
+
+        if (cleanupError) throw cleanupError;
+
+        const lastRun = new Date(lastCleanup?.last_run || 0);
+        const now = new Date();
+        const minutesSinceLastRun =
+          (now.getTime() - lastRun.getTime()) / (1000 * 60);
+
+        if (minutesSinceLastRun >= 5) {
+          const response = await fetch("/api/close-expired-games", {
+            method: "GET",
+          });
+          if (!response.ok) {
+            throw new Error("Failed to trigger cleanup");
+          }
+          console.log("Cleanup triggered successfully");
+        }
+      } catch (error) {
+        console.error("Error checking or triggering cleanup:", error);
+      }
+    };
+
+    // Run immediately on component mount
+    checkAndCleanup();
+
+    // Set up interval to run every 5 minutes
+    const intervalId = setInterval(checkAndCleanup, 5 * 60 * 1000);
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [supabase]);
+
   return (
     <div className="min-h-screen bg-[#7f102c] max-w-7xl mx-auto">
       <div className="text-center mt-20 px-4">
@@ -212,7 +250,7 @@ export default function Home() {
             <div className="flex items-center justify-center space-x-2">
               <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" className="sr-only peer" />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
               </label>
               <span className="text-white">Lucky Dip</span>
             </div>
