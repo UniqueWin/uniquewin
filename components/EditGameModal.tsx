@@ -147,6 +147,58 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
     setPrizeQuantities((prev) => ({ ...prev, [prizeId]: quantity }));
   };
 
+  const handlePresetTime = (preset: string) => {
+    const now = new Date();
+    let newStartTime: Date;
+    let newEndTime: Date;
+
+    const roundToNearest15 = (date: Date) => {
+      const minutes = date.getMinutes();
+      const roundedMinutes = Math.ceil(minutes / 15) * 15;
+      const newDate = new Date(date);
+      newDate.setMinutes(roundedMinutes, 0, 0);
+      return newDate;
+    };
+
+    const addMinutes = (date: Date, minutes: number) => {
+      return new Date(date.getTime() + minutes * 60000);
+    };
+
+    switch (preset) {
+      case '15min':
+      case '30min':
+      case '45min':
+      case '60min':
+        newStartTime = roundToNearest15(now);
+        newEndTime = addMinutes(newStartTime, parseInt(preset));
+        break;
+      case 'next15':
+      case 'next30':
+      case 'next45':
+      case 'next60':
+        const minutesToAdd = parseInt(preset.slice(4));
+        newStartTime = addMinutes(roundToNearest15(now), minutesToAdd);
+        newEndTime = addMinutes(newStartTime, 15);
+        break;
+      case 'nextHour':
+        newStartTime = new Date(now.setMinutes(0, 0, 0));
+        newStartTime.setHours(newStartTime.getHours() + 1);
+        newEndTime = addMinutes(newStartTime, 60);
+        break;
+      default:
+        newStartTime = roundToNearest15(now);
+        newEndTime = addMinutes(newStartTime, 60);
+        break;
+    }
+
+    setStartTime(formatDateTimeLocal(newStartTime));
+    setEndTime(formatDateTimeLocal(newEndTime));
+  };
+
+  const formatDateTimeLocal = (date: Date): string => {
+    return date.toISOString().slice(0, 16);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] bg-white text-black">
@@ -206,6 +258,20 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
                     onChange={(e) => setLuckyDipPrice(e.target.value)}
                     className="mt-1 bg-white"
                   />
+                </div>
+              </div>
+              <div>
+                <Label className="text-sm font-medium">Time Presets</Label>
+                <div className="mt-1 flex flex-wrap gap-2">
+                  <Button type="button" onClick={() => handlePresetTime('15min')}>15 min</Button>
+                  <Button type="button" onClick={() => handlePresetTime('30min')}>30 min</Button>
+                  <Button type="button" onClick={() => handlePresetTime('45min')}>45 min</Button>
+                  <Button type="button" onClick={() => handlePresetTime('60min')}>60 min</Button>
+                  <Button type="button" onClick={() => handlePresetTime('next15')}>Next +15</Button>
+                  <Button type="button" onClick={() => handlePresetTime('next30')}>Next +30</Button>
+                  <Button type="button" onClick={() => handlePresetTime('next45')}>Next +45</Button>
+                  <Button type="button" onClick={() => handlePresetTime('next60')}>Next +60</Button>
+                  <Button type="button" onClick={() => handlePresetTime('nextHour')}>Next Hour</Button>
                 </div>
               </div>
               <div>
