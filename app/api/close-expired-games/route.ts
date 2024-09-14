@@ -7,11 +7,10 @@ export async function GET() {
   const supabase = createClient();
 
   try {
-    // Use UTC time to avoid timezone issues
-    const now = new Date().toLocaleString("en-GB", {
-      timeZone: "Europe/London",
-    });
+    // Get current time in ISO 8601 format with timezone offset
+    const now = new Date().toISOString();
 
+    console.log({ now });
     // Close expired games
     const { data: closedGames, error: closeError } = await supabase
       .from("games")

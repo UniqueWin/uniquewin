@@ -140,21 +140,36 @@ export default function Home() {
 
   useEffect(() => {
     const fetchGames = async () => {
-      const { data: currentGameData } = await supabase
-        .from("games")
-        .select("*")
-        .eq("status", "active")
-        .single();
+      try {
+        const { data: currentGameData, error: currentGameError } =
+          await supabase
+            .from("games")
+            .select("*")
+            .eq("status", "active")
+            .single();
 
-      setCurrentGame(currentGameData || null);
+        if (currentGameError) {
+          console.error("Error fetching current game:", currentGameError);
+          setCurrentGame(null);
+        } else {
+          setCurrentGame(currentGameData || null);
+        }
 
-      const { data: pastGamesData } = await supabase
-        .from("games")
-        .select("*")
-        .neq("status", "active")
-        .limit(5);
+        const { data: pastGamesData, error: pastGamesError } = await supabase
+          .from("games")
+          .select("*")
+          .neq("status", "active")
+          .limit(5);
 
-      setPastGames(pastGamesData || []);
+        if (pastGamesError) {
+          console.error("Error fetching past games:", pastGamesError);
+          setPastGames([]);
+        } else {
+          setPastGames(pastGamesData || []);
+        }
+      } catch (error) {
+        console.error("Error fetching games:", error);
+      }
     };
 
     fetchGames();
@@ -182,21 +197,38 @@ export default function Home() {
           .eq("id", 1)
           .single();
 
+        console.log({ lastCleanup, cleanupError });
+
         if (cleanupError) throw cleanupError;
 
         const lastRunString = lastCleanup?.last_run;
 
+        // Parse the date string directly, as it's already in ISO 8601 format
         const lastRun = lastRunString ? new Date(lastRunString) : new Date(0);
         const now = new Date();
 
-        // Adjust for timezone difference
-        const timezoneDiff = now.getTimezoneOffset() * 60000; // Convert minutes to milliseconds
-        const adjustedLastRun = new Date(lastRun.getTime() + timezoneDiff);
+        // Format both dates to UK time strings for comparison and logging
+        const ukTimeFormatter = new Intl.DateTimeFormat("en-GB", {
+          timeZone: "Europe/London",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+        });
 
-        const minutesSinceLastRun =
-          (now.getTime() - adjustedLastRun.getTime()) / (1000 * 60);
+        const lastRunUK = ukTimeFormatter.format(lastRun);
+        const nowUK = ukTimeFormatter.format(now);
 
-        if (minutesSinceLastRun >= 5) {
+        const minutesSinceLastRun = (now.getTime() - lastRun.getTime()) / (1000 * 60);
+
+        console.log(`Last cleanup run (UK): ${lastRunUK}`);
+        console.log(`Current time (UK): ${nowUK}`);
+        console.log(`Minutes since last run: ${minutesSinceLastRun.toFixed(2)}`);
+
+        if (minutesSinceLastRun >= 1) {
           console.log("Triggering cleanup...");
           const response = await fetch("/api/close-expired-games", {
             method: "GET",

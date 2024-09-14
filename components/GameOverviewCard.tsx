@@ -49,8 +49,8 @@ const GameOverviewCard: React.FC<GameOverviewCardProps> = ({
                 onDelete={() => onDelete(game.id)}
               />
               <div className="mt-2 text-sm text-gray-600">
-                <p>Start Time: {new Date(game.start_time).toLocaleString()}</p>
-                <p>End Time: {new Date(game.end_time).toLocaleString()}</p>
+                <p>Start Time: {game.start_time}</p>
+                <p>End Time: {game.end_time}</p>
               </div>
             </div>
           ))}

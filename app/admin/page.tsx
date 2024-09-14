@@ -27,6 +27,7 @@ import { Edit, Pause, Play, Square, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import Link from 'next/link';
 
 export default function AdminPage() {
   const [games, setGames] = useState<any[]>([]);
@@ -177,6 +178,11 @@ export default function AdminPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         <div className="space-x-2">
+          <Link href="/admin/users">
+            <Button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+              Manage Users
+            </Button>
+          </Link>
           <Button
             onClick={handleCloseExpiredGames}
             className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
@@ -326,15 +332,9 @@ export default function AdminPage() {
                 <td className="p-2">{game.question}</td>
                 <td className="p-2">{game.status}</td>
                 <td className="p-2">£{game.current_prize.toFixed(2)}</td>
-                <td className="p-2">
-                  {new Date(game.start_time).toLocaleString()}
-                </td>
-                <td className="p-2">
-                  {new Date(game.end_time).toLocaleString()}
-                </td>
-                <td className="p-2">
-                  {new Date(game.created_at).toLocaleDateString()}
-                </td>
+                <td className="p-2">{game.start_time}</td>
+                <td className="p-2">{game.end_time}</td>
+                <td className="p-2">{game.created_at}</td>
               </tr>
             ))}
           </tbody>
