@@ -81,3 +81,39 @@
     - [ ] Set up staging environment
     - [ ] Configure production environment
     - [ ] Implement CI/CD pipeline
+
+
+
+
+    play a game every hour
+
+play games per hour
+ - start and end date/time in admin add and edit modals
+
+/games 
+	show current game (current hour)
+
+check instant wins - seem to always be given out should be based on probability and what is left
+
+lucky dip - not functional - should allow to pick from a list of unique answers
+unique answers are answers from the valid_answers list that have not been guessed 
+
+
+
+
+
+
+
+need to see how many instant wins for each game is left
+should show instant wins on the game page to entice people
+
+
+add instant win prize to users account after win
+
+adjust % to scratch off to win scratch card
+
+
+
+
+need a modal to add credits, choose amount, dummy checkout screen for payment
+
