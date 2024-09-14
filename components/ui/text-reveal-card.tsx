@@ -112,7 +112,7 @@ export const TextRevealCard = ({
         ></motion.div>
 
         <div className="overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,white,transparent)]">
-          <p className="text-sm sm:text-base py-2 font-bold bg-clip-text text-transparent bg-white">
+          <div className="text-sm sm:text-base py-2 font-bold bg-clip-text text-transparent bg-white">
             <TypewriterEffectSmooth
               words={[
                 {
@@ -120,7 +120,7 @@ export const TextRevealCard = ({
                 },
               ]}
             />
-          </p>
+          </div>
           <MemoizedStars />
         </div>
       </div>

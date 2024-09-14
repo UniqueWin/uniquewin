@@ -8,7 +8,9 @@ export async function GET() {
 
   try {
     // Use UTC time to avoid timezone issues
-    const now = new Date().toISOString();
+    const now = new Date().toLocaleString("en-GB", {
+      timeZone: "Europe/London",
+    });
 
     // Close expired games
     const { data: closedGames, error: closeError } = await supabase
@@ -22,9 +24,9 @@ export async function GET() {
 
     // Update last_cleanup timestamp
     const { error: updateError } = await supabase
-      .from('last_cleanup')
+      .from("last_cleanup")
       .update({ last_run: now })
-      .eq('id', 1);
+      .eq("id", 1);
 
     if (updateError) throw updateError;
 

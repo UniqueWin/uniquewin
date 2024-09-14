@@ -8,9 +8,9 @@ import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-export default function Home() {
-  const supabase = createClient();
+const supabase = createClient();
 
+export default function Home() {
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
   const [pastGames, setPastGames] = useState<Game[]>([]);
   const placeholders = [
@@ -140,29 +140,21 @@ export default function Home() {
 
   useEffect(() => {
     const fetchGames = async () => {
-      const { data: currentGameData, error: currentGameError } = await supabase
+      const { data: currentGameData } = await supabase
         .from("games")
         .select("*")
         .eq("status", "active")
         .single();
 
-      if (currentGameError) {
-        console.error("Error fetching current game:", currentGameError);
-      } else {
-        setCurrentGame(currentGameData);
-      }
+      setCurrentGame(currentGameData || null);
 
-      const { data: pastGamesData, error: pastGamesError } = await supabase
+      const { data: pastGamesData } = await supabase
         .from("games")
         .select("*")
         .neq("status", "active")
         .limit(5);
 
-      if (pastGamesError) {
-        console.error("Error fetching past games:", pastGamesError);
-      } else {
-        setPastGames(pastGamesData);
-      }
+      setPastGames(pastGamesData || []);
     };
 
     fetchGames();
@@ -177,31 +169,50 @@ export default function Home() {
   };
 
   useEffect(() => {
+    let isChecking = false;
+
     const checkAndCleanup = async () => {
+      if (isChecking) return;
+      isChecking = true;
+
       try {
         const { data: lastCleanup, error: cleanupError } = await supabase
           .from("last_cleanup")
           .select("last_run")
+          .eq("id", 1)
           .single();
 
         if (cleanupError) throw cleanupError;
 
-        const lastRun = new Date(lastCleanup?.last_run || 0);
+        const lastRunString = lastCleanup?.last_run;
+
+        const lastRun = lastRunString ? new Date(lastRunString) : new Date(0);
         const now = new Date();
+
+        // Adjust for timezone difference
+        const timezoneDiff = now.getTimezoneOffset() * 60000; // Convert minutes to milliseconds
+        const adjustedLastRun = new Date(lastRun.getTime() + timezoneDiff);
+
         const minutesSinceLastRun =
-          (now.getTime() - lastRun.getTime()) / (1000 * 60);
+          (now.getTime() - adjustedLastRun.getTime()) / (1000 * 60);
 
         if (minutesSinceLastRun >= 5) {
+          console.log("Triggering cleanup...");
           const response = await fetch("/api/close-expired-games", {
             method: "GET",
           });
           if (!response.ok) {
             throw new Error("Failed to trigger cleanup");
           }
-          console.log("Cleanup triggered successfully");
+          const result = await response.json();
+          console.log("Cleanup result:", result);
+        } else {
+          console.log("Cleanup not needed yet");
         }
       } catch (error) {
         console.error("Error checking or triggering cleanup:", error);
+      } finally {
+        isChecking = false;
       }
     };
 
@@ -221,7 +232,7 @@ export default function Home() {
         <h1 className="text-[#FFC700] text-5xl font-extrabold mb-6">
           Find a Unique Answer and WIN!
         </h1>
-        {currentGame && (
+        {currentGame ? (
           <div className="flex justify-center mb-4">
             <TextRevealCard
               text={currentGame.question}
@@ -229,6 +240,10 @@ export default function Home() {
               className="-rotate-3"
             />
           </div>
+        ) : (
+          <p className="text-white mb-4">
+            No active games at the moment. Check back soon!
+          </p>
         )}
 
         <div className="flex justify-center mb-4">
