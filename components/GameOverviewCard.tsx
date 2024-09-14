@@ -36,7 +36,7 @@ const GameOverviewCard: React.FC<GameOverviewCardProps> = ({
       {games.length === 0 ? (
         <p>No games available.</p>
       ) : (
-        <div className="space-y-4">
+        <div className={`space-y-4 ${title === "Historic Games" ? "max-h-96 overflow-y-auto" : ""}`}>
           {games.map((game) => (
             <div key={game.id} className="border p-4 rounded-lg">
               <GameCard
@@ -56,12 +56,14 @@ const GameOverviewCard: React.FC<GameOverviewCardProps> = ({
           ))}
         </div>
       )}
-      <button
-        onClick={() => setIsAddGameModalOpen(true)}
-        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        Add New Game
-      </button>
+      {title === "Active Games" && (
+        <button
+          onClick={() => setIsAddGameModalOpen(true)}
+          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Add New Game
+        </button>
+      )}
     </div>
   );
 };

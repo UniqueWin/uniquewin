@@ -1,13 +1,14 @@
 # Development Roadmap
 
 1. User Management:
-   - [ ] Create a list view of all users (admin/users page)
-   - [ ] Implement user detail view
-   - [ ] Add ability to verify/unverify users
+   - [x] Create a list view of all users (admin/users page)
+   - [x] Implement user detail view
+   - [x] Add ability to verify/unverify users (Consider adding user status management in the future)
 
 2. Answer Validation:
-   - [ ] Create a view to list pending validations
-   - [ ] Implement approve/reject functionality for answers
+   - [x] Create a view to list pending validations
+   - [x] Implement approve/reject functionality for answers
+   - [ ] Implement automatic update of game status when a unique answer is approved
 
 3. Raffle Management:
    - [ ] Create a view to manage raffle entries

@@ -27,7 +27,8 @@ import { Edit, Pause, Play, Square, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import Link from 'next/link';
+import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminPage() {
   const [games, setGames] = useState<any[]>([]);
@@ -133,8 +134,8 @@ export default function AdminPage() {
 
   const handleCloseExpiredGames = async () => {
     try {
-      const response = await fetch('/api/close-expired-games', {
-        method: 'POST',
+      const response = await fetch("/api/close-expired-games", {
+        method: "POST",
       });
       const data = await response.json();
       alert(data.message); // Show the result in an alert
@@ -142,8 +143,8 @@ export default function AdminPage() {
       const updatedGames = await fetchGames();
       setGames(updatedGames);
     } catch (error) {
-      console.error('Error closing expired games:', error);
-      alert('Failed to close expired games. Please try again.');
+      console.error("Error closing expired games:", error);
+      alert("Failed to close expired games. Please try again.");
     }
   };
 
@@ -151,21 +152,19 @@ export default function AdminPage() {
     return (
       <div className="p-6 bg-gray-100 text-gray-900">
         <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-        <div className="text-center">
-          <p className="mb-4">Please log in to access the admin dashboard.</p>
-          <button
-            onClick={() => setIsLoginModalOpen(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Log In
-          </button>
+        <div className="space-y-4">
+          <Skeleton className="h-12 w-full" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <Skeleton className="h-64 w-full" />
+              <Skeleton className="h-64 w-full" />
+            </div>
+            <Skeleton className="h-[32rem] w-full" />
+          </div>
+          <Skeleton className="h-64 w-full" />
+          <Skeleton className="h-64 w-full" />
+          <Skeleton className="h-64 w-full" />
         </div>
-        <LoginModal
-          isOpen={isLoginModalOpen}
-          onClose={() => setIsLoginModalOpen(false)}
-          onLogin={handleLogin}
-          isSignUp={false}
-        />
       </div>
     );
   }
@@ -181,6 +180,11 @@ export default function AdminPage() {
           <Link href="/admin/users">
             <Button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
               Manage Users
+            </Button>
+          </Link>
+          <Link href="/admin/answer-validation">
+            <Button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+              Validate Answers
             </Button>
           </Link>
           <Button
