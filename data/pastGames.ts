@@ -16,13 +16,14 @@ export const pastGames: Game[] = [
     ],
     lucky_dip_answers: [],
     hangmanWords: ["THOMAS", "TIMOTHY", "TYLER", "THEODORE", "TREVOR"],
-    end_time: new Date().toISOString(), // Add this line
-    current_prize: 1000, // Add this line
+    start_time: new Date(Date.now() - 86400000).toISOString(), // 24 hours ago
+    end_time: new Date().toISOString(),
+    current_prize: 1000,
   },
   {
-    id: "2", // Change to string
+    id: "2",
     question: "NAME A FRUIT THAT STARTS WITH 'A'",
-    gameStatus: "completed", // Add this line
+    gameStatus: "completed",
     jackpot: 1200,
     validAnswers: ["APPLE", "APRICOT", "AVOCADO", "ACAI", "ACKEE"],
     answers: [
@@ -31,13 +32,14 @@ export const pastGames: Game[] = [
     ],
     lucky_dip_answers: [],
     hangmanWords: ["APPLE", "APRICOT", "AVOCADO", "ACAI", "ACKEE"],
-    end_time: new Date().toISOString(), // Add this line
-    current_prize: 1200, // Add this line
+    start_time: new Date(Date.now() - 172800000).toISOString(), // 48 hours ago
+    end_time: new Date(Date.now() - 86400000).toISOString(), // 24 hours ago
+    current_prize: 1200,
   },
   {
-    id: "3", // Change to string
+    id: "3",
     question: "NAME A COUNTRY IN EUROPE",
-    gameStatus: "completed", // Add this line
+    gameStatus: "completed",
     jackpot: 2000,
     validAnswers: ["FRANCE", "GERMANY", "ITALY", "SPAIN", "POLAND"],
     answers: [
@@ -46,7 +48,8 @@ export const pastGames: Game[] = [
     ],
     lucky_dip_answers: [],
     hangmanWords: ["FRANCE", "GERMANY", "ITALY", "SPAIN", "POLAND"],
-    end_time: new Date().toISOString(), // Add this line
-    current_prize: 2000, // Add this line
+    start_time: new Date(Date.now() - 259200000).toISOString(), // 72 hours ago
+    end_time: new Date(Date.now() - 172800000).toISOString(), // 48 hours ago
+    current_prize: 2000,
   },
 ];

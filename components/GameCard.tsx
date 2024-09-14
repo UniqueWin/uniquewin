@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LucideIcon } from 'lucide-react';
+import { GamePlay } from './GamePlay';
 
 interface GameCardProps {
   game: any;

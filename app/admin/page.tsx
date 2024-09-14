@@ -26,6 +26,7 @@ import { createClient } from "@/utils/supabase/client";
 import { Edit, Pause, Play, Square, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function AdminPage() {
   const [games, setGames] = useState<any[]>([]);
@@ -129,6 +130,22 @@ export default function AdminPage() {
     }
   };
 
+  const handleCloseExpiredGames = async () => {
+    try {
+      const response = await fetch('/api/close-expired-games', {
+        method: 'POST',
+      });
+      const data = await response.json();
+      alert(data.message); // Show the result in an alert
+      // Optionally, refresh the games list after closing expired games
+      const updatedGames = await fetchGames();
+      setGames(updatedGames);
+    } catch (error) {
+      console.error('Error closing expired games:', error);
+      alert('Failed to close expired games. Please try again.');
+    }
+  };
+
   if (!user) {
     return (
       <div className="p-6 bg-gray-100 text-gray-900">
@@ -159,12 +176,20 @@ export default function AdminPage() {
     <div className="p-6 bg-gray-100 text-gray-900">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <button
-          onClick={handleLogoutClick}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-        >
-          Log Out
-        </button>
+        <div className="space-x-2">
+          <Button
+            onClick={handleCloseExpiredGames}
+            className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+          >
+            Close Expired Games
+          </Button>
+          <button
+            onClick={handleLogoutClick}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          >
+            Log Out
+          </button>
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Games Overview Column */}
