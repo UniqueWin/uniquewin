@@ -10,14 +10,13 @@ import {
   getGameInstantWinPrizes,
   GameInstantWinPrize,
 } from "@/utils/dataHelpers";
-import { User } from "@/utils/userHelpers";
+import { ExtendedUser } from "@/utils/userHelpers";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
-import { ExtendedUser } from "@/utils/userHelpers"; // Add this import
 import {
   Tooltip,
   TooltipContent,
@@ -38,6 +37,7 @@ type QuestionProps = {
   >;
   getPartiallyHiddenWord: (word: string) => string;
   updateNavbarCredits: () => void;
+  onAnswerSubmitted: () => void;
 };
 
 export default function Question({
@@ -51,6 +51,7 @@ export default function Question({
   setInstantWinPrizes,
   getPartiallyHiddenWord,
   updateNavbarCredits,
+  onAnswerSubmitted,
 }: QuestionProps) {
   const [answer, setAnswer] = useState("");
   const [isLuckyDip, setIsLuckyDip] = useState(false);
@@ -59,13 +60,30 @@ export default function Question({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!answer || isSubmitting) return;
+    if ((!answer && !isLuckyDip) || isSubmitting) return;
 
     setIsSubmitting(true);
 
     try {
-      const isLuckyDipAnswer =
-        isLuckyDip && availableLuckyDips.includes(answer);
+      let submittedAnswer = answer;
+      if (isLuckyDip) {
+        if (availableLuckyDips.length === 0) {
+          // If no lucky dips are available, use a random answer from the game's valid answers
+          const validAnswers = game.validAnswers || [];
+          if (validAnswers.length === 0) {
+            toast.error("No valid answers available for lucky dip!");
+            setIsSubmitting(false);
+            return;
+          }
+          const randomIndex = Math.floor(Math.random() * validAnswers.length);
+          submittedAnswer = validAnswers[randomIndex];
+        } else {
+          const randomIndex = Math.floor(Math.random() * availableLuckyDips.length);
+          submittedAnswer = availableLuckyDips[randomIndex];
+          setAvailableLuckyDips((prev) => prev.filter((a) => a !== submittedAnswer));
+        }
+      }
+
       const instantWin = checkForInstantWin(instantWinPrizes);
 
       const { data, error } = await supabase
@@ -73,8 +91,8 @@ export default function Question({
         .insert({
           game_id: game.id,
           user_id: user.id,
-          answer_text: answer,
-          is_lucky_dip: isLuckyDipAnswer,
+          answer_text: submittedAnswer,
+          is_lucky_dip: isLuckyDip,
           is_instant_win: !!instantWin,
           instant_win_amount: instantWin?.prize.prize_amount || 0,
         })
@@ -82,8 +100,8 @@ export default function Question({
 
       if (error) throw error;
 
-      if (isLuckyDipAnswer) {
-        setAvailableLuckyDips((prev) => prev.filter((a) => a !== answer));
+      if (isLuckyDip) {
+        setAvailableLuckyDips((prev) => prev.filter((a) => a !== submittedAnswer));
       }
 
       if (instantWin) {
@@ -102,6 +120,7 @@ export default function Question({
 
       setAnswer("");
       setIsLuckyDip(false);
+      onAnswerSubmitted();
     } catch (error) {
       console.error("Error submitting answer:", error);
       toast.error("Failed to submit answer. Please try again.");
@@ -118,6 +137,29 @@ export default function Question({
       className="bg-card text-card-foreground p-6 rounded-lg shadow-md mb-6"
     >
       <h2 className="text-3xl font-bold mb-4 text-primary">{game.question}</h2>
+      <div className="flex justify-between items-center mb-4">
+        <p className="text-lg">
+          Your Credits: £{user.credit_balance?.toFixed(2)}
+        </p>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="sm" className="text-xs">
+                Instant Wins
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <ul className="list-disc pl-5">
+                {instantWinPrizes.map((prize) => (
+                  <li key={prize.id} className="text-xs">
+                    £{prize.prize.prize_amount?.toFixed(2)} (x{prize.quantity})
+                  </li>
+                ))}
+              </ul>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex space-x-4">
@@ -143,7 +185,7 @@ export default function Question({
             id="lucky-dip"
             checked={isLuckyDip}
             onCheckedChange={setIsLuckyDip}
-            disabled={availableLuckyDips.length === 0 || isSubmitting}
+            disabled={isSubmitting}
           />
           <Label htmlFor="lucky-dip">
             Lucky Dip ({availableLuckyDips.length} left)
@@ -157,17 +199,3 @@ export default function Question({
     </motion.div>
   );
 }
-
-// Helper function to check for instant win
-// function checkForInstantWin(
-//   prizes: GameInstantWinPrize[]
-// ): GameInstantWinPrize | null {
-//   const availablePrizes = prizes.filter((p) => p.quantity > 0);
-//   if (availablePrizes.length === 0) return null;
-
-//   // Simple random selection for demonstration
-//   // In a real scenario, you might want to use weighted probabilities
-//   return Math.random() < 0.1
-//     ? availablePrizes[Math.floor(Math.random() * availablePrizes.length)]
-//     : null;
-// }

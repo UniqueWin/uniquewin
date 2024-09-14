@@ -10,7 +10,7 @@ import {
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Game } from "@/utils/dataHelpers";
-import { ExtendedUser } from "@/utils/userHelpers"; // Update this import
+import { ExtendedUser } from "@/utils/userHelpers";
 import Footer from "@/components/Footer";
 import Banner from "./Banner";
 import TrustPilot from "./Trustpilot";
@@ -39,15 +39,13 @@ interface UserAnswer {
 
 export default function GamePage({ params }: { params: { gameId: string } }) {
   const router = useRouter();
-  // const [user, setUser] = useState<User | null>(null);
-  //extended user with credit balance and id
-  const [user, setUser] = useState<ExtendedUser | null>(null); // Update the user state type
+  const [user, setUser] = useState<ExtendedUser | null>(null);
   const [game, setGame] = useState<Game | null>(null);
   const [availableLuckyDips, setAvailableLuckyDips] = useState<string[]>([]);
   const [showGameHistory, setShowGameHistory] = useState(true);
   const [instantWinPrizes, setInstantWinPrizes] = useState<
     GameInstantWinPrize[]
-  >([]); // Updated state type
+  >([]);
   const [countdown, setCountdown] = useState("");
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const [userAnswersLoading, setUserAnswersLoading] = useState(true);
@@ -58,7 +56,6 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
       data: { user },
     } = await supabase.auth.getUser();
     if (user) {
-      // Fetch the user's profile data, including credit balance
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select("*")
@@ -88,10 +85,8 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         }
         setAvailableLuckyDips([...(currentGame.validAnswers || [])]);
 
-        // Fetch user answers for this game
         setUserAnswersLoading(true);
         const answers = await getUserAnswers(user.id, params.gameId);
-        // Map the answers to match the UserAnswer interface
         setUserAnswers(
           answers.map((answer) => ({
             answer: answer.answer,
@@ -106,7 +101,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         const gameInstantWinPrizes = await getGameInstantWinPrizes(
           params.gameId
         );
-        setInstantWinPrizes(gameInstantWinPrizes); // Updated state assignment
+        setInstantWinPrizes(gameInstantWinPrizes);
       } else {
         router.push("/games");
       }
@@ -138,7 +133,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         }
       }, 1000);
 
-      return () => clearInterval(timer); // Fixed: Added missing parenthesis
+      return () => clearInterval(timer);
     }
   }, [game]);
 
@@ -159,6 +154,23 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     // that has access to the Navbar's fetchUserAndCredits function
   };
 
+  const refreshUserAnswers = async () => {
+    if (user) {
+      setUserAnswersLoading(true);
+      const answers = await getUserAnswers(user.id, params.gameId);
+      setUserAnswers(
+        answers.map((answer) => ({
+          answer: answer.answer,
+          status: answer.status,
+          isInstantWin: answer.isInstantWin,
+          instantWin: answer.instantWin,
+          submittedAt: answer.submittedAt,
+        })) || []
+      );
+      setUserAnswersLoading(false);
+    }
+  };
+
   if (!user || !game) return <div>Loading...</div>;
 
   return (
@@ -171,7 +183,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         >
           <Question
             game={game}
-            user={user as ExtendedUser} // Cast user to ExtendedUser
+            user={user as ExtendedUser}
             setUser={
               setUser as React.Dispatch<
                 React.SetStateAction<ExtendedUser | null>
@@ -184,9 +196,9 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
             setInstantWinPrizes={setInstantWinPrizes}
             getPartiallyHiddenWord={getPartiallyHiddenWord}
             updateNavbarCredits={updateNavbarCredits}
+            onAnswerSubmitted={refreshUserAnswers}
           />
 
-          {/* User Answers Table */}
           {userAnswersLoading ? (
             <div>Loading your answers...</div>
           ) : userAnswers.length > 0 ? (

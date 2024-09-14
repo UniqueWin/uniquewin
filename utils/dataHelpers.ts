@@ -212,25 +212,15 @@ export const submitAnswer = async (
   }
 };
 
-export function checkForInstantWin(
-  prizes: GameInstantWinPrize[]
-): GameInstantWinPrize | null {
-  const totalProbability = prizes.reduce(
-    (sum, prize) => sum + prize.prize.probability * prize.quantity,
-    0
-  );
-  if (totalProbability === 0) return null;
+export function checkForInstantWin(prizes: GameInstantWinPrize[]): GameInstantWinPrize | null {
+  const availablePrizes = prizes.filter(p => p.quantity > 0);
+  if (availablePrizes.length === 0) return null;
 
-  const randomNumber = Math.random() * totalProbability;
-  let cumulativeProbability = 0;
-
-  for (const prize of prizes) {
-    cumulativeProbability += prize.prize.probability * prize.quantity;
-    if (randomNumber < cumulativeProbability && prize.quantity > 0) {
+  for (const prize of availablePrizes) {
+    if (Math.random() < prize.prize.probability) {
       return prize;
     }
   }
-
   return null;
 }
 
