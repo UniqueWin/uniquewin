@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LucideIcon } from 'lucide-react';
 
 interface GameCardProps {
@@ -27,6 +27,21 @@ export const GameCard: React.FC<GameCardProps> = ({
   onDelete
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isCurrentGame, setIsCurrentGame] = useState(false);
+
+  useEffect(() => {
+    const checkCurrentGame = () => {
+      const now = new Date();
+      const start = new Date(game.startDateTime);
+      const end = new Date(game.endDateTime);
+      setIsCurrentGame(now >= start && now < end);
+    };
+
+    checkCurrentGame();
+    const interval = setInterval(checkCurrentGame, 60000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [game]);
 
   const handleStatusChange = (newStatus: string) => {
     onStatusChange(newStatus);
@@ -46,7 +61,7 @@ export const GameCard: React.FC<GameCardProps> = ({
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
+    <div className={`game-card ${isCurrentGame ? 'current-game' : ''}`}>
       <h3 className="text-lg font-semibold mb-2">{game.question}</h3>
       <p>Status: <span className={getStatusColor(game.status)}>{game.status}</span></p>
       <p>Current Prize: £{game.current_prize.toFixed(2)}</p>
@@ -92,6 +107,7 @@ export const GameCard: React.FC<GameCardProps> = ({
         </button>
       </div>
       {isPlaying && <GamePlay game={game} userId={userId} />}
+      {isCurrentGame && <span className="current-game-indicator">Current Game</span>}
     </div>
   );
 };

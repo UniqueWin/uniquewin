@@ -14,7 +14,7 @@ export async function getCurrentGame(): Promise<Game | null> {
   const { data, error } = await supabase
     .from('games')
     .select('*')
-    .eq('gameStatus', 'active')
+    .eq('status', 'active')
     .order('created_at', { ascending: false })
     .limit(1)
     .single();

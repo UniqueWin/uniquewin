@@ -14,6 +14,23 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 
+function adjustToUTC(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toISOString();
+}
+
+function adjustToLocal(utcDateString: string): string {
+  const date = new Date(utcDateString);
+  return date.toLocaleString('sv-SE', { 
+    year: 'numeric', 
+    month: '2-digit', 
+    day: '2-digit', 
+    hour: '2-digit', 
+    minute: '2-digit',
+    second: '2-digit'
+  }).replace(' ', 'T');
+}
+
 interface InstantWinPrize {
   id: string;
   prize_type: string;
@@ -40,6 +57,8 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
   const [validAnswers, setValidAnswers] = useState("");
   const [price, setPrice] = useState("");
   const [luckyDipPrice, setLuckyDipPrice] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [selectedPrizes, setSelectedPrizes] = useState<string[]>([]);
   const [prizeQuantities, setPrizeQuantities] = useState<{
     [key: string]: number;
@@ -52,6 +71,8 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
       setValidAnswers(game.valid_answers.join(", "));
       setPrice(game.price.toString());
       setLuckyDipPrice(game.lucky_dip_price?.toString() || "");
+      setStartTime(adjustToLocal(game.start_time));
+      setEndTime(adjustToLocal(game.end_time));
       setSelectedPrizes(
         game.game_instant_win_prizes.map((p: any) => p.instant_win_prize_id)
       );
@@ -74,6 +95,8 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
         valid_answers: validAnswers.split(",").map((answer) => answer.trim()),
         price: parseInt(price),
         lucky_dip_price: luckyDipPrice ? parseFloat(luckyDipPrice) : null,
+        start_time: formatDateTime(startTime),
+        end_time: formatDateTime(endTime),
       })
       .eq("id", game.id);
 
@@ -185,6 +208,30 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
                     className="mt-1 bg-white"
                   />
                 </div>
+              </div>
+              <div>
+                <Label htmlFor="startTime" className="text-sm font-medium">
+                  Start Time
+                </Label>
+                <Input
+                  id="startTime"
+                  type="datetime-local"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                  className="mt-1 bg-white"
+                />
+              </div>
+              <div>
+                <Label htmlFor="endTime" className="text-sm font-medium">
+                  End Time
+                </Label>
+                <Input
+                  id="endTime"
+                  type="datetime-local"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                  className="mt-1 bg-white"
+                />
               </div>
             </div>
             <div>
