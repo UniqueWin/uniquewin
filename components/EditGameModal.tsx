@@ -14,11 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 
-function adjustToUTC(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toISOString();
-}
-
 function adjustToLocal(utcDateString: string): string {
   const date = new Date(utcDateString);
   return date.toLocaleString('sv-SE', { 
@@ -27,8 +22,12 @@ function adjustToLocal(utcDateString: string): string {
     day: '2-digit', 
     hour: '2-digit', 
     minute: '2-digit',
-    second: '2-digit'
+    timeZone: 'UTC'
   }).replace(' ', 'T');
+}
+
+function formatDateTime(dateTimeString: string): string {
+  return dateTimeString;
 }
 
 interface InstantWinPrize {
@@ -95,8 +94,8 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
         valid_answers: validAnswers.split(",").map((answer) => answer.trim()),
         price: parseInt(price),
         lucky_dip_price: luckyDipPrice ? parseFloat(luckyDipPrice) : null,
-        start_time: formatDateTime(startTime),
-        end_time: formatDateTime(endTime),
+        start_time: startTime,
+        end_time: endTime,
       })
       .eq("id", game.id);
 

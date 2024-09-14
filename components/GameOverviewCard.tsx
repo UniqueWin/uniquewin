@@ -1,60 +1,69 @@
-import { GameCard } from "@/components/GameCard";
-import { Play, Pause, Square, Edit } from "lucide-react";
+import React from 'react';
+import { GameCard } from './GameCard';
 
 interface GameOverviewCardProps {
-  title: string;
   games: any[];
-  onUpdate: () => void;
   onEdit: (game: any) => void;
+  onDelete: (gameId: string) => void;
   onStatusChange: (gameId: string, newStatus: string) => void;
   userId: string;
-  icons: {
-    play: React.ReactNode;
-    pause: React.ReactNode;
-    stop: React.ReactNode;
-    edit: React.ReactNode;
-    delete: React.ReactNode;
-  };
+  title: string;
+  onUpdate: () => void;
   setIsAddGameModalOpen: (isOpen: boolean) => void;
-  onDelete: (gameId: string) => void;
+  icons: {
+    play: React.ReactElement;
+    pause: React.ReactElement;
+    stop: React.ReactElement;
+    edit: React.ReactElement;
+    delete: React.ReactElement;
+  };
 }
 
-export default function GameOverviewCard({
-  title,
+const GameOverviewCard: React.FC<GameOverviewCardProps> = ({
   games,
-  onUpdate,
   onEdit,
+  onDelete,
   onStatusChange,
   userId,
-  icons,
+  title,
+  onUpdate,
   setIsAddGameModalOpen,
-  onDelete,
-}: GameOverviewCardProps) {
+  icons,
+}) => {
   return (
-    <div className="col-span-1 bg-white p-4 rounded-lg shadow">
+    <div className="bg-white p-4 rounded-lg shadow mb-6">
       <h2 className="text-2xl font-semibold mb-4 text-gray-800">{title}</h2>
-      <div className="grid grid-cols-1 gap-4">
-        {games.map((game) => (
-          <GameCard
-            key={game.id}
-            game={game}
-            onUpdate={onUpdate}
-            onEdit={() => onEdit(game)}
-            onStatusChange={(newStatus) => onStatusChange(game.id, newStatus)}
-            userId={userId}
-            icons={icons}
-            onDelete={() => onDelete(game.id)}
-          />
-        ))}
-      </div>
-      {title === "Active Games" && (
-        <button
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          onClick={() => setIsAddGameModalOpen(true)}
-        >
-          Add New Game
-        </button>
+      {games.length === 0 ? (
+        <p>No games available.</p>
+      ) : (
+        <div className="space-y-4">
+          {games.map((game) => (
+            <div key={game.id} className="border p-4 rounded-lg">
+              <GameCard
+                game={game}
+                onUpdate={onUpdate}
+                onEdit={() => onEdit(game)}
+                onStatusChange={(newStatus) => onStatusChange(game.id, newStatus)}
+                userId={userId}
+                icons={icons}
+                onDelete={() => onDelete(game.id)}
+              />
+              <div className="mt-2 text-sm text-gray-600">
+                <p>Start Time: {new Date(game.start_time).toLocaleString()}</p>
+                <p>End Time: {new Date(game.end_time).toLocaleString()}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
+      <button
+        onClick={() => setIsAddGameModalOpen(true)}
+        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+      >
+        Add New Game
+      </button>
     </div>
   );
-}
+};
+
+export default GameOverviewCard;

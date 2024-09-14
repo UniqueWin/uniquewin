@@ -42,8 +42,8 @@ export function AddGameModal({ isOpen, onClose, onAddGame, allInstantWinPrizes }
       .from('games')
       .insert({
         question,
-        start_time: formatDateTime(startTime),
-        end_time: formatDateTime(endTime),
+        start_time: startTime,  // Use startTime directly
+        end_time: endTime,      // Use endTime directly
         valid_answers: validAnswers.split(',').map(answer => answer.trim()),
         price: parseInt(price),
         lucky_dip_price: parseFloat(luckyDipPrice),

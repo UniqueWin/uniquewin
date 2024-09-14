@@ -99,9 +99,9 @@ export default function AdminPage() {
         console.error("Error deleting game:", error);
       } else {
         // Update the games state directly after successful deletion
-        setGames(prevGames => prevGames.filter(game => game.id !== gameId));
+        setGames((prevGames) => prevGames.filter((game) => game.id !== gameId));
         // Optionally, you can still call fetchGames to ensure consistency with the database
-        fetchGames().then(updatedGames => setGames(updatedGames));
+        fetchGames().then((updatedGames) => setGames(updatedGames));
       }
     }
   };
@@ -117,11 +117,13 @@ export default function AdminPage() {
     try {
       // Call the function from adminFunctions to update the game status in the database
       await updateGameStatusInDB(gameId, newStatus);
-      
+
       // Update the local state without fetching all games again
-      setGames(prevGames => prevGames.map(game => 
-        game.id === gameId ? { ...game, status: newStatus } : game
-      ));
+      setGames((prevGames) =>
+        prevGames.map((game) =>
+          game.id === gameId ? { ...game, status: newStatus } : game
+        )
+      );
     } catch (error) {
       console.error("Error changing game status:", error);
     }
@@ -288,6 +290,8 @@ export default function AdminPage() {
               <th className="p-2 text-left">Question</th>
               <th className="p-2 text-left">Status</th>
               <th className="p-2 text-left">Current Prize</th>
+              <th className="p-2 text-left">Start Time</th>
+              <th className="p-2 text-left">End Time</th>
               <th className="p-2 text-left">Created Date</th>
             </tr>
           </thead>
@@ -297,6 +301,12 @@ export default function AdminPage() {
                 <td className="p-2">{game.question}</td>
                 <td className="p-2">{game.status}</td>
                 <td className="p-2">£{game.current_prize.toFixed(2)}</td>
+                <td className="p-2">
+                  {new Date(game.start_time).toLocaleString()}
+                </td>
+                <td className="p-2">
+                  {new Date(game.end_time).toLocaleString()}
+                </td>
                 <td className="p-2">
                   {new Date(game.created_at).toLocaleDateString()}
                 </td>
