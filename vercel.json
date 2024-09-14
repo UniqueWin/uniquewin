@@ -1,0 +1,8 @@
+{
+    "crons": [
+      {
+        "path": "/api/close-expired-games",
+        "schedule": "*/5 * * * *"
+      }
+    ]
+  }

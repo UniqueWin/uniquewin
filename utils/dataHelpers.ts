@@ -19,6 +19,7 @@ export interface Game {
   jackpot: number;
   validAnswers: string[];
   answers: Answer[];
+  start_time: string; // Add this line if it's not already there
   end_time: string; // Add this line
   current_prize: number; // Add this line
   lucky_dip_answers: string[]; // Add this line
@@ -45,13 +46,16 @@ export interface GameInstantWinPrize {
 
 export async function getCurrentGame(): Promise<Game | null> {
   const now = new Date();
+  const localNow = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+  console.log("Current local time:", localNow.toISOString());
 
   const { data, error } = await supabase
     .from("games")
     .select("*")
-    .gte("end_time", now.toISOString())
+    .lte("start_time", localNow.toISOString())
+    .gt("end_time", localNow.toISOString())
     .eq("status", "active")
-    .order("end_time", { ascending: true })
+    .order("start_time", { ascending: false })
     .limit(1)
     .single();
 
