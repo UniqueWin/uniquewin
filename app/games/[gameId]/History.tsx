@@ -3,13 +3,11 @@
 import React from "react";
 import { motion } from "framer-motion";
 import ScratchCardComponent from "./ScratchCardComponent";
-import { Game } from "@/utils/dataHelpers";
+import { Game, GameInstantWinPrize } from "@/utils/dataHelpers";
 
 type HistoryProps = {
   game: Game;
-  instantWinPrizes: {
-    [key: number]: { type: "money" | "word"; value: string };
-  };
+  instantWinPrizes: GameInstantWinPrize[];
 };
 
 function History({ game, instantWinPrizes }: HistoryProps) {

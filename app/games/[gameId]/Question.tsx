@@ -8,6 +8,7 @@ import {
   submitAnswer,
   checkForInstantWin,
   getGameInstantWinPrizes,
+  GameInstantWinPrize,
 } from "@/utils/dataHelpers";
 import { User } from "@/utils/userHelpers";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,12 @@ import { Label } from "@/components/ui/label";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { ExtendedUser } from "@/utils/userHelpers"; // Add this import
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type QuestionProps = {
   game: Game;
@@ -25,10 +32,9 @@ type QuestionProps = {
   setGame: React.Dispatch<React.SetStateAction<Game | null>>;
   availableLuckyDips: string[];
   setAvailableLuckyDips: React.Dispatch<React.SetStateAction<string[]>>;
+  instantWinPrizes: GameInstantWinPrize[];
   setInstantWinPrizes: React.Dispatch<
-    React.SetStateAction<{
-      [key: number]: { type: "money" | "word"; value: string };
-    }>
+    React.SetStateAction<GameInstantWinPrize[]>
   >;
   getPartiallyHiddenWord: (word: string) => string;
   updateNavbarCredits: () => void;
@@ -41,6 +47,7 @@ export default function Question({
   setGame,
   availableLuckyDips,
   setAvailableLuckyDips,
+  instantWinPrizes,
   setInstantWinPrizes,
   getPartiallyHiddenWord,
   updateNavbarCredits,
@@ -50,91 +57,54 @@ export default function Question({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const supabase = createClient();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!answer.trim() && !isLuckyDip) {
-      toast("Please enter an answer or select Lucky Dip.");
-      return;
-    }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!answer || isSubmitting) return;
+
+    setIsSubmitting(true);
 
     try {
-      setIsSubmitting(true);
+      const isLuckyDipAnswer =
+        isLuckyDip && availableLuckyDips.includes(answer);
+      const instantWin = checkForInstantWin(instantWinPrizes);
 
-      // Check for instant win
-      const instantWinPrizes = await getGameInstantWinPrizes(
-        game.id.toString()
-      );
-      const instantWinPrize = checkForInstantWin(instantWinPrizes);
-
-      const result = await submitAnswer(
-        game.id.toString(),
-        user.id.toString(), // Convert user.id to string
-        isLuckyDip
-          ? getPartiallyHiddenWord(
-              availableLuckyDips[
-                Math.floor(Math.random() * availableLuckyDips.length)
-              ]
-            )
-          : answer,
-        isLuckyDip,
-        instantWinPrize
-      );
-
-      console.log({ user });
-      // Update local user state
-      const { data: updatedUser, error } = await supabase
-        .from("profiles")
-        .select("credit_balance")
-        .eq("id", user.id)
-        .single();
+      const { data, error } = await supabase
+        .from("answers")
+        .insert({
+          game_id: game.id,
+          user_id: user.id,
+          answer_text: answer,
+          is_lucky_dip: isLuckyDipAnswer,
+          is_instant_win: !!instantWin,
+          instant_win_amount: instantWin?.prize.prize_amount || 0,
+        })
+        .select();
 
       if (error) throw error;
 
-      setUser((prevUser) => {
-        if (prevUser) {
-          return {
-            ...prevUser,
-            credit_balance: updatedUser.credit_balance,
-          };
-        }
-        return prevUser;
-      });
-
-      // Update game answers
-      setGame((prevGame) => {
-        if (prevGame) {
-          return {
-            ...prevGame,
-            answers: [...(prevGame.answers || []), result],
-          };
-        }
-        return prevGame;
-      });
-
-      // Update available lucky dips
-      if (isLuckyDip) {
-        setAvailableLuckyDips((prev) => prev.filter((_, index) => index !== 0));
+      if (isLuckyDipAnswer) {
+        setAvailableLuckyDips((prev) => prev.filter((a) => a !== answer));
       }
 
-      updateNavbarCredits();
+      if (instantWin) {
+        setInstantWinPrizes((prev) =>
+          prev.map((p) =>
+            p.id === instantWin.id ? { ...p, quantity: p.quantity - 1 } : p
+          )
+        );
+        toast.success(
+          `Congratulations! You won £${instantWin.prize.prize_amount?.toFixed(
+            2
+          )}!`
+        );
+        updateNavbarCredits();
+      }
 
       setAnswer("");
-      toast("Answer submitted successfully!");
-
-      if (instantWinPrize) {
-        toast(
-          `Congratulations! You won an instant prize: £${instantWinPrize.prize.prize_amount}`
-        );
-      }
+      setIsLuckyDip(false);
     } catch (error) {
-      if (error instanceof Error && error.message === "Insufficient credits") {
-        toast(
-          "You don't have enough credits to play. Please buy more credits."
-        );
-      } else {
-        toast("Failed to submit answer. Please try again.");
-      }
       console.error("Error submitting answer:", error);
+      toast.error("Failed to submit answer. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -148,9 +118,6 @@ export default function Question({
       className="bg-card text-card-foreground p-6 rounded-lg shadow-md mb-6"
     >
       <h2 className="text-3xl font-bold mb-4 text-primary">{game.question}</h2>
-      <p className="mb-4 text-lg">
-        Your Credits: £{user.credit_balance?.toFixed(2)}
-      </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex space-x-4">
@@ -160,7 +127,7 @@ export default function Question({
             onChange={(e) => setAnswer(e.target.value)}
             placeholder="Type your answer here..."
             className="flex-grow bg-white text-black"
-            disabled={isLuckyDip || isSubmitting}
+            disabled={isSubmitting}
           />
           <Button
             type="submit"
@@ -190,3 +157,17 @@ export default function Question({
     </motion.div>
   );
 }
+
+// Helper function to check for instant win
+// function checkForInstantWin(
+//   prizes: GameInstantWinPrize[]
+// ): GameInstantWinPrize | null {
+//   const availablePrizes = prizes.filter((p) => p.quantity > 0);
+//   if (availablePrizes.length === 0) return null;
+
+//   // Simple random selection for demonstration
+//   // In a real scenario, you might want to use weighted probabilities
+//   return Math.random() < 0.1
+//     ? availablePrizes[Math.floor(Math.random() * availablePrizes.length)]
+//     : null;
+// }

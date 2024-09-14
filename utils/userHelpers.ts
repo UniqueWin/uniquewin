@@ -1,28 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-// import { User } from "@supabase/supabase-js";
+import { User as SupabaseUser } from "@supabase/supabase-js";
 
-export interface User {
+export interface LocalUser {
   id: string;
   username: string;
   email: string;
   credit_balance: number;
 }
 
-export interface ExtendedUser extends User {
+export interface ExtendedUser extends LocalUser {
   is_admin: boolean;
-  username: string;
-  credit_balance: number;
-  gameHistory?: {
-    gameId: number;
-    answers: { answer: string; status: string; instantWin: string }[];
-  }[];
 }
 
 const STORAGE_KEY = "currentUser";
 
-export function useUser<T extends User>() {
+export function useUser<T extends LocalUser>() {
   const [user, setUser] = useState<T | null>(null);
 
   useEffect(() => {
@@ -64,14 +58,13 @@ export function useUser<T extends User>() {
   return { user, login, logout, addCredits, updateUser };
 }
 
-// Emulate login function (for development purposes)
 export function emulateLogin(
   userId: string,
   username: string,
   email: string,
   initialBalance: number
 ) {
-  const userData: User = {
+  const userData: LocalUser = {
     id: userId,
     username,
     email,

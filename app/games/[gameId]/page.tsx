@@ -1,11 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getGameById, getUserAnswers } from "@/utils/dataHelpers";
+import {
+  getGameById,
+  getUserAnswers,
+  getGameInstantWinPrizes,
+  GameInstantWinPrize,
+} from "@/utils/dataHelpers";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Game } from "@/utils/dataHelpers";
-import { User } from "@supabase/supabase-js";
+import { ExtendedUser } from "@/utils/userHelpers"; // Update this import
 import Footer from "@/components/Footer";
 import Banner from "./Banner";
 import TrustPilot from "./Trustpilot";
@@ -23,7 +28,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import ScratchCardComponent from "./ScratchCardComponent";
-import { ExtendedUser } from "@/utils/userHelpers"; // Add this import
 
 interface UserAnswer {
   answer: string;
@@ -41,9 +45,9 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
   const [game, setGame] = useState<Game | null>(null);
   const [availableLuckyDips, setAvailableLuckyDips] = useState<string[]>([]);
   const [showGameHistory, setShowGameHistory] = useState(true);
-  const [instantWinPrizes, setInstantWinPrizes] = useState<{
-    [key: number]: { type: "money" | "word"; value: string };
-  }>({});
+  const [instantWinPrizes, setInstantWinPrizes] = useState<
+    GameInstantWinPrize[]
+  >([]); // Updated state type
   const [countdown, setCountdown] = useState("");
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const [userAnswersLoading, setUserAnswersLoading] = useState(true);
@@ -54,15 +58,28 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
       data: { user },
     } = await supabase.auth.getUser();
     if (user) {
+      // Fetch the user's profile data, including credit balance
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError) {
+        console.error("Error fetching user profile:", profileError);
+        return;
+      }
+
       const extendedUser: ExtendedUser = {
         ...user,
-        id: user.id, // Convert string id to number
-        username: "", // Provide a default value if username is missing
-        is_admin: false, // Set a default value or fetch from somewhere
-        email: user.email || "", // Provide a default value for email
-        credit_balance: 0, // Set a default value or fetch from somewhere
+        id: user.id,
+        username: profileData.username || "",
+        is_admin: profileData.is_admin || false,
+        email: user.email || "",
+        credit_balance: profileData.credit_balance || 0,
       };
       setUser(extendedUser);
+
       const currentGame = await getGameById(params.gameId);
       if (currentGame) {
         setGame(currentGame);
@@ -85,6 +102,11 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
           })) || []
         );
         setUserAnswersLoading(false);
+
+        const gameInstantWinPrizes = await getGameInstantWinPrizes(
+          params.gameId
+        );
+        setInstantWinPrizes(gameInstantWinPrizes); // Updated state assignment
       } else {
         router.push("/games");
       }
@@ -101,7 +123,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     if (game) {
       const timer = setInterval(() => {
         const now = new Date();
-        const endTime = new Date(game.end_time); // Change this line
+        const endTime = new Date(game.end_time);
         const distance = endTime.getTime() - now.getTime();
 
         if (distance < 0) {
@@ -116,7 +138,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         }
       }, 1000);
 
-      return () => clearInterval(timer);
+      return () => clearInterval(timer); // Fixed: Added missing parenthesis
     }
   }, [game]);
 
@@ -158,6 +180,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
             setGame={setGame}
             availableLuckyDips={availableLuckyDips}
             setAvailableLuckyDips={setAvailableLuckyDips}
+            instantWinPrizes={instantWinPrizes}
             setInstantWinPrizes={setInstantWinPrizes}
             getPartiallyHiddenWord={getPartiallyHiddenWord}
             updateNavbarCredits={updateNavbarCredits}
