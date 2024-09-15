@@ -38,3 +38,7 @@
 
 7. Game Flow:
    - [ ] Redirect users when visiting an ended game page
+
+
+
+if a user wins an instant win - it should be added to their account immediately and the prize pool should be deducted from the game.
