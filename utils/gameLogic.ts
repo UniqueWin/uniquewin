@@ -11,7 +11,7 @@ export async function processAnswer(
   const supabase = createClient();
 
   try {
-    const isCorrectAnswer = validAnswers.includes(answer.toUpperCase());
+    const isValidAnswer = validAnswers.includes(answer.toUpperCase());
 
     // Fetch user's current credit balance
     const { data: userData, error: userError } = await supabase
@@ -32,6 +32,18 @@ export async function processAnswer(
 
     if (updateError) throw updateError;
 
+    // Check if the answer is unique
+    const { data: existingAnswers, error: existingAnswerError } = await supabase
+      .from("answers")
+      .select("id")
+      .eq("game_id", gameId)
+      .eq("answer_text", answer)
+      .limit(1);
+
+    if (existingAnswerError) throw existingAnswerError;
+
+    const isUniqueAnswer = existingAnswers.length === 0;
+
     // Insert the answer
     const { data: answerData, error: answerError } = await supabase
       .from("answers")
@@ -39,7 +51,7 @@ export async function processAnswer(
         user_id: userId,
         game_id: gameId,
         answer_text: answer,
-        status: isCorrectAnswer ? "correct" : "incorrect",
+        status: isValidAnswer && isUniqueAnswer ? "correct" : "pending",
       })
       .select()
       .single();
@@ -47,7 +59,7 @@ export async function processAnswer(
     if (answerError) throw answerError;
 
     let instantWin = null;
-    if (!isCorrectAnswer) {
+    if (!isValidAnswer) {
       instantWin = checkForInstantWin(instantWinPrizes);
       if (instantWin) {
         // Update game_instant_win_prizes quantity
@@ -76,7 +88,7 @@ export async function processAnswer(
       }
     }
 
-    return { success: true, isCorrectAnswer, instantWin };
+    return { success: true, isValidAnswer, isUniqueAnswer, instantWin };
   } catch (error) {
     console.error("Error processing answer:", error);
     throw error;

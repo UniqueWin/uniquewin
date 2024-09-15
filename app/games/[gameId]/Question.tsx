@@ -72,8 +72,10 @@ export default function Question({
         game.valid_answers
       );
       if (result.success) {
-        if (result.isCorrectAnswer) {
-          toast.success("Correct answer!");
+        if (result.isValidAnswer && result.isUniqueAnswer) {
+          toast.success("Correct and unique answer!");
+        } else if (result.isValidAnswer) {
+          toast.info("Valid answer, but already submitted by someone else.");
         } else if (result.instantWin) {
           toast.success(`Congratulations! You won ${result.instantWin.prize.prize_amount} ${result.instantWin.prize.prize_type}!`);
           setInstantWinPrizes(prevPrizes => 
@@ -84,7 +86,7 @@ export default function Question({
             )
           );
         } else {
-          toast.info("Incorrect answer, but keep trying!");
+          toast.info("Answer submitted and pending validation.");
         }
         setAnswer("");
         onAnswerSubmitted();
