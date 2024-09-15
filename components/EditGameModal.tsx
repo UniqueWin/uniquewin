@@ -196,7 +196,13 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
   };
 
   const formatDateTimeLocal = (date: Date): string => {
-    return date.toISOString().slice(0, 16);
+    return date.toLocaleString('sv-SE', { 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit', 
+      hour: '2-digit', 
+      minute: '2-digit'
+    }).replace(' ', 'T');
   };
 
   return (
