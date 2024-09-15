@@ -268,7 +268,7 @@ export default function Home() {
           <div className="flex justify-center mb-4">
             <TextRevealCard
               text={currentGame.question}
-              revealText={`Jackpot: £${currentGame.current_prize}`}
+              revealText={`Jackpot: £${currentGame.current_prize ?? currentGame.jackpot}`}
               className="-rotate-3"
             />
           </div>
@@ -374,7 +374,7 @@ export default function Home() {
           {pastGames.map((game) => (
             <li key={game.id} className="bg-[#C0163D] p-4 rounded-lg">
               <h3 className="font-bold">{game.question}</h3>
-              <p>Jackpot: £{game.current_prize}</p>
+              <p>Jackpot: £{game.current_prize ?? game.jackpot}</p>
               <p>Ended: {new Date(game.end_time).toLocaleString()}</p>
             </li>
           ))}

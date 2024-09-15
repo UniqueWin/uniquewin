@@ -15,16 +15,18 @@ export interface Answer {
 export interface Game {
   id: string;
   question: string;
-  valid_answers: string[];
   answers: Answer[];
-  start_time: string;
-  end_time: string;
-  current_prize: number;
-  lucky_dip_answers: string[];
-  hangmanWords: string[];
-  price: number;
-  lucky_dip_price: number;
-  // ... other properties
+  jackpot: number;
+  valid_answers?: string[]; // Add this line
+  end_time: string; // Add this line as well
+  lucky_dip_price?: number; // Add this line
+  price?: number; // Add this line as well
+  current_prize?: number; // Add this line
+  status: string; // Change this from gameStatus to status
+  start_time: string; // Add this line
+  lucky_dip_answers?: string[]; // Add this line
+  hangmanWords?: string[]; // Add this line
+  // ... other properties of Game
 }
 
 export interface InstantWinPrize {
@@ -155,11 +157,11 @@ export const submitAnswer = async (
   gameId: string,
   userId: string,
   answer: string,
-  isLuckyDip: boolean,
-  instantWinPrize?: GameInstantWinPrize | null
+  instantWinPrizes: GameInstantWinPrize | GameInstantWinPrize[],
+  validAnswers: string[]
 ) => {
   try {
-    console.log("Submitting answer:", gameId, userId, answer, isLuckyDip);
+    console.log("Submitting answer:", gameId, userId, answer, instantWinPrizes);
     // Fetch user's current credits
     const { data: userData, error: userError } = await supabase
       .from("profiles")
@@ -190,10 +192,12 @@ export const submitAnswer = async (
         game_id: gameId,
         user_id: userId,
         answer_text: answer,
-        is_lucky_dip: isLuckyDip,
-        is_instant_win: !!instantWinPrize,
-        instant_win_amount: instantWinPrize
-          ? instantWinPrize.prize.prize_amount
+        is_lucky_dip: Array.isArray(instantWinPrizes) ? false : instantWinPrizes,
+        is_instant_win: !!instantWinPrizes,
+        instant_win_amount: instantWinPrizes
+          ? Array.isArray(instantWinPrizes)
+            ? instantWinPrizes[0]?.prize.prize_amount || 0
+            : instantWinPrizes.prize.prize_amount
           : 0,
       })
       .select()
@@ -201,8 +205,8 @@ export const submitAnswer = async (
 
     if (error) throw error;
 
-    if (instantWinPrize) {
-      await updateInstantWinPrizeQuantity(instantWinPrize.id);
+    if (instantWinPrizes && !Array.isArray(instantWinPrizes)) {
+      await updateInstantWinPrizeQuantity(instantWinPrizes.id);
     }
 
     return data;
@@ -212,8 +216,10 @@ export const submitAnswer = async (
   }
 };
 
-export function checkForInstantWin(prizes: GameInstantWinPrize[]): GameInstantWinPrize | null {
-  const availablePrizes = prizes.filter(p => p.quantity > 0);
+export function checkForInstantWin(
+  prizes: GameInstantWinPrize[]
+): GameInstantWinPrize | null {
+  const availablePrizes = prizes.filter((p) => p.quantity > 0);
   if (availablePrizes.length === 0) return null;
 
   for (const prize of availablePrizes) {

@@ -4,9 +4,9 @@ export const pastGames: Game[] = [
   {
     id: "1",
     question: "Name a boy's name beginning with T",
-    gameStatus: "completed",
+    status: "completed",
     jackpot: 1000,
-    validAnswers: ["THOMAS", "TIMOTHY", "TYLER", "THEODORE", "TREVOR"],
+    valid_answers: ["THOMAS", "TIMOTHY", "TYLER", "THEODORE", "TREVOR"],
     answers: [
       { answer: "THOMAS", frequency: 50, status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
       { answer: "TIMOTHY", frequency: 30, status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
@@ -23,9 +23,9 @@ export const pastGames: Game[] = [
   {
     id: "2",
     question: "NAME A FRUIT THAT STARTS WITH 'A'",
-    gameStatus: "completed",
+    status: "completed",
     jackpot: 1200,
-    validAnswers: ["APPLE", "APRICOT", "AVOCADO", "ACAI", "ACKEE"],
+    valid_answers: ["APPLE", "APRICOT", "AVOCADO", "ACAI", "ACKEE"],
     answers: [
       { answer: "ACKEE", frequency: 1, status: "UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
       { answer: "APPLE", frequency: 5, status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
@@ -39,9 +39,9 @@ export const pastGames: Game[] = [
   {
     id: "3",
     question: "NAME A COUNTRY IN EUROPE",
-    gameStatus: "completed",
+    status: "completed",
     jackpot: 2000,
-    validAnswers: ["FRANCE", "GERMANY", "ITALY", "SPAIN", "POLAND"],
+    valid_answers: ["FRANCE", "GERMANY", "ITALY", "SPAIN", "POLAND"],
     answers: [
       { answer: "POLAND", frequency: 1, status: "UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
       { answer: "FRANCE", frequency: 4, status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },

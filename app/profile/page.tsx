@@ -2,16 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useUser, User } from "@/utils/userHelpers";
+import { useUser, ExtendedUser } from "@/utils/userHelpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { getAllGames } from "@/utils/dataHelpers";
-import { Game } from "@/utils/dataHelpers";
+import { getAllGames, Game, Answer } from "@/utils/dataHelpers"; // Add Game to the import
 
 export default function ProfilePage() {
   const { user, addCredits, updateUser } = useUser();
   const [editMode, setEditMode] = useState(false);
-  const [editedUser, setEditedUser] = useState<User | null>(null);
+  const [editedUser, setEditedUser] = useState<ExtendedUser | null>(null);
   const [gameHistory, setGameHistory] = useState<Game[]>([]);
 
   useEffect(() => {
@@ -106,8 +105,8 @@ export default function ProfilePage() {
                   <td>{game.id}</td>
                   <td>{game.question}</td>
                   <td>{game.answers.length}</td>
-                  <td>{game.answers.some(a => a.status === "UNIQUE") ? "WIN" : "LOSE"}</td>
-                  <td>{game.answers.some(a => a.instantWin !== "NO") ? "YES" : "NO"}</td>
+                  <td>{game.answers.some((a: Answer) => a.status === "UNIQUE") ? "WIN" : "LOSE"}</td>
+                  <td>{game.answers.some((a: Answer) => a.instantWin !== "NO") ? "YES" : "NO"}</td>
                   <td>£{calculateProfitLoss(game)}</td>
                 </tr>
               ))}
@@ -120,9 +119,8 @@ export default function ProfilePage() {
 }
 
 function calculateProfitLoss(game: Game) {
-  // This is a placeholder function. You'd need to implement the actual logic based on your game rules.
-  const winningAnswer = game.answers.find(a => a.status === "UNIQUE");
-  const instantWin = game.answers.find(a => a.instantWin !== "NO");
+  const winningAnswer = game.answers.find((a: Answer) => a.status === "UNIQUE");
+  const instantWin = game.answers.find((a: Answer) => a.instantWin !== "NO");
   let profit = 0;
   if (winningAnswer) profit += game.jackpot;
   if (instantWin) profit += parseInt(instantWin.instantWin.replace('£', ''));

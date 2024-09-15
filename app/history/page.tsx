@@ -1,22 +1,40 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getCurrentUser } from "@/utils/dataHelpers";
-import { ExtendedUser } from "@/utils/userHelpers";
+import { ExtendedUser, GameHistoryItem, Answer } from "@/utils/userHelpers";
+import { createClient } from "@/utils/supabase/client";
 
 export default function HistoryPage() {
   const [user, setUser] = useState<ExtendedUser | null>(null);
-  const [history, setHistory] = useState<ExtendedUser['gameHistory']>([]);
+  const [history, setHistory] = useState<GameHistoryItem[]>([]);
 
   useEffect(() => {
     const fetchUser = async () => {
-      const userId = localStorage.getItem("currentUserId");
-      if (userId) {
-        const currentUser = await getCurrentUser(userId);
-        if (currentUser) {
-          setUser(currentUser);
-          setHistory(currentUser.gameHistory || []); // Assuming gameHistory is part of ExtendedUser
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+
+        if (profileError) {
+          console.error("Error fetching user profile:", profileError);
+          return;
         }
+
+        const extendedUser: ExtendedUser = {
+          ...user,
+          id: user.id,
+          username: profileData.username || "",
+          is_admin: profileData.is_admin || false,
+          email: user.email || "",
+          credit_balance: profileData.credit_balance || 0,
+          gameHistory: profileData.game_history || [],
+        };
+        setUser(extendedUser);
+        setHistory(extendedUser.gameHistory || []);
       }
     };
 
@@ -43,14 +61,14 @@ export default function HistoryPage() {
             <tr key={game.gameId}>
               <td>{game.gameId}</td>
               <td>
-                {game.answers.map((ans) => (
+                {game.answers.map((ans: Answer) => (
                   <div key={ans.answer}>
                     {ans.answer} - {ans.status}
                   </div>
                 ))}
               </td>
               <td>
-                {game.answers.some((ans) => ans.status === "UNIQUE")
+                {game.answers.some((ans: Answer) => ans.status === "UNIQUE")
                   ? "Winning"
                   : "Not Winning"}
               </td>

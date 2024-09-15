@@ -77,16 +77,16 @@ export default function Question({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !game) return;
-    setIsSubmitting(true);
+    if (answer.trim() === "") return;
 
     try {
-      const result = await processAnswer(
-        user.id,
+      setIsSubmitting(true);
+      const result = await submitAnswer(
         game.id,
+        user.id,
         answer,
         instantWinPrizes,
-        game.valid_answers
+        game.valid_answers || [] // Provide an empty array as default
       );
       if (result.success) {
         if (result.isValidAnswer && result.isUniqueAnswer) {
@@ -127,7 +127,7 @@ export default function Question({
         user.id,
         game.id,
         availableLuckyDips,
-        game.lucky_dip_price
+        game.lucky_dip_price ?? 0 // Provide a default value of 0
       );
       if (result.success) {
         toast.success(`Lucky Dip purchased! Your answer: ${result.answer}`);
@@ -211,7 +211,7 @@ export default function Question({
         </Button>
 
         <p className="text-sm text-muted-foreground">
-          Cost: £{game.price} per play, £{game.lucky_dip_price} for Lucky Dip
+          Cost: £{game.price ?? 0} per play, £{game.lucky_dip_price ?? 0} for Lucky Dip
         </p>
       </form>
     </motion.div>

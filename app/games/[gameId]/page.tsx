@@ -83,7 +83,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         if (!currentGame.answers) {
           currentGame.answers = [];
         }
-        setAvailableLuckyDips([...(currentGame.validAnswers || [])]);
+        setAvailableLuckyDips(currentGame.valid_answers || []);
 
         setUserAnswersLoading(true);
         const answers = await getUserAnswers(user.id, params.gameId);
