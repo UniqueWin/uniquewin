@@ -58,6 +58,23 @@ export default function Question({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const supabase = createClient();
 
+  const updateUserCredits = async () => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("credit_balance")
+      .eq("id", user.id)
+      .single();
+
+    if (error) {
+      console.error("Error fetching updated credit balance:", error);
+    } else if (data) {
+      setUser(prevUser => ({
+        ...prevUser!,
+        credit_balance: data.credit_balance
+      }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !game) return;
@@ -89,6 +106,7 @@ export default function Question({
           toast.info("Answer submitted and pending validation.");
         }
         setAnswer("");
+        await updateUserCredits();
         onAnswerSubmitted();
         updateNavbarCredits();
       }
@@ -114,6 +132,7 @@ export default function Question({
       if (result.success) {
         toast.success(`Lucky Dip purchased! Your answer: ${result.answer}`);
         setAvailableLuckyDips(prevDips => prevDips.filter(dip => dip !== result.answer));
+        await updateUserCredits();
         onAnswerSubmitted();
         updateNavbarCredits();
       }
