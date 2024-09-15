@@ -15,15 +15,15 @@ export interface Answer {
 export interface Game {
   id: string;
   question: string;
-  gameStatus: string;
-  jackpot: number;
-  validAnswers: string[];
+  valid_answers: string[];
   answers: Answer[];
-  start_time: string; // Add this line if it's not already there
-  end_time: string; // Add this line
-  current_prize: number; // Add this line
-  lucky_dip_answers: string[]; // Add this line
-  hangmanWords: string[]; // Add this line if it's not already there
+  start_time: string;
+  end_time: string;
+  current_prize: number;
+  lucky_dip_answers: string[];
+  hangmanWords: string[];
+  price: number;
+  lucky_dip_price: number;
   // ... other properties
 }
 

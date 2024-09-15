@@ -12,6 +12,7 @@ export interface LocalUser {
 
 export interface ExtendedUser extends LocalUser {
   is_admin: boolean;
+  credit_balance: number;
 }
 
 const STORAGE_KEY = "currentUser";

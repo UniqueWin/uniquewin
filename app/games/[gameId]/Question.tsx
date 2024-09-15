@@ -23,6 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { processAnswer, purchaseLuckyDip } from "@/utils/gameLogic";
 
 type QuestionProps = {
   game: Game;
@@ -54,76 +55,69 @@ export default function Question({
   onAnswerSubmitted,
 }: QuestionProps) {
   const [answer, setAnswer] = useState("");
-  const [isLuckyDip, setIsLuckyDip] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const supabase = createClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if ((!answer && !isLuckyDip) || isSubmitting) return;
-
+    if (!user || !game) return;
     setIsSubmitting(true);
 
     try {
-      let submittedAnswer = answer;
-      if (isLuckyDip) {
-        if (availableLuckyDips.length === 0) {
-          // If no lucky dips are available, use a random answer from the game's valid answers
-          const validAnswers = game.validAnswers || [];
-          if (validAnswers.length === 0) {
-            toast.error("No valid answers available for lucky dip!");
-            setIsSubmitting(false);
-            return;
-          }
-          const randomIndex = Math.floor(Math.random() * validAnswers.length);
-          submittedAnswer = validAnswers[randomIndex];
+      const result = await processAnswer(
+        user.id,
+        game.id,
+        answer,
+        instantWinPrizes,
+        game.valid_answers
+      );
+      if (result.success) {
+        if (result.isCorrectAnswer) {
+          toast.success("Correct answer!");
+        } else if (result.instantWin) {
+          toast.success(`Congratulations! You won ${result.instantWin.prize.prize_amount} ${result.instantWin.prize.prize_type}!`);
+          setInstantWinPrizes(prevPrizes => 
+            prevPrizes.map(prize => 
+              prize.id === result.instantWin?.id 
+                ? { ...prize, quantity: prize.quantity - 1 }
+                : prize
+            )
+          );
         } else {
-          const randomIndex = Math.floor(Math.random() * availableLuckyDips.length);
-          submittedAnswer = availableLuckyDips[randomIndex];
-          setAvailableLuckyDips((prev) => prev.filter((a) => a !== submittedAnswer));
+          toast.info("Incorrect answer, but keep trying!");
         }
-      }
-
-      const instantWin = checkForInstantWin(instantWinPrizes);
-
-      const { data, error } = await supabase
-        .from("answers")
-        .insert({
-          game_id: game.id,
-          user_id: user.id,
-          answer_text: submittedAnswer,
-          is_lucky_dip: isLuckyDip,
-          is_instant_win: !!instantWin,
-          instant_win_amount: instantWin?.prize.prize_amount || 0,
-        })
-        .select();
-
-      if (error) throw error;
-
-      if (isLuckyDip) {
-        setAvailableLuckyDips((prev) => prev.filter((a) => a !== submittedAnswer));
-      }
-
-      if (instantWin) {
-        setInstantWinPrizes((prev) =>
-          prev.map((p) =>
-            p.id === instantWin.id ? { ...p, quantity: p.quantity - 1 } : p
-          )
-        );
-        toast.success(
-          `Congratulations! You won £${instantWin.prize.prize_amount?.toFixed(
-            2
-          )}!`
-        );
+        setAnswer("");
+        onAnswerSubmitted();
         updateNavbarCredits();
       }
-
-      setAnswer("");
-      setIsLuckyDip(false);
-      onAnswerSubmitted();
     } catch (error) {
       console.error("Error submitting answer:", error);
       toast.error("Failed to submit answer. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLuckyDip = async () => {
+    if (!user || !game) return;
+    setIsSubmitting(true);
+
+    try {
+      const result = await purchaseLuckyDip(
+        user.id,
+        game.id,
+        availableLuckyDips,
+        game.lucky_dip_price
+      );
+      if (result.success) {
+        toast.success(`Lucky Dip purchased! Your answer: ${result.answer}`);
+        setAvailableLuckyDips(prevDips => prevDips.filter(dip => dip !== result.answer));
+        onAnswerSubmitted();
+        updateNavbarCredits();
+      }
+    } catch (error) {
+      console.error("Error purchasing Lucky Dip:", error);
+      toast.error("Failed to purchase Lucky Dip. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -152,7 +146,10 @@ export default function Question({
               <ul className="list-disc pl-5">
                 {instantWinPrizes.map((prize) => (
                   <li key={prize.id} className="text-xs">
-                    £{prize.prize.prize_amount?.toFixed(2)} (x{prize.quantity})
+                    {prize.prize.prize_type === "CASH" && "£"}
+                    {prize.prize.prize_amount?.toFixed(2)}
+                    {prize.prize.prize_type === "CREDITS" && "Q"} (x
+                    {prize.quantity})
                   </li>
                 ))}
               </ul>
@@ -174,26 +171,26 @@ export default function Question({
           <Button
             type="submit"
             className="bg-primary text-primary-foreground hover:bg-primary/90"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !answer || answer.length === 0}
           >
             {isSubmitting ? "Submitting..." : "Answer!"}
           </Button>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="lucky-dip"
-            checked={isLuckyDip}
-            onCheckedChange={setIsLuckyDip}
-            disabled={isSubmitting}
-          />
-          <Label htmlFor="lucky-dip">
-            Lucky Dip ({availableLuckyDips.length} left)
-          </Label>
-        </div>
+        <Button
+          type="button"
+          onClick={handleLuckyDip}
+          disabled={
+            isSubmitting ||
+            availableLuckyDips.length === 0 ||
+            (user.credit_balance ?? 0) < (game.lucky_dip_price ?? 0)
+          }
+        >
+          Lucky Dip (£{game.lucky_dip_price ?? 0})
+        </Button>
 
         <p className="text-sm text-muted-foreground">
-          Cost: {isLuckyDip ? "£5" : "£1"} per play
+          Cost: £{game.price} per play, £{game.lucky_dip_price} for Lucky Dip
         </p>
       </form>
     </motion.div>
