@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { CustomSlider } from "@/components/CustomSlider";
 
 function formatDateTimeLocal(date: Date): string {
   return date.toLocaleString('sv-SE', { 
@@ -54,6 +55,7 @@ export function AddGameModal({
   const [prizeQuantities, setPrizeQuantities] = useState<{
     [key: string]: number;
   }>({});
+  const [currentPrize, setCurrentPrize] = useState(0);
   const supabase = createClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -69,7 +71,7 @@ export function AddGameModal({
         price: parseInt(price),
         lucky_dip_price: luckyDipPrice ? parseFloat(luckyDipPrice) : null,
         status: "active",
-        current_prize: 0,
+        current_prize: currentPrize,
       })
       .select()
       .single();
@@ -160,6 +162,8 @@ export function AddGameModal({
     setEndTime(formatDateTimeLocal(newEndTime));
   };
 
+  const prizeSteps = [0, 250, 500, 1000, 1500, 2000, 2500, 5000];
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] bg-white text-black">
@@ -220,6 +224,18 @@ export function AddGameModal({
                     className="mt-1 bg-white"
                   />
                 </div>
+              </div>
+              <div>
+                <Label htmlFor="currentPrize" className="text-sm font-medium">
+                  Prize: £{currentPrize}
+                </Label>
+                <CustomSlider
+                  min={0}
+                  max={5000}
+                  steps={prizeSteps}
+                  value={currentPrize}
+                  onChange={(value) => setCurrentPrize(value)}
+                />
               </div>
               <div>
                 <Label className="text-sm font-medium">Time Presets</Label>
