@@ -6,7 +6,7 @@ import { Bell, Trophy } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { LoginModal } from "@/components/LoginModal";
-import { useUser } from '@/utils/UserContext';
+import { useUser } from "@/utils/UserContext";
 
 const Navbar = () => {
   const { user, refreshUser } = useUser();
@@ -91,7 +91,9 @@ const Navbar = () => {
               <div className="flex flex-col">
                 <span className="font-semibold">
                   You have{" "}
-                  <span className="text-yellow-400">{user.credit_balance} credits</span>{" "}
+                  <span className="text-yellow-400">
+                    {user.credit_balance} credits
+                  </span>{" "}
                   left.
                 </span>
                 <small className="text-xxs">Buy more credits</small>
@@ -114,7 +116,9 @@ const Navbar = () => {
       {/* Header */}
       <div className="bg-white p-4 flex justify-between items-center">
         <div className="flex justify-start items-center gap-4 text-black">
-          <div className="text-lg font-bold">Logo</div>
+          <div className="text-lg font-bold">
+            <Link href="/">Logo</Link>
+          </div>
           <nav>
             <ul className="flex space-x-4">
               <li>

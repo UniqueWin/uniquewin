@@ -36,8 +36,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         password,
         options: {
           data: {
-            username: email.split("@")[0], // Use part of email as username
-            full_name: "", // You might want to add a field for this in your form
+            username: email.split("@")[0],
+            full_name: "",
             email: email,
           },
           emailRedirectTo: `${window.location.origin}/auth/callback`,
@@ -48,20 +48,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         console.log({ error });
         setError(error.message);
       } else if (data?.user) {
-        // Create a profile for the new user
-        const { error: profileError } = await supabase.from("profiles").insert({
-          id: data.user.id,
-          username: email.split("@")[0], // Use part of email as username
-          email: email,
-        });
-
-        if (profileError) {
-          console.error("Error creating profile:", profileError);
-          setError("Error creating user profile");
-        } else {
-          setMessage("Check your email to continue sign up process");
-          onClose();
-        }
+        setMessage("Check your email to continue sign up process");
+        onClose();
       }
     } else {
       const { error } = await supabase.auth.signInWithPassword({
