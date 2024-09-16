@@ -21,7 +21,7 @@ export type Game = {
   end_time: string;
   lucky_dip_price?: number;
   price?: number;
-  current_prize?: number;
+  current_prize: number;
   status: string;
   start_time: string;
   lucky_dip_answers?: string[];

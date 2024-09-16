@@ -176,6 +176,16 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
+          {/* Add a new Card component to display the current prize */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-black">Prize</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold text-green-600">£{game.current_prize}</p>
+            </CardContent>
+          </Card>
+
           <Question
             game={game}
             setGame={setGame}
