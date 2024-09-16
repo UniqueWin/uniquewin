@@ -13,7 +13,7 @@ type HistoryProps = {
 function History({ game, instantWinPrizes }: HistoryProps) {
   const calculateWinnings = () => {
     const uniqueAnswers =
-      game?.answers.filter((a) => a.status === "UNIQUE") || [];
+      game?.answers?.filter((a) => a.status === "UNIQUE") || [];
     return uniqueAnswers.length
       ? (750 / uniqueAnswers.length).toFixed(2)
       : "0.00";
@@ -58,7 +58,7 @@ function History({ game, instantWinPrizes }: HistoryProps) {
                   {answer.instantWin === "REVEAL" ? (
                     <ScratchCardComponent
                       prize={
-                        instantWinPrizes[game.answers.length - 1 - index]
+                        game.answers && instantWinPrizes[game.answers.length - 1 - index]
                           ? instantWinPrizes[game.answers.length - 1 - index]
                               .prize.prize_type === "CASH"
                             ? instantWinPrizes[game.answers.length - 1 - index]

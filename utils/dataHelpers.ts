@@ -12,11 +12,11 @@ export interface Answer {
   frequency?: number; // Make frequency optional
 }
 
-export interface Game {
+export type Game = {
   id: string;
   question: string;
   valid_answers: string[]; // Admin-defined valid answers
-  answers?: Answer[]; // User submitted answers, optional as it might not always be loaded
+  answers: Answer[]; // User submitted answers, optional as it might not always be loaded
   jackpot: number;
   end_time: string;
   lucky_dip_price?: number;

@@ -104,9 +104,9 @@ export default function ProfilePage() {
                 <tr key={game.id}>
                   <td>{game.id}</td>
                   <td>{game.question}</td>
-                  <td>{game.answers.length}</td>
-                  <td>{game.answers.some((a: Answer) => a.status === "UNIQUE") ? "WIN" : "LOSE"}</td>
-                  <td>{game.answers.some((a: Answer) => a.instantWin !== "NO") ? "YES" : "NO"}</td>
+                  <td>{game.answers!.length}</td>
+                  <td>{game.answers!.some((a: Answer) => a.status === "UNIQUE") ? "WIN" : "LOSE"}</td>
+                  <td>{game.answers!.some((a: Answer) => a.instantWin !== "NO") ? "YES" : "NO"}</td>
                   <td>£{calculateProfitLoss(game)}</td>
                 </tr>
               ))}
