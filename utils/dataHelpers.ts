@@ -15,18 +15,17 @@ export interface Answer {
 export interface Game {
   id: string;
   question: string;
-  answers: Answer[];
+  valid_answers: string[]; // Admin-defined valid answers
+  answers?: Answer[]; // User submitted answers, optional as it might not always be loaded
   jackpot: number;
-  valid_answers?: string[]; // Add this line
-  end_time: string; // Add this line as well
-  lucky_dip_price?: number; // Add this line
-  price?: number; // Add this line as well
-  current_prize?: number; // Add this line
-  status: string; // Change this from gameStatus to status
-  start_time: string; // Add this line
-  lucky_dip_answers?: string[]; // Add this line
-  hangmanWords?: string[]; // Add this line
-  // ... other properties of Game
+  end_time: string;
+  lucky_dip_price?: number;
+  price?: number;
+  current_prize?: number;
+  status: string;
+  start_time: string;
+  lucky_dip_answers?: string[];
+  hangmanWords?: string[];
 }
 
 export interface InstantWinPrize {
@@ -91,7 +90,17 @@ export async function getGameById(gameId: string): Promise<Game | null> {
   try {
     const { data, error } = await supabase
       .from("games")
-      .select("*")
+      .select(`
+        *,
+        answers:answers(
+          id,
+          answer_text,
+          status,
+          is_instant_win,
+          instant_win_amount,
+          submitted_at
+        )
+      `)
       .eq("id", gameId)
       .single();
 
@@ -100,7 +109,22 @@ export async function getGameById(gameId: string): Promise<Game | null> {
       return null;
     }
 
-    return data as Game;
+    // Transform the answers to match the Answer interface
+    const transformedAnswers: Answer[] = data.answers.map((answer: any) => ({
+      answer: answer.answer_text,
+      status: answer.status || "PENDING",
+      isInstantWin: answer.is_instant_win,
+      instantWin: answer.is_instant_win ? `£${answer.instant_win_amount}` : "NO",
+      submittedAt: answer.submitted_at,
+    }));
+
+    // Create the Game object with the transformed answers
+    const game: Game = {
+      ...data,
+      answers: transformedAnswers,
+    };
+
+    return game;
   } catch (error) {
     console.error("Error in getGameById:", error);
     return null;
@@ -157,11 +181,13 @@ export const submitAnswer = async (
   gameId: string,
   userId: string,
   answer: string,
-  instantWinPrizes: GameInstantWinPrize | GameInstantWinPrize[],
+  instantWinPrizes: GameInstantWinPrize[],
   validAnswers: string[]
 ) => {
   try {
     console.log("Submitting answer:", gameId, userId, answer, instantWinPrizes);
+    console.log("Valid answers:", validAnswers); // Add this line for debugging
+
     // Fetch user's current credits
     const { data: userData, error: userError } = await supabase
       .from("profiles")
@@ -185,31 +211,63 @@ export const submitAnswer = async (
 
     if (updateError) throw updateError;
 
+    const isValidAnswer = validAnswers.some(validAnswer => 
+      validAnswer.toLowerCase() === answer.toLowerCase()
+    );
+    console.log("Is valid answer:", isValidAnswer); // Add this line for debugging
+
+    const instantWin = checkForInstantWin(instantWinPrizes);
+
+    // Check if the answer already exists for this game
+    const { data: existingAnswers, error: existingAnswerError } = await supabase
+      .from("answers")
+      .select("id")
+      .eq("game_id", gameId)
+      .ilike("answer_text", answer)
+      .limit(1);
+
+    if (existingAnswerError) throw existingAnswerError;
+
+    const isUniqueAnswer = isValidAnswer && existingAnswers.length === 0;
+
     // Submit the answer
-    const { data, error } = await supabase
+    const { data: submittedAnswer, error } = await supabase
       .from("answers")
       .insert({
         game_id: gameId,
         user_id: userId,
         answer_text: answer,
-        is_lucky_dip: Array.isArray(instantWinPrizes) ? false : instantWinPrizes,
-        is_instant_win: !!instantWinPrizes,
-        instant_win_amount: instantWinPrizes
-          ? Array.isArray(instantWinPrizes)
-            ? instantWinPrizes[0]?.prize.prize_amount || 0
-            : instantWinPrizes.prize.prize_amount
-          : 0,
+        is_instant_win: !!instantWin,
+        instant_win_amount: instantWin ? instantWin.prize.prize_amount : 0,
+        status: isValidAnswer 
+          ? (isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE") 
+          : "INVALID",
       })
       .select()
       .single();
 
     if (error) throw error;
 
-    if (instantWinPrizes && !Array.isArray(instantWinPrizes)) {
-      await updateInstantWinPrizeQuantity(instantWinPrizes.id);
+    if (instantWin) {
+      await updateInstantWinPrizeQuantity(instantWin.id);
     }
 
-    return data;
+    // Fetch updated user profile
+    const { data: updatedProfile, error: profileError } = await supabase
+      .from("profiles")
+      .select("credit_balance")
+      .eq("id", userId)
+      .single();
+
+    if (profileError) throw profileError;
+
+    return {
+      success: true,
+      isValidAnswer,
+      isUniqueAnswer,
+      instantWin,
+      updatedCredits: updatedProfile.credit_balance,
+    };
   } catch (error) {
     console.error("Error submitting answer:", error);
     throw error;

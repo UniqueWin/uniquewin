@@ -6,21 +6,22 @@ import { Bell, Trophy } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { LoginModal } from "@/components/LoginModal";
+import { useUser } from '@/utils/UserContext';
 
 const Navbar = () => {
-  const [user, setUser] = useState<any>(null);
-  const [credits, setCredits] = useState(0);
+  const { user, refreshUser } = useUser();
+
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
-    fetchUserAndCredits();
+    refreshUser();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
-          fetchUserAndCredits();
+          refreshUser();
         }
       }
     );
@@ -29,27 +30,6 @@ const Navbar = () => {
       authListener.subscription.unsubscribe();
     };
   }, []);
-
-  const fetchUserAndCredits = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    setUser(user);
-
-    if (user) {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("credit_balance")
-        .eq("id", user.id)
-        .single();
-
-      if (error) {
-        console.error("Error fetching user credits:", error);
-      } else {
-        setCredits(data?.credit_balance || 0);
-      }
-    }
-  };
 
   const handleSignIn = () => {
     setIsSignUp(false);
@@ -63,12 +43,11 @@ const Navbar = () => {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    setUser(null);
-    setCredits(0);
+    refreshUser();
   };
 
   const handleLoginSuccess = () => {
-    fetchUserAndCredits();
+    refreshUser();
   };
 
   const handleBuyCredits = async () => {
@@ -76,14 +55,14 @@ const Navbar = () => {
       const additionalCredits = 10; // You can adjust this value or make it dynamic
       const { data, error } = await supabase
         .from("profiles")
-        .update({ credit_balance: credits + additionalCredits })
+        .update({ credit_balance: user.credit_balance + additionalCredits })
         .eq("id", user.id)
         .select();
 
       if (error) {
         console.error("Error updating credits:", error);
       } else {
-        setCredits(credits + additionalCredits);
+        refreshUser();
       }
     }
   };
@@ -112,7 +91,7 @@ const Navbar = () => {
               <div className="flex flex-col">
                 <span className="font-semibold">
                   You have{" "}
-                  <span className="text-yellow-400">{credits} credits</span>{" "}
+                  <span className="text-yellow-400">{user.credit_balance} credits</span>{" "}
                   left.
                 </span>
                 <small className="text-xxs">Buy more credits</small>

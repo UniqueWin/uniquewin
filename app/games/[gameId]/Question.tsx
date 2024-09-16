@@ -24,11 +24,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { processAnswer, purchaseLuckyDip } from "@/utils/gameLogic";
+import { useUser } from '@/utils/UserContext';
 
 type QuestionProps = {
   game: Game;
-  user: ExtendedUser;
-  setUser: React.Dispatch<React.SetStateAction<ExtendedUser | null>>;
   setGame: React.Dispatch<React.SetStateAction<Game | null>>;
   availableLuckyDips: string[];
   setAvailableLuckyDips: React.Dispatch<React.SetStateAction<string[]>>;
@@ -39,12 +38,11 @@ type QuestionProps = {
   getPartiallyHiddenWord: (word: string) => string;
   updateNavbarCredits: () => void;
   onAnswerSubmitted: () => void;
+  refreshPage: () => void;
 };
 
 export default function Question({
   game,
-  user,
-  setUser,
   setGame,
   availableLuckyDips,
   setAvailableLuckyDips,
@@ -53,40 +51,27 @@ export default function Question({
   getPartiallyHiddenWord,
   updateNavbarCredits,
   onAnswerSubmitted,
+  refreshPage,
 }: QuestionProps) {
+  const { user, refreshUser } = useUser();
   const [answer, setAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const supabase = createClient();
 
-  const updateUserCredits = async () => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("credit_balance")
-      .eq("id", user.id)
-      .single();
-
-    if (error) {
-      console.error("Error fetching updated credit balance:", error);
-    } else if (data) {
-      setUser(prevUser => ({
-        ...prevUser!,
-        credit_balance: data.credit_balance
-      }));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (answer.trim() === "") return;
+    if (answer.trim() === "" || !user) return;
 
     try {
       setIsSubmitting(true);
+      console.log("Submitting answer:", answer); // Add this line for debugging
+      console.log("Valid answers:", game.valid_answers); // Add this line for debugging
       const result = await submitAnswer(
         game.id,
         user.id,
         answer,
         instantWinPrizes,
-        game.valid_answers || [] // Provide an empty array as default
+        game.valid_answers || [] // Ensure we're passing valid_answers correctly
       );
       if (result.success) {
         if (result.isValidAnswer && result.isUniqueAnswer) {
@@ -106,9 +91,9 @@ export default function Question({
           toast.info("Answer submitted and pending validation.");
         }
         setAnswer("");
-        await updateUserCredits();
+        await refreshUser();
         onAnswerSubmitted();
-        updateNavbarCredits();
+        refreshPage();
       }
     } catch (error) {
       console.error("Error submitting answer:", error);
@@ -127,14 +112,14 @@ export default function Question({
         user.id,
         game.id,
         availableLuckyDips,
-        game.lucky_dip_price ?? 0 // Provide a default value of 0
+        game.lucky_dip_price ?? 0
       );
       if (result.success) {
         toast.success(`Lucky Dip purchased! Your answer: ${result.answer}`);
         setAvailableLuckyDips(prevDips => prevDips.filter(dip => dip !== result.answer));
-        await updateUserCredits();
+        await refreshUser();
         onAnswerSubmitted();
-        updateNavbarCredits();
+        refreshPage();
       }
     } catch (error) {
       console.error("Error purchasing Lucky Dip:", error);
@@ -154,7 +139,7 @@ export default function Question({
       <h2 className="text-3xl font-bold mb-4 text-primary">{game.question}</h2>
       <div className="flex justify-between items-center mb-4">
         <p className="text-lg">
-          Your Credits: £{user.credit_balance?.toFixed(2)}
+          Your Credits: £{user?.credit_balance?.toFixed(2)}
         </p>
         <TooltipProvider>
           <Tooltip>
@@ -204,7 +189,7 @@ export default function Question({
           disabled={
             isSubmitting ||
             availableLuckyDips.length === 0 ||
-            (user.credit_balance ?? 0) < (game.lucky_dip_price ?? 0)
+            (user?.credit_balance ?? 0) < (game.lucky_dip_price ?? 0)
           }
         >
           Lucky Dip (£{game.lucky_dip_price ?? 0})

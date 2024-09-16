@@ -80,22 +80,11 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
       const currentGame = await getGameById(params.gameId);
       if (currentGame) {
         setGame(currentGame);
-        if (!currentGame.answers) {
-          currentGame.answers = [];
-        }
         setAvailableLuckyDips(currentGame.valid_answers || []);
 
         setUserAnswersLoading(true);
         const answers = await getUserAnswers(user.id, params.gameId);
-        setUserAnswers(
-          answers.map((answer) => ({
-            answer: answer.answer,
-            status: answer.status,
-            isInstantWin: answer.isInstantWin,
-            instantWin: answer.instantWin,
-            submittedAt: answer.submittedAt,
-          })) || []
-        );
+        setUserAnswers(answers || []);
         setUserAnswersLoading(false);
 
         const gameInstantWinPrizes = await getGameInstantWinPrizes(
@@ -152,6 +141,8 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
   const updateNavbarCredits = () => {
     // This function should be passed down from a parent component
     // that has access to the Navbar's fetchUserAndCredits function
+    // For now, we'll just call fetchUserAndGame to update the local state
+    fetchUserAndGame();
   };
 
   const refreshUserAnswers = async () => {
@@ -171,6 +162,10 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     }
   };
 
+  const refreshPage = () => {
+    fetchUserAndGame();
+  };
+
   if (!user || !game) return <div>Loading...</div>;
 
   return (
@@ -183,20 +178,15 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         >
           <Question
             game={game}
-            user={user as ExtendedUser}
-            setUser={
-              setUser as React.Dispatch<
-                React.SetStateAction<ExtendedUser | null>
-              >
-            }
             setGame={setGame}
-            availableLuckyDips={availableLuckyDips}
+            availableLuckyDips={game?.valid_answers || []}
             setAvailableLuckyDips={setAvailableLuckyDips}
             instantWinPrizes={instantWinPrizes}
             setInstantWinPrizes={setInstantWinPrizes}
             getPartiallyHiddenWord={getPartiallyHiddenWord}
             updateNavbarCredits={updateNavbarCredits}
             onAnswerSubmitted={refreshUserAnswers}
+            refreshPage={refreshPage}
           />
 
           {userAnswersLoading ? (

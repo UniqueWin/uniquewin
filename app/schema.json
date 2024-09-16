@@ -5,9 +5,9 @@
     "data_type": "uuid",
     "is_nullable": "NO",
     "column_default": "gen_random_uuid()",
-    "key": "PK",
-    "foreign_table_name": null,
-    "foreign_column_name": null
+    "constraint_type": "PRIMARY KEY",
+    "foreign_table_name": "admin_actions",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "admin_actions",
@@ -15,7 +15,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "users",
     "foreign_column_name": "id"
   },
@@ -25,7 +25,7 @@
     "data_type": "text",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -35,7 +35,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -45,7 +45,7 @@
     "data_type": "text",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -55,7 +55,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -65,9 +65,9 @@
     "data_type": "uuid",
     "is_nullable": "NO",
     "column_default": "gen_random_uuid()",
-    "key": "PK",
-    "foreign_table_name": null,
-    "foreign_column_name": null
+    "constraint_type": "PRIMARY KEY",
+    "foreign_table_name": "answers",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "answers",
@@ -75,7 +75,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "games",
     "foreign_column_name": "id"
   },
@@ -85,7 +85,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "users",
     "foreign_column_name": "id"
   },
@@ -95,7 +95,7 @@
     "data_type": "text",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -105,7 +105,7 @@
     "data_type": "text",
     "is_nullable": "YES",
     "column_default": "'pending'::text",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -115,7 +115,7 @@
     "data_type": "boolean",
     "is_nullable": "YES",
     "column_default": "false",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -125,7 +125,7 @@
     "data_type": "boolean",
     "is_nullable": "YES",
     "column_default": "false",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -135,7 +135,7 @@
     "data_type": "numeric",
     "is_nullable": "YES",
     "column_default": "0",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -145,7 +145,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -155,7 +155,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -165,9 +165,9 @@
     "data_type": "uuid",
     "is_nullable": "NO",
     "column_default": "gen_random_uuid()",
-    "key": "PK",
-    "foreign_table_name": null,
-    "foreign_column_name": null
+    "constraint_type": "PRIMARY KEY",
+    "foreign_table_name": "game_history",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "game_history",
@@ -175,7 +175,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "games",
     "foreign_column_name": "id"
   },
@@ -185,7 +185,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "users",
     "foreign_column_name": "id"
   },
@@ -195,7 +195,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "answers",
     "foreign_column_name": "id"
   },
@@ -205,7 +205,7 @@
     "data_type": "text",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -215,7 +215,7 @@
     "data_type": "numeric",
     "is_nullable": "YES",
     "column_default": "0",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -225,7 +225,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -235,9 +235,9 @@
     "data_type": "uuid",
     "is_nullable": "NO",
     "column_default": "gen_random_uuid()",
-    "key": "PK",
-    "foreign_table_name": null,
-    "foreign_column_name": null
+    "constraint_type": "PRIMARY KEY",
+    "foreign_table_name": "game_instant_win_prizes",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "game_instant_win_prizes",
@@ -245,8 +245,38 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "games",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "game_instant_win_prizes",
+    "column_name": "game_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null,
+    "constraint_type": "UNIQUE",
+    "foreign_table_name": "game_instant_win_prizes",
+    "foreign_column_name": "game_id"
+  },
+  {
+    "table_name": "game_instant_win_prizes",
+    "column_name": "game_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null,
+    "constraint_type": "UNIQUE",
+    "foreign_table_name": "game_instant_win_prizes",
+    "foreign_column_name": "instant_win_prize_id"
+  },
+  {
+    "table_name": "game_instant_win_prizes",
+    "column_name": "instant_win_prize_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null,
+    "constraint_type": "FOREIGN KEY",
+    "foreign_table_name": "instant_win_prizes",
     "foreign_column_name": "id"
   },
   {
@@ -255,9 +285,19 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
-    "foreign_table_name": "instant_win_prizes",
-    "foreign_column_name": "id"
+    "constraint_type": "UNIQUE",
+    "foreign_table_name": "game_instant_win_prizes",
+    "foreign_column_name": "game_id"
+  },
+  {
+    "table_name": "game_instant_win_prizes",
+    "column_name": "instant_win_prize_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null,
+    "constraint_type": "UNIQUE",
+    "foreign_table_name": "game_instant_win_prizes",
+    "foreign_column_name": "instant_win_prize_id"
   },
   {
     "table_name": "game_instant_win_prizes",
@@ -265,17 +305,7 @@
     "data_type": "integer",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
-    "foreign_table_name": null,
-    "foreign_column_name": null
-  },
-  {
-    "table_name": "game_instant_win_prizes",
-    "column_name": "custom_probability",
-    "data_type": "numeric",
-    "is_nullable": "NO",
-    "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -285,9 +315,9 @@
     "data_type": "uuid",
     "is_nullable": "NO",
     "column_default": "gen_random_uuid()",
-    "key": "PK",
-    "foreign_table_name": null,
-    "foreign_column_name": null
+    "constraint_type": "PRIMARY KEY",
+    "foreign_table_name": "game_settings",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "game_settings",
@@ -295,9 +325,9 @@
     "data_type": "text",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
-    "foreign_table_name": null,
-    "foreign_column_name": null
+    "constraint_type": "UNIQUE",
+    "foreign_table_name": "game_settings",
+    "foreign_column_name": "setting_name"
   },
   {
     "table_name": "game_settings",
@@ -305,7 +335,7 @@
     "data_type": "text",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -315,7 +345,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -325,7 +355,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -335,9 +365,9 @@
     "data_type": "uuid",
     "is_nullable": "NO",
     "column_default": "gen_random_uuid()",
-    "key": "PK",
-    "foreign_table_name": null,
-    "foreign_column_name": null
+    "constraint_type": "PRIMARY KEY",
+    "foreign_table_name": "games",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "games",
@@ -345,7 +375,7 @@
     "data_type": "text",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -355,7 +385,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -365,7 +395,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -375,7 +405,7 @@
     "data_type": "ARRAY",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -385,7 +415,7 @@
     "data_type": "integer",
     "is_nullable": "NO",
     "column_default": "1",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -395,7 +425,7 @@
     "data_type": "text",
     "is_nullable": "YES",
     "column_default": "'pending'::text",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -405,7 +435,7 @@
     "data_type": "numeric",
     "is_nullable": "YES",
     "column_default": "0",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -415,7 +445,7 @@
     "data_type": "numeric",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -425,7 +455,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -435,7 +465,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -445,9 +475,9 @@
     "data_type": "uuid",
     "is_nullable": "NO",
     "column_default": "gen_random_uuid()",
-    "key": "PK",
-    "foreign_table_name": null,
-    "foreign_column_name": null
+    "constraint_type": "PRIMARY KEY",
+    "foreign_table_name": "instant_win_prizes",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "instant_win_prizes",
@@ -455,7 +485,7 @@
     "data_type": "numeric",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -465,7 +495,7 @@
     "data_type": "numeric",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -475,7 +505,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -485,7 +515,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -495,7 +525,7 @@
     "data_type": "text",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -505,7 +535,27 @@
     "data_type": "jsonb",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
+    "foreign_table_name": null,
+    "foreign_column_name": null
+  },
+  {
+    "table_name": "last_cleanup",
+    "column_name": "id",
+    "data_type": "integer",
+    "is_nullable": "NO",
+    "column_default": "nextval('last_cleanup_id_seq'::regclass)",
+    "constraint_type": "PRIMARY KEY",
+    "foreign_table_name": "last_cleanup",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "last_cleanup",
+    "column_name": "last_run",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": "CURRENT_TIMESTAMP",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -515,9 +565,9 @@
     "data_type": "uuid",
     "is_nullable": "NO",
     "column_default": "gen_random_uuid()",
-    "key": "PK",
-    "foreign_table_name": null,
-    "foreign_column_name": null
+    "constraint_type": "PRIMARY KEY",
+    "foreign_table_name": "pending_validation",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "pending_validation",
@@ -525,7 +575,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "games",
     "foreign_column_name": "id"
   },
@@ -535,7 +585,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "users",
     "foreign_column_name": "id"
   },
@@ -545,7 +595,7 @@
     "data_type": "text",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -555,7 +605,7 @@
     "data_type": "text",
     "is_nullable": "YES",
     "column_default": "'pending'::text",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -565,7 +615,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -575,7 +625,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -585,8 +635,18 @@
     "data_type": "uuid",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "PK",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "users",
+    "foreign_column_name": "id"
+  },
+  {
+    "table_name": "profiles",
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": null,
+    "constraint_type": "PRIMARY KEY",
+    "foreign_table_name": "profiles",
     "foreign_column_name": "id"
   },
   {
@@ -595,9 +655,9 @@
     "data_type": "text",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
-    "foreign_table_name": null,
-    "foreign_column_name": null
+    "constraint_type": "UNIQUE",
+    "foreign_table_name": "profiles",
+    "foreign_column_name": "username"
   },
   {
     "table_name": "profiles",
@@ -605,7 +665,7 @@
     "data_type": "text",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -615,7 +675,7 @@
     "data_type": "date",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -625,7 +685,7 @@
     "data_type": "text",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -635,7 +695,7 @@
     "data_type": "text",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -645,7 +705,7 @@
     "data_type": "text",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -655,7 +715,7 @@
     "data_type": "text",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -665,9 +725,9 @@
     "data_type": "text",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
-    "foreign_table_name": null,
-    "foreign_column_name": null
+    "constraint_type": "UNIQUE",
+    "foreign_table_name": "profiles",
+    "foreign_column_name": "email"
   },
   {
     "table_name": "profiles",
@@ -675,7 +735,7 @@
     "data_type": "numeric",
     "is_nullable": "YES",
     "column_default": "0",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -685,7 +745,7 @@
     "data_type": "integer",
     "is_nullable": "YES",
     "column_default": "0",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -695,7 +755,7 @@
     "data_type": "boolean",
     "is_nullable": "YES",
     "column_default": "false",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -705,7 +765,7 @@
     "data_type": "boolean",
     "is_nullable": "YES",
     "column_default": "true",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -715,7 +775,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -725,7 +785,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -735,9 +795,9 @@
     "data_type": "uuid",
     "is_nullable": "NO",
     "column_default": "gen_random_uuid()",
-    "key": "PK",
-    "foreign_table_name": null,
-    "foreign_column_name": null
+    "constraint_type": "PRIMARY KEY",
+    "foreign_table_name": "raffle_entries",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "raffle_entries",
@@ -745,7 +805,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "games",
     "foreign_column_name": "id"
   },
@@ -755,7 +815,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "users",
     "foreign_column_name": "id"
   },
@@ -765,7 +825,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -775,9 +835,9 @@
     "data_type": "uuid",
     "is_nullable": "NO",
     "column_default": "gen_random_uuid()",
-    "key": "PK",
-    "foreign_table_name": null,
-    "foreign_column_name": null
+    "constraint_type": "PRIMARY KEY",
+    "foreign_table_name": "transactions",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "transactions",
@@ -785,7 +845,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "users",
     "foreign_column_name": "id"
   },
@@ -795,7 +855,7 @@
     "data_type": "text",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -805,7 +865,7 @@
     "data_type": "numeric",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -815,7 +875,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -825,7 +885,7 @@
     "data_type": "text",
     "is_nullable": "YES",
     "column_default": "'pending'::text",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -835,9 +895,9 @@
     "data_type": "uuid",
     "is_nullable": "NO",
     "column_default": "gen_random_uuid()",
-    "key": "PK",
-    "foreign_table_name": null,
-    "foreign_column_name": null
+    "constraint_type": "PRIMARY KEY",
+    "foreign_table_name": "winners",
+    "foreign_column_name": "id"
   },
   {
     "table_name": "winners",
@@ -845,7 +905,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "games",
     "foreign_column_name": "id"
   },
@@ -855,7 +915,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "users",
     "foreign_column_name": "id"
   },
@@ -865,7 +925,7 @@
     "data_type": "uuid",
     "is_nullable": "YES",
     "column_default": null,
-    "key": "",
+    "constraint_type": "FOREIGN KEY",
     "foreign_table_name": "answers",
     "foreign_column_name": "id"
   },
@@ -875,7 +935,7 @@
     "data_type": "numeric",
     "is_nullable": "NO",
     "column_default": null,
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   },
@@ -885,7 +945,7 @@
     "data_type": "timestamp with time zone",
     "is_nullable": "YES",
     "column_default": "now()",
-    "key": "",
+    "constraint_type": null,
     "foreign_table_name": null,
     "foreign_column_name": null
   }

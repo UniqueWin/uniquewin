@@ -60,7 +60,7 @@ function History({ game, instantWinPrizes }: HistoryProps) {
                       prize={
                         instantWinPrizes[game.answers.length - 1 - index]
                           ? instantWinPrizes[game.answers.length - 1 - index]
-                              .prize.prize_type === "money"
+                              .prize.prize_type === "CASH"
                             ? instantWinPrizes[game.answers.length - 1 - index]
                                 .prize.prize_amount
                             : `${

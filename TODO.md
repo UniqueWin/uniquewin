@@ -42,3 +42,8 @@
 
 
 if a user wins an instant win - it should be added to their account immediately and the prize pool should be deducted from the game.
+
+countdown until next game starts on todays game in @game/page.tsx
+stop entries for current game 1 hour before it ends (or have variable time)
+modal for adding credits to account
+
