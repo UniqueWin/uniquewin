@@ -209,7 +209,7 @@ export default function Question({
       className="bg-card text-card-foreground p-6 rounded-lg shadow-md mb-6"
     >
       <h2 className="text-3xl font-bold mb-4 text-primary">{game.question}</h2>
-      <div className="flex justify-between items-center mb-4">
+      {/* <div className="flex justify-between items-center mb-4">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -231,7 +231,7 @@ export default function Question({
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-      </div>
+      </div> */}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex space-x-4">
