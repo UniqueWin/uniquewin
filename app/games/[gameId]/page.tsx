@@ -27,6 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import ScratchCardComponent from "./ScratchCardComponent";
+import { cn } from "@/lib/utils";
 
 interface UserAnswer {
   answer: string;
@@ -217,34 +218,32 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                     <TableRow>
                       <TableHead className="w-[100px]">Answer</TableHead>
                       <TableHead>Status</TableHead>
-                      {/* <TableHead>Instant Win</TableHead> */}
                       <TableHead>Instant Win Prize</TableHead>
-                      {/* <TableHead className="text-right">Submitted At</TableHead> */}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {userAnswers.map((answer, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="font-medium">
-                          {answer.answer}
-                        </TableCell>
-                        <TableCell>{answer.status}</TableCell>
-                        {/* <TableCell>
-                          {answer.isInstantWin ? "Yes" : "No"}
-                        </TableCell> */}
-                        <TableCell>
-                          {answer.instantWin !== "NO" ? (
-                            <ScratchCardComponent
-                              prize={answer.instantWin}
-                              onReveal={() => {}}
-                            />
-                          ) : null}
-                        </TableCell>
-                        {/* <TableCell className="text-right">
-                          {new Date(answer.submittedAt).toLocaleString()}
-                        </TableCell> */}
-                      </TableRow>
-                    ))}
+                    {userAnswers.map((answer, index) => {
+                      const uniqueAnswersCount = userAnswers.filter(a => a.status === "UNIQUE").length;
+                      const statusColor = 
+                        answer.status === "UNIQUE" && uniqueAnswersCount === 1 ? "text-green-500" :
+                        answer.status === "UNIQUE" ? "text-orange-500" :
+                        answer.status === "NOT UNIQUE" ? "text-red-500" :
+                        "text-black";
+
+                      return (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">
+                            {answer.answer}
+                          </TableCell>
+                          <TableCell className={cn("font-medium", statusColor)}>
+                            {answer.status}
+                          </TableCell>
+                          <TableCell>
+                            {answer.instantWin !== "NO" ? answer.instantWin : "No instant win"}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </CardContent>
