@@ -4,8 +4,7 @@ import { useState, useEffect } from "react";
 import {
   getGameById,
   getUserAnswers,
-  getGameInstantWinPrizes,
-  GameInstantWinPrize,
+  getAnswerInstantWinPrizes,
 } from "@/utils/dataHelpers";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -43,9 +42,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
   const [game, setGame] = useState<Game | null>(null);
   const [availableLuckyDips, setAvailableLuckyDips] = useState<string[]>([]);
   const [showGameHistory, setShowGameHistory] = useState(true);
-  const [instantWinPrizes, setInstantWinPrizes] = useState<
-    GameInstantWinPrize[]
-  >([]);
+  const [instantWinPrizes, setInstantWinPrizes] = useState<any[]>([]);
   const [countdown, setCountdown] = useState("");
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const [userAnswersLoading, setUserAnswersLoading] = useState(true);
@@ -96,13 +93,17 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
 
         setUserAnswersLoading(true);
         const answers = await getUserAnswers(user.id, params.gameId);
-        setUserAnswers(answers || []);
+        setUserAnswers(answers.map((answer) => ({
+          answer: answer.answer,
+          status: answer.status,
+          isInstantWin: answer.isInstantWin,
+          instantWin: answer.instantWin,
+          submittedAt: answer.submittedAt,
+        })) || []);
 
         setUserAnswersLoading(false);
 
-        const gameInstantWinPrizes = await getGameInstantWinPrizes(
-          params.gameId
-        );
+        const gameInstantWinPrizes = await getAnswerInstantWinPrizes(params.gameId);
         setInstantWinPrizes(gameInstantWinPrizes);
       } else {
         router.push("/games");
@@ -281,7 +282,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
             </Card>
           )}
 
-          {/* Replace the existing Instant Win Prizes card with this new one */}
+          {/* Updated Instant Win Prizes card */}
           <Card className="my-8">
             <CardHeader>
               <CardTitle className="text-xl text-black font-bold mb-4">
@@ -292,41 +293,35 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Winner</TableHead>
-                    <TableHead>Prize</TableHead>
-                    <TableHead>Scratch Card</TableHead>
+                    <TableHead>Answer</TableHead>
+                    <TableHead>Prize Type</TableHead>
+                    <TableHead>Prize Amount</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {instantWinPrizes.flatMap((prize, prizeIndex) =>
-                    Array.from({ length: prize.quantity }, (_, index) => (
-                      <TableRow key={`${prizeIndex}-${index}`}>
-                        <TableCell>
-                          {prize.winner_id !== undefined
-                            ? `Winner ${prizeIndex + 1}-${index + 1}`
-                            : "______ ______"}
-                        </TableCell>
-                        {/* <TableCell>
-                          {prize.prize.prize_type === "CASH" ? `£${prize.prize.prize_amount}` : 
-                           prize.prize.prize_type === "CREDITS" ? `${prize.prize.prize_amount}Q` : 
-                           prize.prize.prize_details}
-                        </TableCell> */}
-                        <TableCell>{prize.prize.prize_type}</TableCell>
-                        <TableCell>
+                  {instantWinPrizes.map((prize, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{prize.answer}</TableCell>
+                      <TableCell>{prize.prize_type}</TableCell>
+                      <TableCell>
+                        {prize.prize_type === 'CASH' ? `£${prize.prize_amount}` :
+                         prize.prize_type === 'CREDITS' ? `${prize.prize_amount} credits` :
+                         prize.prize_type}
+                      </TableCell>
+                      <TableCell>
+                        {prize.status === 'LOCKED' ? (
                           <ScratchCardComponent
-                            prize={
-                              prize.prize.prize_type === "CASH"
-                                ? `£${prize.prize.prize_amount}`
-                                : prize.prize.prize_type === "CREDITS"
-                                ? `${prize.prize.prize_amount}Q`
-                                : prize.prize.prize_details
-                            }
+                            prize={prize.prize_type === 'CASH' ? `£${prize.prize_amount}` :
+                                   prize.prize_type === 'CREDITS' ? `${prize.prize_amount} credits` :
+                                   prize.prize_type}
                             onReveal={() => {}}
+                            isLocked={true}
                           />
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
+                        ) : prize.status}
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </CardContent>

@@ -1,16 +1,14 @@
 import { createClient } from "@/utils/supabase/client";
-import { GameInstantWinPrize } from "@/utils/dataHelpers";
+import { checkForInstantWin } from './dataHelpers';
 
 export async function processAnswer(
   userId: string,
   gameId: string,
   answer: string,
-  instantWinPrizes: GameInstantWinPrize[],
   validAnswers: string[]
 ) {
   const supabase = createClient();
   console.log('Starting processAnswer', { userId, gameId, answer, validAnswersCount: validAnswers.length });
-  console.log('Valid answers:', validAnswers);
 
   try {
     // Check if the user has already submitted this answer (case-insensitive)
@@ -21,8 +19,6 @@ export async function processAnswer(
       .eq("user_id", userId)
       .ilike("answer_text", answer)
       .limit(1);
-
-      console.log("Existing user answer:", existingUserAnswer);
 
     if (existingUserAnswerError) throw existingUserAnswerError;
 
@@ -38,7 +34,6 @@ export async function processAnswer(
     const isValidAnswer = validAnswers.some(validAnswer => 
       validAnswer.toLowerCase() === answer.toLowerCase()
     );
-    console.log('Is valid answer:', isValidAnswer, 'Submitted answer:', answer);
 
     // Fetch user's current credit balance
     const { data: userData, error: userError } = await supabase
@@ -59,7 +54,7 @@ export async function processAnswer(
 
     if (updateError) throw updateError;
 
-    // Check if the answer already exists for ANY user in this game
+    // Check if the answer already exists for ANY user in this game (case-insensitive)
     const { data: existingAnswers, error: existingAnswerError } = await supabase
       .from("answers")
       .select("id, status")
@@ -69,11 +64,9 @@ export async function processAnswer(
     if (existingAnswerError) throw existingAnswerError;
 
     const isUniqueAnswer = existingAnswers.length === 0;
-    console.log('Is unique answer:', isUniqueAnswer, 'Existing answers:', existingAnswers);
 
     // Update all existing answers with the same text to NOT UNIQUE if this is a new non-unique answer
     if (!isUniqueAnswer && isValidAnswer) {
-      console.log('Updating existing answers to NOT UNIQUE');
       const { data: updatedAnswers, error: updateError } = await supabase
         .from("answers")
         .update({ status: "NOT UNIQUE" })
@@ -82,7 +75,6 @@ export async function processAnswer(
         .select();
 
       if (updateError) throw updateError;
-      console.log('Existing answers updated successfully:', updatedAnswers);
     }
 
     // Determine the status for the new answer
@@ -92,70 +84,45 @@ export async function processAnswer(
     } else {
       status = "PENDING";
     }
-    console.log('Determined status for new answer:', status);
 
-    // Insert the new answer
-    const { data: answerData, error: answerError } = await supabase
+    // Check for instant win
+    const instantWin = await checkForInstantWin(gameId, answer);
+
+    // Update the answer in the database
+    const { data: newAnswer, error: answerError } = await supabase
       .from("answers")
       .insert({
-        user_id: userId,
         game_id: gameId,
+        user_id: userId,
         answer_text: answer,
         status: status,
+        is_instant_win: !!instantWin,
+        instant_win_amount: instantWin ? instantWin.prize_amount : null,
       })
       .select()
       .single();
 
-    if (answerError) {
-      console.error('Error inserting answer:', answerError);
-      throw answerError;
-    }
-    console.log('Inserted new answer:', answerData);
+    if (answerError) throw answerError;
 
-    let instantWin = null;
-    if (isValidAnswer) {
-      instantWin = checkForInstantWin(instantWinPrizes);
-      if (instantWin) {
-        // Update game_instant_win_prizes quantity
-        await supabase
-          .from("game_instant_win_prizes")
-          .update({ quantity: instantWin.quantity - 1 })
-          .eq("id", instantWin.id);
-
-        // Update the answer with instant win information
-        await supabase
-          .from("answers")
-          .update({
-            is_instant_win: true,
-            instant_win_amount: instantWin.prize.prize_amount,
-          })
-          .eq("id", answerData.id);
-
-        // Update user's balance
-        const balanceColumn = instantWin.prize.prize_type.toLowerCase() === "cash" ? "account_balance" : "credit_balance";
-        await supabase
-          .from("profiles")
-          .update({
-            [balanceColumn]: updatedUserData[balanceColumn] + instantWin.prize.prize_amount
-          })
-          .eq("id", userId);
-      }
+    // If it's an instant win, update the status
+    if (instantWin) {
+      await supabase
+        .from("answer_instant_wins")
+        .update({ status: 'UNLOCKED', winner_id: userId })
+        .eq("id", instantWin.id);
     }
 
-    return { success: true, isValidAnswer, isUniqueAnswer, instantWin };
+    return {
+      success: true,
+      isValidAnswer,
+      isUniqueAnswer,
+      isInstantWin: !!instantWin,
+      instantWinAmount: instantWin ? instantWin.prize_amount : null,
+    };
   } catch (error) {
     console.error("Error processing answer:", error);
     throw error;
   }
-}
-
-function checkForInstantWin(prizes: GameInstantWinPrize[]): GameInstantWinPrize | null {
-  for (const prize of prizes) {
-    if (prize.quantity > 0 && Math.random() < prize.prize.probability) {
-      return prize;
-    }
-  }
-  return null;
 }
 
 export const purchaseLuckyDip = async (

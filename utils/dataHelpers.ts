@@ -150,6 +150,7 @@ export async function getGameInstantWinPrizes(
       game_id,
       instant_win_prize_id,
       quantity,
+      custom_probability,
       prize:instant_win_prizes (
         id,
         prize_amount,
@@ -308,18 +309,23 @@ export const submitAnswer = async (
   }
 };
 
-export function checkForInstantWin(
-  prizes: GameInstantWinPrize[]
-): GameInstantWinPrize | null {
-  const availablePrizes = prizes.filter((p) => p.quantity > 0);
-  if (availablePrizes.length === 0) return null;
+export async function checkForInstantWin(gameId: string, answer: string) {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("answer_instant_wins")
+    .select("*")
+    .eq("game_id", gameId)
+    .ilike("answer", answer)
+    .eq("status", "LOCKED")
+    .limit(1)
+    .single();
 
-  for (const prize of availablePrizes) {
-    if (Math.random() < prize.prize.probability) {
-      return prize;
-    }
+  if (error) {
+    console.error("Error checking for instant win:", error);
+    return null;
   }
-  return null;
+
+  return data;
 }
 
 async function updateInstantWinPrizeQuantity(prizeId: string) {
@@ -465,4 +471,19 @@ export async function getCurrentUser(
   };
 
   return extendedUser;
+}
+
+export async function getAnswerInstantWinPrizes(gameId: string) {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("answer_instant_wins")
+    .select("*")
+    .eq("game_id", gameId);
+
+  if (error) {
+    console.error("Error fetching answer instant win prizes:", error);
+    return [];
+  }
+
+  return data || [];
 }

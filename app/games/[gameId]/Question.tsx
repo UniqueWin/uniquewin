@@ -60,16 +60,12 @@ export default function Question({
 
     try {
       setIsSubmitting(true);
-      console.log("Submitting answer:", answer);
-      console.log("Valid answers:", game.valid_answers);
       const result = await processAnswer(
         user.id,
         game.id,
         answer,
-        instantWinPrizes,
         game.valid_answers || []
       );
-      console.log("Process answer result:", result);
 
       if (result.success) {
         if (result.isValidAnswer) {
@@ -78,8 +74,8 @@ export default function Question({
           } else {
             toast.info("Valid answer, but already submitted by someone else.");
           }
-          if (result.instantWin) {
-            toast.success(`Congratulations! You've won an instant prize: ${result.instantWin.prize.prize_amount} ${result.instantWin.prize.prize_type}`);
+          if (result.isInstantWin) {
+            toast.success(`Congratulations! You've won an instant prize: ${result.instantWinAmount}`);
           }
         } else {
           toast.info("Invalid answer submitted.");
@@ -102,8 +98,8 @@ export default function Question({
                 : "PENDING",
               isLuckyDip: false,
               submittedAt: new Date().toISOString(),
-              instantWin: result.instantWin ? JSON.stringify(result.instantWin) : "",
-              isInstantWin: !!result.instantWin,
+              instantWin: result.isInstantWin ? String(result.instantWinAmount) : "NO",
+              isInstantWin: result.isInstantWin,
               user_id: user.id,
             } as Answer
           ];
@@ -116,12 +112,10 @@ export default function Question({
 
         setAnswer("");
         await refreshUser();
-        onAnswerSubmitted(); // This should refresh the user answers
+        onAnswerSubmitted();
         refreshPage();
       } else {
-        toast.error(
-          result.message || "Failed to submit answer. Please try again."
-        );
+        toast.error(result.message || "Failed to submit answer. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting answer:", error);
@@ -177,9 +171,9 @@ export default function Question({
               status: result.isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE",
               isLuckyDip: true,
               submittedAt: new Date().toISOString(),
-              instantWin: "", // Add this line
-              isInstantWin: false, // Add this line
-              user_id: user.id, // Add this line
+              instantWin: "",
+              isInstantWin: false,
+              user_id: user.id,
             } as Answer
           ];
           console.log("Updated game answers:", updatedAnswers);
@@ -190,7 +184,7 @@ export default function Question({
         });
 
         await refreshUser();
-        onAnswerSubmitted(); // This should refresh the user answers
+        onAnswerSubmitted();
         refreshPage();
       }
     } catch (error) {
@@ -209,29 +203,6 @@ export default function Question({
       className="bg-card text-card-foreground p-6 rounded-lg shadow-md mb-6"
     >
       <h2 className="text-3xl font-bold mb-4 text-primary">{game.question}</h2>
-      {/* <div className="flex justify-between items-center mb-4">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="sm" className="text-xs">
-                Instant Wins
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <ul className="list-disc pl-5">
-                {instantWinPrizes.map((prize) => (
-                  <li key={prize.id} className="text-xs">
-                    {prize.prize.prize_type === "CASH" && "£"}
-                    {prize.prize.prize_amount?.toFixed(2)}
-                    {prize.prize.prize_type === "CREDITS" && "Q"} (x
-                    {prize.quantity})
-                  </li>
-                ))}
-              </ul>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div> */}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex space-x-4">
