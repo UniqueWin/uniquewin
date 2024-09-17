@@ -62,6 +62,21 @@ export default function Question({
     e.preventDefault();
     if (answer.trim() === "" || !user) return;
 
+    // Check if user has enough credits
+    if ((user.credit_balance ?? 0) < (game.price ?? 0)) {
+      toast.error("Insufficient credits to play.");
+      return;
+    }
+
+    // Check if the user has already submitted this answer
+    const hasSubmittedAnswer = game.answers.some(
+      (a) => a.answer.toLowerCase() === answer.toLowerCase()
+    );
+    if (hasSubmittedAnswer) {
+      toast.error("You've already submitted this answer.");
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       console.log("Submitting answer:", answer);
@@ -199,7 +214,7 @@ export default function Question({
           <Button
             type="submit"
             className="bg-primary text-primary-foreground hover:bg-primary/90"
-            disabled={isSubmitting || !answer || answer.length === 0}
+            disabled={isSubmitting || !answer || answer.length === 0 || (user?.credit_balance ?? 0) < (game.price ?? 0)}
           >
             {isSubmitting ? "Submitting..." : "Answer!"}
           </Button>

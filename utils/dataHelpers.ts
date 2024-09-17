@@ -219,7 +219,7 @@ export const submitAnswer = async (
 
     const instantWin = checkForInstantWin(instantWinPrizes);
 
-    // Check if the answer already exists for this game
+    // Check if the answer already exists for this game (case-insensitive)
     const { data: existingAnswers, error: existingAnswerError } = await supabase
       .from("answers")
       .select("id")
