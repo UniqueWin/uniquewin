@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CustomSlider } from "@/components/CustomSlider";
+import InstantWinPrizeManager from './InstantWinPrizeManager';
 
 function formatDateTimeLocal(date: Date): string {
   return date.toLocaleString('sv-SE', { 
@@ -36,14 +37,12 @@ interface AddGameModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddGame: () => void;
-  allInstantWinPrizes: InstantWinPrize[];
 }
 
 export function AddGameModal({
   isOpen,
   onClose,
   onAddGame,
-  allInstantWinPrizes,
 }: AddGameModalProps) {
   const [question, setQuestion] = useState("");
   const [validAnswers, setValidAnswers] = useState("");
@@ -51,11 +50,9 @@ export function AddGameModal({
   const [luckyDipPrice, setLuckyDipPrice] = useState("5");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-  const [selectedPrizes, setSelectedPrizes] = useState<string[]>([]);
-  const [prizeQuantities, setPrizeQuantities] = useState<{
-    [key: string]: number;
-  }>({});
   const [currentPrize, setCurrentPrize] = useState(0);
+  const [gameId, setGameId] = useState<string | null>(null);
+  const [tempGameId, setTempGameId] = useState<string>(crypto.randomUUID());
   const supabase = createClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -64,6 +61,7 @@ export function AddGameModal({
     const { data: newGame, error: gameError } = await supabase
       .from("games")
       .insert({
+        id: tempGameId, // Use the temporary ID
         question,
         start_time: startTime,
         end_time: endTime,
@@ -82,36 +80,9 @@ export function AddGameModal({
     }
 
     if (newGame) {
-      const instantWinPrizes = selectedPrizes.map((prizeId) => ({
-        game_id: newGame.id,
-        instant_win_prize_id: prizeId,
-        quantity: prizeQuantities[prizeId] || 0,
-      }));
-
-      const { error: prizeError } = await supabase
-        .from("game_instant_win_prizes")
-        .insert(instantWinPrizes);
-
-      if (prizeError) {
-        console.error("Error adding instant win prizes:", prizeError);
-        return;
-      }
+      onAddGame();
+      onClose();
     }
-
-    onAddGame();
-    onClose();
-  };
-
-  const handlePrizeSelection = (prizeId: string) => {
-    setSelectedPrizes((prev) =>
-      prev.includes(prizeId)
-        ? prev.filter((id) => id !== prizeId)
-        : [...prev, prizeId]
-    );
-  };
-
-  const handleQuantityChange = (prizeId: string, quantity: number) => {
-    setPrizeQuantities((prev) => ({ ...prev, [prizeId]: quantity }));
   };
 
   const handlePresetTime = (preset: string) => {
@@ -276,42 +247,14 @@ export function AddGameModal({
                 />
               </div>
             </div>
-            <div>
-              <Label className="text-sm font-medium">Instant Win Prizes</Label>
-              <div className="mt-1 space-y-2 max-h-[300px] overflow-y-auto">
-                {allInstantWinPrizes.map((prize) => (
-                  <div key={prize.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`prize-${prize.id}`}
-                      checked={selectedPrizes.includes(prize.id)}
-                      onCheckedChange={() => handlePrizeSelection(prize.id)}
-                    />
-                    <Label htmlFor={`prize-${prize.id}`} className="flex-grow">
-                      {prize.prize_type} - £{prize.prize_amount} ({" "}
-                      {(prize.probability * 100).toFixed()}%)
-                    </Label>
-                    {selectedPrizes.includes(prize.id) && (
-                      <Input
-                        type="number"
-                        value={prizeQuantities[prize.id] || 0}
-                        onChange={(e) =>
-                          handleQuantityChange(
-                            prize.id,
-                            parseInt(e.target.value)
-                          )
-                        }
-                        className="w-20 bg-white"
-                        placeholder="Qty"
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Instant Win Prizes</h3>
+            <InstantWinPrizeManager gameId={tempGameId} />
           </div>
           <DialogFooter>
             <Button type="submit" className="w-full sm:w-auto">
-              Add Game
+              Create Game
             </Button>
           </DialogFooter>
         </form>

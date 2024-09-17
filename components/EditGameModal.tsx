@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CustomSlider } from "@/components/CustomSlider";
+import InstantWinPrizeManager from './InstantWinPrizeManager';
 
 function adjustToLocal(utcDateString: string): string {
   const date = new Date(utcDateString);
@@ -51,7 +52,6 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
   onClose,
   onEditGame,
   game,
-  allInstantWinPrizes,
 }) => {
   const [question, setQuestion] = useState("");
   const [validAnswers, setValidAnswers] = useState("");
@@ -59,10 +59,6 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
   const [luckyDipPrice, setLuckyDipPrice] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-  const [selectedPrizes, setSelectedPrizes] = useState<string[]>([]);
-  const [prizeQuantities, setPrizeQuantities] = useState<{
-    [key: string]: number;
-  }>({});
   const [currentPrize, setCurrentPrize] = useState(0);
   const supabase = createClient();
 
@@ -74,14 +70,6 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
       setLuckyDipPrice(game.lucky_dip_price?.toString() || "");
       setStartTime(adjustToLocal(game.start_time));
       setEndTime(adjustToLocal(game.end_time));
-      setSelectedPrizes(
-        game.game_instant_win_prizes.map((p: any) => p.instant_win_prize_id)
-      );
-      const quantities: { [key: string]: number } = {};
-      game.game_instant_win_prizes.forEach((p: any) => {
-        quantities[p.instant_win_prize_id] = p.quantity;
-      });
-      setPrizeQuantities(quantities);
       setCurrentPrize(game.current_prize);
     }
   }, [game]);
@@ -108,47 +96,8 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
       return;
     }
 
-    // Remove existing instant win prizes
-    const { error: deleteError } = await supabase
-      .from("game_instant_win_prizes")
-      .delete()
-      .eq("game_id", game.id);
-
-    if (deleteError) {
-      console.error("Error deleting existing instant win prizes:", deleteError);
-      return;
-    }
-
-    // Add new instant win prizes
-    const newPrizes = selectedPrizes.map((prizeId) => ({
-      game_id: game.id,
-      instant_win_prize_id: prizeId,
-      quantity: prizeQuantities[prizeId] || 0,
-    }));
-
-    const { error: insertError } = await supabase
-      .from("game_instant_win_prizes")
-      .insert(newPrizes);
-
-    if (insertError) {
-      console.error("Error inserting new instant win prizes:", insertError);
-      return;
-    }
-
     onEditGame();
     onClose();
-  };
-
-  const handlePrizeSelection = (prizeId: string) => {
-    setSelectedPrizes((prev) =>
-      prev.includes(prizeId)
-        ? prev.filter((id) => id !== prizeId)
-        : [...prev, prizeId]
-    );
-  };
-
-  const handleQuantityChange = (prizeId: string, quantity: number) => {
-    setPrizeQuantities((prev) => ({ ...prev, [prizeId]: quantity }));
   };
 
   const handlePresetTime = (preset: string) => {
@@ -324,36 +273,12 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
               </div>
             </div>
             <div>
-              <Label className="text-sm font-medium">Instant Win Prizes</Label>
-              <div className="mt-1 space-y-2 max-h-[300px] overflow-y-auto">
-                {allInstantWinPrizes.map((prize) => (
-                  <div key={prize.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`prize-${prize.id}`}
-                      checked={selectedPrizes.includes(prize.id)}
-                      onCheckedChange={() => handlePrizeSelection(prize.id)}
-                    />
-                    <Label htmlFor={`prize-${prize.id}`} className="flex-grow">
-                      {prize.prize_type} - £{prize.prize_amount} ({" "}
-                      {(prize.probability * 100).toFixed()}%)
-                    </Label>
-                    {selectedPrizes.includes(prize.id) && (
-                      <Input
-                        type="number"
-                        value={prizeQuantities[prize.id] || 0}
-                        onChange={(e) =>
-                          handleQuantityChange(
-                            prize.id,
-                            parseInt(e.target.value)
-                          )
-                        }
-                        className="w-20 bg-white"
-                        placeholder="Qty"
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
+              {game && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Instant Win Prizes</h3>
+                  <InstantWinPrizeManager gameId={game.id} />
+                </div>
+              )}
             </div>
           </div>
           <DialogFooter>

@@ -12,112 +12,215 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Badge } from "@/components/ui/badge";
+import { Pencil, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface InstantWinPrize {
   id: string;
-  prize_type: 'CASH' | 'CREDITS' | 'LUCKY_DIP' | 'HANGMAN';
+  game_id: string;
+  answer: string;
+  status: "LOCKED" | "UNLOCKED" | "SCRATCHED";
+  winner_id: string | null;
+  prize_type: "CASH" | "CREDITS" | "LUCKY_DIP" | "HANGMAN";
   prize_amount: number | null;
-  probability: number;
-  prize_details?: {
-    expiry_date?: string;
-    currency?: string;
-    guaranteed_unique?: boolean;
-    hangman_prize_id?: string;
-  };
 }
 
-const probabilityLevels = {
-  LOW: 0.1,
-  MEDIUM: 0.3,
-  HIGH: 0.5
-};
-
-export default function InstantWinPrizeManager() {
+export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
   const [prizes, setPrizes] = useState<InstantWinPrize[]>([]);
   const [newPrize, setNewPrize] = useState<Partial<InstantWinPrize>>({
-    prize_type: 'CASH',
+    game_id: gameId,
+    answer: "",
+    status: "LOCKED",
+    prize_type: "CASH",
     prize_amount: 0,
-    probability: probabilityLevels.LOW,
-    prize_details: {}
   });
-  const [editingPrize, setEditingPrize] = useState<InstantWinPrize | null>(null);
-  const [probabilityInput, setProbabilityInput] = useState<'level' | 'percentage'>('level');
+  const [quantity, setQuantity] = useState(1);
+  const [validAnswers, setValidAnswers] = useState<string[]>([]);
+  const [showAlert, setShowAlert] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
     fetchPrizes();
-  }, []);
+    fetchValidAnswers();
+  }, [gameId]);
 
   const fetchPrizes = async () => {
-    const { data, error } = await supabase.from("instant_win_prizes").select("*");
+    const { data, error } = await supabase
+      .from("answer_instant_wins")
+      .select("*")
+      .eq("game_id", gameId);
+
     if (error) console.error("Error fetching instant win prizes:", error);
     else setPrizes(data || []);
   };
 
-  const handleAddPrize = async () => {
-    const prizeToAdd = {
-      ...newPrize,
-      prize_amount: newPrize.prize_type === 'LUCKY_DIP' ? 1 : newPrize.prize_amount
-    };
-    const { data, error } = await supabase.from("instant_win_prizes").insert([prizeToAdd]);
-    if (error) console.error("Error adding instant win prize:", error);
-    else {
-      fetchPrizes();
-      setNewPrize({
-        prize_type: 'CASH',
-        prize_amount: 0,
-        probability: probabilityLevels.LOW,
-        prize_details: {}
-      });
-    }
+  const fetchValidAnswers = async () => {
+    const { data, error } = await supabase
+      .from("games")
+      .select("valid_answers")
+      .eq("id", gameId)
+      .single();
+
+    if (error) console.error("Error fetching valid answers:", error);
+    else setValidAnswers(data?.valid_answers || []);
   };
 
-  const handleUpdatePrize = async () => {
-    if (!editingPrize) return;
-    const prizeToUpdate = {
-      ...editingPrize,
-      prize_amount: editingPrize.prize_type === 'LUCKY_DIP' ? 1 : editingPrize.prize_amount
-    };
-    const { error } = await supabase
-      .from("instant_win_prizes")
-      .update(prizeToUpdate)
-      .eq("id", editingPrize.id);
-    if (error) console.error("Error updating instant win prize:", error);
-    else {
-      fetchPrizes();
-      setEditingPrize(null);
+  const handleAddPrize = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!newPrize.answer) {
+      alert("Please enter a winning answer");
+      return;
     }
+
+    const normalizedAnswer = newPrize.answer.trim().toUpperCase();
+    const isValidAnswer = validAnswers.some(answer => answer.trim().toUpperCase() === normalizedAnswer);
+
+    if (!isValidAnswer) {
+      setShowAlert(true);
+      return;
+    }
+
+    const prizesToAdd = Array(quantity).fill({
+      game_id: gameId,
+      answer: normalizedAnswer,
+      status: "LOCKED",
+      prize_type: newPrize.prize_type,
+      prize_amount: newPrize.prize_amount,
+    });
+
+    const { error } = await supabase.from("answer_instant_wins").insert(prizesToAdd);
+
+    if (error) {
+      console.error("Error adding instant win prizes:", error);
+      return;
+    }
+
+    fetchPrizes();
+    setNewPrize({
+      game_id: gameId,
+      answer: "",
+      status: "LOCKED",
+      prize_type: "CASH",
+      prize_amount: 0,
+    });
+    setQuantity(1);
   };
 
   const handleDeletePrize = async (id: string) => {
-    const { error } = await supabase.from("instant_win_prizes").delete().eq("id", id);
+    const { error } = await supabase
+      .from("answer_instant_wins")
+      .delete()
+      .eq("id", id);
     if (error) console.error("Error deleting instant win prize:", error);
     else fetchPrizes();
+    setShowDeleteAlert(false);
+    setDeleteId(null);
+  };
+
+  const handleEditPrize = (prize: InstantWinPrize) => {
+    setNewPrize(prize);
+    setEditingId(prize.id);
+  };
+
+  const handleUpdatePrize = async () => {
+    if (!editingId) return;
+
+    const { error } = await supabase
+      .from("answer_instant_wins")
+      .update({
+        answer: newPrize.answer,
+        prize_type: newPrize.prize_type,
+        prize_amount: newPrize.prize_amount,
+      })
+      .eq("id", editingId);
+
+    if (error) {
+      console.error("Error updating instant win prize:", error);
+      return;
+    }
+
+    fetchPrizes();
+    setNewPrize({
+      game_id: gameId,
+      answer: "",
+      status: "LOCKED",
+      prize_type: "CASH",
+      prize_amount: 0,
+    });
+    setEditingId(null);
+  };
+
+  const handleAddValidAnswer = async () => {
+    const updatedValidAnswers = [
+      ...validAnswers,
+      newPrize.answer?.toUpperCase() || "",
+    ];
+    const { error } = await supabase
+      .from("games")
+      .update({ valid_answers: updatedValidAnswers })
+      .eq("id", gameId);
+
+    if (error) {
+      console.error("Error updating valid answers:", error);
+    } else {
+      setValidAnswers(updatedValidAnswers);
+      setShowAlert(false);
+    }
   };
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold mb-4 text-red-700">Manage Instant Win Prizes</h2>
-      <div className="bg-red-100 p-6 rounded-lg shadow-md">
-        <h3 className="text-xl font-bold mb-2 text-red-600">
-          {editingPrize ? "Edit Prize" : "Add New Prize"}
+      <div className="bg-white p-6 rounded-lg">
+        <h3 className="text-xl font-bold mb-2">
+          {editingId ? "Edit Prize" : "Add New Prize"}
         </h3>
         <form className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="answer">Winning Answer</Label>
+            <Input
+              id="answer"
+              value={newPrize.answer}
+              onChange={(e) => setNewPrize({...newPrize, answer: e.target.value})}
+              className="text-black bg-white"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="valid-answers">Select from Valid Answers</Label>
+            <Select onValueChange={(value) => setNewPrize({...newPrize, answer: value})}>
+              <SelectTrigger className="w-full text-black bg-white">
+                <SelectValue placeholder="Select a valid answer" />
+              </SelectTrigger>
+              <SelectContent>
+                {validAnswers.map((answer) => (
+                  <SelectItem key={answer} value={answer}>
+                    {answer}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div>
             <Label htmlFor="prize-type">Prize Type</Label>
             <Select
-              value={editingPrize ? editingPrize.prize_type : newPrize.prize_type}
-              onValueChange={(value: InstantWinPrize['prize_type']) => {
-                const updatedPrize = {
-                  ...(editingPrize || newPrize),
-                  prize_type: value,
-                  prize_amount: value === 'LUCKY_DIP' ? 1 : (editingPrize || newPrize).prize_amount
-                };
-                editingPrize ? setEditingPrize(updatedPrize as InstantWinPrize) : setNewPrize(updatedPrize);
-              }}
+              value={newPrize.prize_type}
+              onValueChange={(value: InstantWinPrize["prize_type"]) => 
+                setNewPrize({...newPrize, prize_type: value})
+              }
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full text-black bg-white">
                 <SelectValue placeholder="Select prize type" />
               </SelectTrigger>
               <SelectContent>
@@ -128,128 +231,103 @@ export default function InstantWinPrizeManager() {
               </SelectContent>
             </Select>
           </div>
-          {(editingPrize?.prize_type === 'CASH' || editingPrize?.prize_type === 'CREDITS' || 
-            newPrize.prize_type === 'CASH' || newPrize.prize_type === 'CREDITS') && (
-            <div>
-              <Label htmlFor="prize-amount">Prize Amount</Label>
-              <Input
-                id="prize-amount"
-                className="text-black bg-white"
-                type="number"
-                value={editingPrize ? editingPrize.prize_amount || '' : newPrize.prize_amount || ''}
-                onChange={(e) => {
-                  const value = e.target.value === '' ? null : Number(e.target.value);
-                  editingPrize 
-                    ? setEditingPrize({...editingPrize, prize_amount: value})
-                    : setNewPrize({...newPrize, prize_amount: value});
-                }}
-              />
-            </div>
-          )}
-          {(editingPrize?.prize_type === 'LUCKY_DIP' || newPrize.prize_type === 'LUCKY_DIP') && (
-            <div className="text-sm text-gray-600">
-              Lucky Dip prize amount is always 1 (one lucky dip from unique answers)
-            </div>
-          )}
           <div>
-            <Label>Probability</Label>
-            <RadioGroup
-              value={probabilityInput}
-              onValueChange={(value: string) => setProbabilityInput(value as 'level' | 'percentage')}
-              className="flex space-x-4 mb-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="level" id="level" />
-                <Label htmlFor="level">Level</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="percentage" id="percentage" />
-                <Label htmlFor="percentage">Percentage</Label>
-              </div>
-            </RadioGroup>
-            
-            {probabilityInput === 'level' ? (
-              <Select
-                value={String(editingPrize ? editingPrize.probability : newPrize.probability)}
-                onValueChange={(value: string) => {
-                  const probabilityValue = Number(value);
-                  editingPrize 
-                    ? setEditingPrize({...editingPrize, probability: probabilityValue})
-                    : setNewPrize({...newPrize, probability: probabilityValue});
-                }}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select probability level" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={String(probabilityLevels.LOW)}>Low</SelectItem>
-                  <SelectItem value={String(probabilityLevels.MEDIUM)}>Medium</SelectItem>
-                  <SelectItem value={String(probabilityLevels.HIGH)}>High</SelectItem>
-                </SelectContent>
-              </Select>
-            ) : (
-              <Input
-                className="text-black bg-white"
-                type="number"
-                min="0"
-                max="100"
-                step="0.1"
-                value={editingPrize ? editingPrize.probability * 100 : newPrize.probability ? newPrize.probability * 100 : 0}
-                onChange={(e) => {
-                  const value = Number(e.target.value) / 100;
-                  editingPrize 
-                    ? setEditingPrize({...editingPrize, probability: value})
-                    : setNewPrize({...newPrize, probability: value});
-                }}
-              />
-            )}
+            <Label htmlFor="prize-amount">Prize Amount</Label>
+            <Input
+              id="prize-amount"
+              type="number"
+              value={newPrize.prize_amount?.toString() || ""}
+              onChange={(e) =>
+                setNewPrize({
+                  ...newPrize,
+                  prize_amount: parseFloat(e.target.value),
+                })
+              }
+              className="text-black bg-white"
+            />
           </div>
-          <Button
-            className="bg-orange-500 hover:bg-orange-600"
-            onClick={(e) => {
-              e.preventDefault();
-              editingPrize ? handleUpdatePrize() : handleAddPrize();
-            }}
-          >
-            {editingPrize ? "Update Prize" : "Add Prize"}
+          <div>
+            <Label htmlFor="quantity">Quantity</Label>
+            <Input
+              id="quantity"
+              type="number"
+              value={quantity}
+              onChange={(e) => setQuantity(parseInt(e.target.value))}
+              className="text-black bg-white"
+              min="1"
+              disabled={!!editingId}
+            />
+          </div>
+          <Button onClick={editingId ? handleUpdatePrize : handleAddPrize}>
+            {editingId ? "Update Prize" : "Add Prize"}
           </Button>
-          {editingPrize && (
-            <Button
-              className="bg-gray-500 hover:bg-gray-600 ml-2"
-              onClick={() => setEditingPrize(null)}
-            >
-              Cancel Edit
-            </Button>
+          {editingId && (
+            <Button onClick={() => setEditingId(null)}>Cancel Edit</Button>
           )}
         </form>
       </div>
-      <div className="space-y-4">
-        {prizes.map((prize) => (
-          <div key={prize.id} className="bg-red-100 p-4 rounded-lg shadow-md flex justify-between items-center">
-            <div>
-              <p>Type: {prize.prize_type}</p>
-              {prize.prize_type === 'CASH' && <p>Amount: £{prize.prize_amount}</p>}
-              {prize.prize_type === 'CREDITS' && <p>Amount: {prize.prize_amount} credits</p>}
-              {prize.prize_type === 'LUCKY_DIP' && <p>Amount: 1 lucky dip</p>}
-              <p>Probability: {(prize.probability * 100).toFixed(1)}%</p>
-            </div>
-            <div>
-              <Button
-                className="bg-red-500 hover:bg-red-600 mr-2"
-                onClick={() => setEditingPrize(prize)}
+      <div className="space-y-2">
+        <h3 className="text-xl font-bold">Current Instant Win Prizes</h3>
+        <div className="flex flex-wrap gap-2">
+          {prizes.map((prize) => (
+            <Badge key={prize.id} variant="secondary" className="text-sm py-1 px-2">
+              {prize.answer} ({prize.prize_type}: {prize.prize_amount})
+              <button
+                onClick={() => handleEditPrize(prize)}
+                className="ml-2 text-blue-500 hover:text-blue-700"
               >
-                Edit
-              </Button>
-              <Button
-                className="bg-red-500 hover:bg-red-600"
-                onClick={() => handleDeletePrize(prize.id)}
+                <Pencil size={14} />
+              </button>
+              <button
+                onClick={() => {
+                  setDeleteId(prize.id);
+                  setShowDeleteAlert(true);
+                }}
+                className="ml-1 text-red-500 hover:text-red-700"
               >
-                Delete
-              </Button>
-            </div>
-          </div>
-        ))}
+                <Trash2 size={14} />
+              </button>
+            </Badge>
+          ))}
+        </div>
       </div>
+      <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Invalid Answer</AlertDialogTitle>
+            <AlertDialogDescription>
+              The answer "{newPrize.answer}" is not in the list of valid
+              answers. Would you like to add it?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowAlert(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleAddValidAnswer}>
+              Add to Valid Answers
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this instant win prize?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowDeleteAlert(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={() => deleteId && handleDeletePrize(deleteId)}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
