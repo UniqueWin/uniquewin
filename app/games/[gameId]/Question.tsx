@@ -64,35 +64,28 @@ export default function Question({
 
     try {
       setIsSubmitting(true);
-      console.log("Submitting answer:", answer); // Add this line for debugging
-      console.log("Valid answers:", game.valid_answers); // Add this line for debugging
-      const result = await submitAnswer(
-        game.id,
+      console.log("Submitting answer:", answer);
+      console.log("Valid answers:", game.valid_answers);
+      const result = await processAnswer(
         user.id,
+        game.id,
         answer,
         instantWinPrizes,
-        game.valid_answers || [] // Ensure we're passing valid_answers correctly
+        game.valid_answers || []
       );
+      console.log("Process answer result:", result);
+
       if (result.success) {
         if (result.isValidAnswer && result.isUniqueAnswer) {
           toast.success("Correct and unique answer!");
         } else if (result.isValidAnswer) {
           toast.info("Valid answer, but already submitted by someone else.");
-        } else if (result.instantWin) {
-          toast.success(`Congratulations! You won ${result.instantWin.prize.prize_amount} ${result.instantWin.prize.prize_type}!`);
-          setInstantWinPrizes(prevPrizes => 
-            prevPrizes.map(prize => 
-              prize.id === result.instantWin?.id 
-                ? { ...prize, quantity: prize.quantity - 1 }
-                : prize
-            )
-          );
         } else {
-          toast.info("Answer submitted and pending validation.");
+          toast.info("Invalid answer submitted.");
         }
         setAnswer("");
         await refreshUser();
-        onAnswerSubmitted();
+        onAnswerSubmitted(); // This should refresh the user answers
         refreshPage();
       }
     } catch (error) {
@@ -106,6 +99,7 @@ export default function Question({
   const handleLuckyDip = async () => {
     if (!user || !game) return;
     setIsSubmitting(true);
+    console.log('Starting handleLuckyDip', { userId: user.id, gameId: game.id, luckyDipPrice: game.lucky_dip_price });
 
     try {
       const result = await purchaseLuckyDip(
@@ -114,27 +108,39 @@ export default function Question({
         availableLuckyDips,
         game.lucky_dip_price ?? 0
       );
+      console.log('purchaseLuckyDip result:', result);
+
       if (result.success) {
-        const isUniqueAnswer = !game.answers?.some(a => a.answer === result.answer);
-        const status = isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE";
-        
-        toast.success(`Lucky Dip purchased! Your answer: ${result.answer} (${status})`);
+        toast.success(`Lucky Dip purchased! Your answer: ${result.answer} (${result.isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE"})`);
         setAvailableLuckyDips(prevDips => prevDips.filter(dip => dip !== result.answer));
         
         // Update the game state with the new answer
         setGame(prevGame => {
           if (!prevGame) return null;
+          const updatedAnswers = [
+            ...(prevGame.answers || []).map(a => {
+              if (a.answer === result.answer) {
+                console.log(`Updating existing answer: ${a.answer} from ${a.status} to NOT UNIQUE`);
+                return { ...a, status: "NOT UNIQUE" };
+              }
+              return a;
+            }),
+            { 
+              answer: result.answer, 
+              status: result.isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE", 
+              isLuckyDip: true,
+              submittedAt: new Date().toISOString()
+            }
+          ];
+          console.log('Updated game answers:', updatedAnswers);
           return {
             ...prevGame,
-            answers: [
-              ...(prevGame.answers || []),
-              { answer: result.answer, status, frequency: isUniqueAnswer ? 1 : 2 }
-            ]
+            answers: updatedAnswers
           };
         });
 
         await refreshUser();
-        onAnswerSubmitted();
+        onAnswerSubmitted(); // This should refresh the user answers
         refreshPage();
       }
     } catch (error) {

@@ -79,12 +79,25 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
 
       const currentGame = await getGameById(params.gameId);
       if (currentGame) {
+        // Fetch all answers for the game
+        const { data: allAnswers, error: answersError } = await supabase
+          .from("answers")
+          .select("*")
+          .eq("game_id", params.gameId);
+
+        if (answersError) {
+          console.error("Error fetching game answers:", answersError);
+        } else {
+          currentGame.answers = allAnswers;
+        }
+
         setGame(currentGame);
         setAvailableLuckyDips(currentGame.valid_answers || []);
 
         setUserAnswersLoading(true);
         const answers = await getUserAnswers(user.id, params.gameId);
         setUserAnswers(answers || []);
+
         setUserAnswersLoading(false);
 
         const gameInstantWinPrizes = await getGameInstantWinPrizes(
@@ -223,12 +236,17 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                   </TableHeader>
                   <TableBody>
                     {userAnswers.map((answer, index) => {
-                      const uniqueAnswersCount = userAnswers.filter(a => a.status === "UNIQUE").length;
-                      const statusColor = 
-                        answer.status === "UNIQUE" && uniqueAnswersCount === 1 ? "text-green-500" :
-                        answer.status === "UNIQUE" ? "text-orange-500" :
-                        answer.status === "NOT UNIQUE" ? "text-red-500" :
-                        "text-black";
+                      const uniqueAnswersCount =
+                        game.answers?.filter((a) => a.status === "UNIQUE")
+                          .length || 0;
+                      const statusColor =
+                        answer.status === "UNIQUE" && uniqueAnswersCount === 1
+                          ? "text-green-500"
+                          : answer.status === "UNIQUE"
+                          ? "text-orange-500"
+                          : answer.status === "NOT UNIQUE"
+                          ? "text-red-500"
+                          : "text-black";
 
                       return (
                         <TableRow key={index}>
@@ -239,7 +257,9 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                             {answer.status}
                           </TableCell>
                           <TableCell>
-                            {answer.instantWin !== "NO" ? answer.instantWin : "No instant win"}
+                            {answer.instantWin !== "NO"
+                              ? answer.instantWin
+                              : "No instant win"}
                           </TableCell>
                         </TableRow>
                       );
@@ -278,20 +298,29 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {instantWinPrizes.flatMap((prize, prizeIndex) => 
+                  {instantWinPrizes.flatMap((prize, prizeIndex) =>
                     Array.from({ length: prize.quantity }, (_, index) => (
                       <TableRow key={`${prizeIndex}-${index}`}>
-                        <TableCell>{prize.winner_id ? `Winner ${prizeIndex + 1}-${index + 1}` : '______ ______'}</TableCell>
                         <TableCell>
+                          {prize.winner_id
+                            ? `Winner ${prizeIndex + 1}-${index + 1}`
+                            : "______ ______"}
+                        </TableCell>
+                        {/* <TableCell>
                           {prize.prize.prize_type === "CASH" ? `£${prize.prize.prize_amount}` : 
                            prize.prize.prize_type === "CREDITS" ? `${prize.prize.prize_amount}Q` : 
                            prize.prize.prize_details}
-                        </TableCell>
+                        </TableCell> */}
+                        <TableCell>{prize.prize.prize_type}</TableCell>
                         <TableCell>
                           <ScratchCardComponent
-                            prize={prize.prize.prize_type === "CASH" ? `£${prize.prize.prize_amount}` : 
-                                   prize.prize.prize_type === "CREDITS" ? `${prize.prize.prize_amount}Q` : 
-                                   prize.prize.prize_details}
+                            prize={
+                              prize.prize.prize_type === "CASH"
+                                ? `£${prize.prize.prize_amount}`
+                                : prize.prize.prize_type === "CREDITS"
+                                ? `${prize.prize.prize_amount}Q`
+                                : prize.prize.prize_details
+                            }
                             onReveal={() => {}}
                           />
                         </TableCell>

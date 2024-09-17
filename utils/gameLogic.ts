@@ -9,9 +9,15 @@ export async function processAnswer(
   validAnswers: string[]
 ) {
   const supabase = createClient();
+  console.log('Starting processAnswer', { userId, gameId, answer, validAnswersCount: validAnswers.length });
+  console.log('Valid answers:', validAnswers);
 
   try {
-    const isValidAnswer = validAnswers.includes(answer.toUpperCase());
+    // Make the check case-insensitive
+    const isValidAnswer = validAnswers.some(validAnswer => 
+      validAnswer.toLowerCase() === answer.toLowerCase()
+    );
+    console.log('Is valid answer:', isValidAnswer, 'Submitted answer:', answer);
 
     // Fetch user's current credit balance
     const { data: userData, error: userError } = await supabase
@@ -32,31 +38,58 @@ export async function processAnswer(
 
     if (updateError) throw updateError;
 
-    // Check if the answer is unique
+    // Check if the answer already exists for ANY user in this game
     const { data: existingAnswers, error: existingAnswerError } = await supabase
       .from("answers")
-      .select("id")
+      .select("id, status")
       .eq("game_id", gameId)
-      .eq("answer_text", answer)
-      .limit(1);
+      .eq("answer_text", answer);
 
     if (existingAnswerError) throw existingAnswerError;
 
     const isUniqueAnswer = existingAnswers.length === 0;
+    console.log('Is unique answer:', isUniqueAnswer, 'Existing answers:', existingAnswers);
 
-    // Insert the answer
+    // Update all existing answers with the same text to NOT UNIQUE if this is a new non-unique answer
+    if (!isUniqueAnswer && isValidAnswer) {
+      console.log('Updating existing answers to NOT UNIQUE');
+      const { data: updatedAnswers, error: updateError } = await supabase
+        .from("answers")
+        .update({ status: "NOT UNIQUE" })
+        .eq("game_id", gameId)
+        .ilike("answer_text", answer)
+        .select();
+
+      if (updateError) throw updateError;
+      console.log('Existing answers updated successfully:', updatedAnswers);
+    }
+
+    // Determine the status for the new answer
+    let status;
+    if (isValidAnswer) {
+      status = isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE";
+    } else {
+      status = "INVALID";
+    }
+    console.log('Determined status for new answer:', status);
+
+    // Insert the new answer
     const { data: answerData, error: answerError } = await supabase
       .from("answers")
       .insert({
         user_id: userId,
         game_id: gameId,
         answer_text: answer,
-        status: isValidAnswer && isUniqueAnswer ? "correct" : "pending",
+        status: status,
       })
       .select()
       .single();
 
-    if (answerError) throw answerError;
+    if (answerError) {
+      console.error('Error inserting answer:', answerError);
+      throw answerError;
+    }
+    console.log('Inserted new answer:', answerData);
 
     let instantWin = null;
     if (!isValidAnswer) {
@@ -111,56 +144,94 @@ export const purchaseLuckyDip = async (
   luckyDipPrice: number
 ): Promise<{ success: boolean; answer: string; isUniqueAnswer: boolean }> => {
   const supabase = createClient();
+  console.log('Starting purchaseLuckyDip', { userId, gameId, luckyDipPrice, availableLuckyDipsCount: availableLuckyDips.length });
 
-  // Fetch current credit balance
-  const { data: userData, error: fetchError } = await supabase
-    .from('profiles')
-    .select('credit_balance')
-    .eq('id', userId)
-    .single();
+  try {
+    // Fetch current credit balance
+    const { data: userData, error: fetchError } = await supabase
+      .from('profiles')
+      .select('credit_balance')
+      .eq('id', userId)
+      .single();
 
-  if (fetchError) throw fetchError;
+    if (fetchError) {
+      console.error('Error fetching user data:', fetchError);
+      throw fetchError;
+    }
 
-  // Calculate new balance
-  const newBalance = (userData.credit_balance || 0) - luckyDipPrice;
+    console.log('Current credit balance:', userData.credit_balance);
 
-  if (newBalance < 0) {
-    throw new Error("Insufficient credits");
+    // Calculate new balance
+    const newBalance = (userData.credit_balance || 0) - luckyDipPrice;
+
+    if (newBalance < 0) {
+      console.error('Insufficient credits', { currentBalance: userData.credit_balance, luckyDipPrice, newBalance });
+      throw new Error("Insufficient credits");
+    }
+
+    // Update credit balance
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ credit_balance: newBalance })
+      .eq('id', userId);
+
+    if (updateError) {
+      console.error('Error updating credit balance:', updateError);
+      throw updateError;
+    }
+
+    console.log('Credit balance updated successfully', { newBalance });
+
+    // Get all existing answers for this game
+    const { data: existingAnswers, error: existingAnswersError } = await supabase
+      .from('answers')
+      .select('answer_text')
+      .eq('game_id', gameId);
+
+    if (existingAnswersError) {
+      console.error('Error fetching existing answers:', existingAnswersError);
+      throw existingAnswersError;
+    }
+
+    // Filter out already used answers (case-insensitive)
+    const unusedAnswers = availableLuckyDips.filter(answer => 
+      !existingAnswers.some(existingAnswer => 
+        existingAnswer.answer_text.toLowerCase() === answer.toLowerCase()
+      )
+    );
+
+    if (unusedAnswers.length === 0) {
+      throw new Error("No unique Lucky Dip answers available");
+    }
+
+    // Select a random answer from unused Lucky Dips
+    const randomIndex = Math.floor(Math.random() * unusedAnswers.length);
+    const selectedAnswer = unusedAnswers[randomIndex];
+    console.log('Selected answer:', selectedAnswer);
+
+    // Insert the new answer (it's guaranteed to be unique)
+    console.log('Inserting new answer');
+    const { data: insertedAnswer, error: insertError } = await supabase
+      .from('answers')
+      .insert({
+        user_id: userId,
+        game_id: gameId,
+        answer_text: selectedAnswer,
+        status: 'UNIQUE',
+        is_lucky_dip: true,
+        submitted_at: new Date().toISOString()
+      })
+      .select();
+
+    if (insertError) {
+      console.error('Error inserting new answer:', insertError);
+      throw insertError;
+    }
+    console.log('New answer inserted successfully:', insertedAnswer);
+
+    return { success: true, answer: selectedAnswer, isUniqueAnswer: true };
+  } catch (error) {
+    console.error('Error in purchaseLuckyDip:', error);
+    throw error;
   }
-
-  // Update credit balance
-  const { error: updateError } = await supabase
-    .from('profiles')
-    .update({ credit_balance: newBalance })
-    .eq('id', userId);
-
-  if (updateError) throw updateError;
-
-  // Select a random answer from available Lucky Dips
-  const randomIndex = Math.floor(Math.random() * availableLuckyDips.length);
-  const selectedAnswer = availableLuckyDips[randomIndex];
-
-  // Check if the answer is unique
-  const { data: existingAnswers, error: answerError } = await supabase
-    .from('answers')
-    .select('answer_text')
-    .eq('game_id', gameId);
-
-  if (answerError) throw answerError;
-
-  const isUniqueAnswer = !existingAnswers?.some(a => a.answer_text === selectedAnswer);
-
-  // Insert the answer
-  const { error: insertError } = await supabase
-    .from('answers')
-    .insert({
-      user_id: userId,
-      game_id: gameId,
-      answer_text: selectedAnswer,
-      status: isUniqueAnswer ? 'UNIQUE' : 'NOT UNIQUE'
-    });
-
-  if (insertError) throw insertError;
-
-  return { success: true, answer: selectedAnswer, isUniqueAnswer };
 };
