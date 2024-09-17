@@ -302,7 +302,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                     Array.from({ length: prize.quantity }, (_, index) => (
                       <TableRow key={`${prizeIndex}-${index}`}>
                         <TableCell>
-                          {prize.winner_id
+                          {prize.winner_id !== undefined
                             ? `Winner ${prizeIndex + 1}-${index + 1}`
                             : "______ ______"}
                         </TableCell>

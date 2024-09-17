@@ -9,7 +9,7 @@ export interface Answer {
   instantWin: string;
   isInstantWin: boolean;
   submittedAt: string;
-  frequency?: number; // Make frequency optional
+  frequency?: number; // Optional property
 }
 
 export type Game = {
@@ -43,6 +43,7 @@ export interface GameInstantWinPrize {
   quantity: number;
   custom_probability: number;
   prize: InstantWinPrize;
+  winner_id?: string | null; // Add this line
 }
 
 export async function getCurrentGame(): Promise<Game | null> {

@@ -47,3 +47,23 @@ countdown until next game starts on todays game in @game/page.tsx
 stop entries for current game 1 hour before it ends (or have variable time)
 modal for adding credits to account
 
+
+
+remove scratch card from your answers section
+highlight status based on uniqueness - green for being the only player in game with a unique answer and orange for if more than 1 player has a unique answer, red for not unique, this means the prize is split between everyone who has a unique answer
+
+make scratch cards in instant win prizes locked
+redesign instant win prizes to be like clover competitions
+
+put answer next to scratch card
+
+
+update status of other answers when someone else  answers the same as theirs so if it was unique then someone guesses the same we need to update to not unique 
+
+order your answers 
+
+- check credits before purcahse
+    even if we dont have credits we can still play with custom answer, lucky dip disables the button
+- unique answers are case sensative, for example I put lilac and Lilac and they were both unique - this should not be unique
+- cant put same answer twice
+    a user can enter the same guess twice - we should do a check to prevent this
