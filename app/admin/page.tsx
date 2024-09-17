@@ -261,7 +261,6 @@ export default function AdminPage() {
           <thead className="bg-gray-200">
             <tr>
               <th className="p-2 text-left">Prize Type</th>
-              <th className="p-2 text-left">Probability</th>
               <th className="p-2 text-left">Amount</th>
               <th className="p-2 text-left">Actions</th>
             </tr>
@@ -270,7 +269,6 @@ export default function AdminPage() {
             {instantWinPrizes.map((prize) => (
               <tr key={prize.id} className="border-b">
                 <td className="p-2">{prize.prize_type}</td>
-                <td className="p-2">{prize.probability}</td>
                 <td className="p-2">{prize.prize_amount}</td>
                 <td className="p-2">{/* Add edit and delete buttons */}</td>
               </tr>
@@ -357,7 +355,6 @@ export default function AdminPage() {
         isOpen={isAddGameModalOpen}
         onClose={() => setIsAddGameModalOpen(false)}
         onAddGame={handleAddGame}
-        allInstantWinPrizes={instantWinPrizes}
       />
 
       <EditGameModal

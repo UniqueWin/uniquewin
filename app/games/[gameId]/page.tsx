@@ -318,7 +318,9 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                             onReveal={() => {}}
                             isLocked={true}
                           />
-                        ) : prize.status}
+                        ) : (
+                          prize.status
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}

@@ -9,6 +9,7 @@ import { ScratchCard } from "next-scratchcard";
 interface ScratchCardProps {
   prize: string | number;
   onReveal: () => void;
+  isLocked?: boolean; // Add this line
 }
 
 // Extend the ScratchCardProps interface to include the brushColor and onScratch props
@@ -27,7 +28,7 @@ interface ExtendedScratchCardProps extends ScratchCardProps {
 const ScratchCardWithBrushColor =
   ScratchCard as React.ComponentType<ExtendedScratchCardProps>;
 
-const ScratchCardComponent: React.FC<ScratchCardProps> = ({ prize, onReveal }) => {
+const ScratchCardComponent: React.FC<ScratchCardProps> = ({ prize, onReveal, isLocked = false }) => {
   const [isRevealed, setIsRevealed] = useState(false);
   const [scratchedPercentage, setScratchedPercentage] = useState(0);
   const [isClicked, setIsClicked] = useState(false);
@@ -40,6 +41,21 @@ const ScratchCardComponent: React.FC<ScratchCardProps> = ({ prize, onReveal }) =
       setIsRevealed(false);
     }, 5000);
   };
+
+  const handleReveal = () => {
+    if (!isLocked) { // Add this check
+      setIsRevealed(true);
+      onReveal();
+    }
+  };
+
+  if (isLocked) {
+    return (
+      <div className="bg-gray-300 text-gray-600 p-4 rounded-lg text-center">
+        Locked
+      </div>
+    );
+  }
 
   return (
     <div className="bg-pink-200 p-1 rounded-lg w-fit">

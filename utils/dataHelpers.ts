@@ -248,7 +248,8 @@ export const submitAnswer = async (
     );
     console.log("Is valid answer:", isValidAnswer);
 
-    const instantWin = checkForInstantWin(instantWinPrizes);
+    // Update this line
+    const instantWin = await checkForInstantWin(gameId, answer);
 
     // Check if the answer already exists for this game (case-insensitive)
     const { data: existingAnswers, error: existingGameAnswerError } =
