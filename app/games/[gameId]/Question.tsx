@@ -72,10 +72,15 @@ export default function Question({
       console.log("Process answer result:", result);
 
       if (result.success) {
-        if (result.isValidAnswer && result.isUniqueAnswer) {
-          toast.success("Correct and unique answer!");
-        } else if (result.isValidAnswer) {
-          toast.info("Valid answer, but already submitted by someone else.");
+        if (result.isValidAnswer) {
+          if (result.isUniqueAnswer) {
+            toast.success("Correct and unique answer!");
+          } else {
+            toast.info("Valid answer, but already submitted by someone else.");
+          }
+          if (result.instantWin) {
+            toast.success(`Congratulations! You've won an instant prize: ${result.instantWin.prize.prize_amount} ${result.instantWin.prize.prize_type}`);
+          }
         } else {
           toast.info("Invalid answer submitted.");
         }
@@ -94,7 +99,7 @@ export default function Question({
               answer: answer,
               status: result.isValidAnswer
                 ? (result.isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE")
-                : "INVALID",
+                : "PENDING",
               isLuckyDip: false,
               submittedAt: new Date().toISOString(),
               instantWin: result.instantWin ? JSON.stringify(result.instantWin) : "",

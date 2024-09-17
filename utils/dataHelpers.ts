@@ -275,7 +275,7 @@ export const submitAnswer = async (
           ? isUniqueAnswer
             ? "UNIQUE"
             : "NOT UNIQUE"
-          : "INVALID",
+          : "PENDING",
       })
       .select()
       .single();

@@ -90,7 +90,7 @@ export async function processAnswer(
     if (isValidAnswer) {
       status = isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE";
     } else {
-      status = "INVALID";
+      status = "PENDING";
     }
     console.log('Determined status for new answer:', status);
 
@@ -113,7 +113,7 @@ export async function processAnswer(
     console.log('Inserted new answer:', answerData);
 
     let instantWin = null;
-    if (!isValidAnswer) {
+    if (isValidAnswer) {
       instantWin = checkForInstantWin(instantWinPrizes);
       if (instantWin) {
         // Update game_instant_win_prizes quantity
