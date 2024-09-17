@@ -8,12 +8,12 @@ export const pastGames: Game[] = [
     jackpot: 1000,
     valid_answers: ["THOMAS", "TIMOTHY", "TYLER", "THEODORE", "TREVOR"],
     answers: [
-      { answer: "THOMAS", frequency: 50, status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
-      { answer: "TIMOTHY", frequency: 30, status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
-      { answer: "TYLER", frequency: 20, status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
-      { answer: "THEODORE", frequency: 1, status: "UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
-      { answer: "TREVOR", frequency: 1, status: "UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
-    ],
+      { answer: "THOMAS", status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString(), isLuckyDip: false, user_id: "user1" },
+      { answer: "TIMOTHY", status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString(), isLuckyDip: false, user_id: "user2" },
+      { answer: "TYLER", status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString(), isLuckyDip: false, user_id: "user3" },
+      { answer: "THEODORE", status: "UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString(), isLuckyDip: false, user_id: "user4" },
+      { answer: "TREVOR", status: "UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString(), isLuckyDip: false, user_id: "user5" },
+    ] as Answer[],
     lucky_dip_answers: [],
     hangmanWords: ["THOMAS", "TIMOTHY", "TYLER", "THEODORE", "TREVOR"],
     start_time: new Date(Date.now() - 86400000).toISOString(), // 24 hours ago
@@ -27,9 +27,9 @@ export const pastGames: Game[] = [
     jackpot: 1200,
     valid_answers: ["APPLE", "APRICOT", "AVOCADO", "ACAI", "ACKEE"],
     answers: [
-      { answer: "ACKEE", frequency: 1, status: "UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
-      { answer: "APPLE", frequency: 5, status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
-    ],
+      { answer: "ACKEE", status: "UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString(), isLuckyDip: false, user_id: "user6" },
+      { answer: "APPLE", status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString(), isLuckyDip: false, user_id: "user7" },
+    ] as Answer[],
     lucky_dip_answers: [],
     hangmanWords: ["APPLE", "APRICOT", "AVOCADO", "ACAI", "ACKEE"],
     start_time: new Date(Date.now() - 172800000).toISOString(), // 48 hours ago
@@ -43,9 +43,9 @@ export const pastGames: Game[] = [
     jackpot: 2000,
     valid_answers: ["FRANCE", "GERMANY", "ITALY", "SPAIN", "POLAND"],
     answers: [
-      { answer: "POLAND", frequency: 1, status: "UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
-      { answer: "FRANCE", frequency: 4, status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString() },
-    ],
+      { answer: "POLAND", status: "UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString(), isLuckyDip: false, user_id: "user8" },
+      { answer: "FRANCE", status: "NOT UNIQUE", instantWin: "NO", isInstantWin: false, submittedAt: new Date().toISOString(), isLuckyDip: false, user_id: "user9" },
+    ] as Answer[],
     lucky_dip_answers: [],
     hangmanWords: ["FRANCE", "GERMANY", "ITALY", "SPAIN", "POLAND"],
     start_time: new Date(Date.now() - 259200000).toISOString(), // 72 hours ago

@@ -3,15 +3,15 @@ import { ExtendedUser } from "./userHelpers";
 
 const supabase = createClient();
 
-export interface Answer {
+export type Answer = {
   answer: string;
   status: string;
+  isLuckyDip: boolean;
+  submittedAt: string;
   instantWin: string;
   isInstantWin: boolean;
-  submittedAt: string;
-  frequency?: number; // Optional property
   user_id: string;
-}
+};
 
 export type Game = {
   id: string;
@@ -408,7 +408,8 @@ export async function getUserAnswers(
         status,
         is_instant_win,
         instant_win_amount,
-        submitted_at
+        submitted_at,
+        user_id
       `
       )
       .eq("user_id", userId)
@@ -424,11 +425,10 @@ export async function getUserAnswers(
       answer: answer.answer_text,
       status: answer.status || "PENDING",
       isInstantWin: answer.is_instant_win,
-      instantWin: answer.is_instant_win
-        ? `£${answer.instant_win_amount}`
-        : "NO",
+      instantWin: answer.is_instant_win ? `${answer.instant_win_amount}` : "NO",
       submittedAt: answer.submitted_at,
-      // frequency is not included in the database query, so we omit it here
+      isLuckyDip: false,
+      user_id: answer.user_id,
     }));
   } catch (error) {
     console.error("Error in getUserAnswers:", error);

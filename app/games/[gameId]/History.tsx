@@ -42,7 +42,7 @@ function History({ game, instantWinPrizes }: HistoryProps) {
             {[...(game.answers || [])].reverse().map((answer, index) => (
               <tr key={index}>
                 <td>{answer.answer}</td>
-                <td>{answer.frequency}</td>
+                <td>{/* {answer.frequency} */}</td>
                 <td
                   className={
                     answer.status === "UNIQUE"
@@ -58,7 +58,8 @@ function History({ game, instantWinPrizes }: HistoryProps) {
                   {answer.instantWin === "REVEAL" ? (
                     <ScratchCardComponent
                       prize={
-                        game.answers && instantWinPrizes[game.answers.length - 1 - index]
+                        game.answers &&
+                        instantWinPrizes[game.answers.length - 1 - index]
                           ? instantWinPrizes[game.answers.length - 1 - index]
                               .prize.prize_type === "CASH"
                             ? instantWinPrizes[game.answers.length - 1 - index]

@@ -1,30 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import {
-  Game,
-  Answer,
-  submitAnswer,
-  checkForInstantWin,
-  getGameInstantWinPrizes,
-  GameInstantWinPrize,
-} from "@/utils/dataHelpers";
-import { ExtendedUser } from "@/utils/userHelpers";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { createClient } from "@/utils/supabase/client";
-import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useUser } from "@/utils/UserContext";
+import { Game, GameInstantWinPrize, Answer } from "@/utils/dataHelpers";
 import { processAnswer, purchaseLuckyDip } from "@/utils/gameLogic";
-import { useUser } from '@/utils/UserContext';
+import { createClient } from "@/utils/supabase/client";
+import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { toast } from "sonner";
 
 type QuestionProps = {
   game: Game;
@@ -91,20 +81,32 @@ export default function Question({
         }
 
         // Update the game state with the new answer immediately
-        setGame(prevGame => {
+        setGame((prevGame: Game | null): Game | null => {
           if (!prevGame) return null;
-          const newAnswer: Answer = {
-            answer: answer,
-            status: result.isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE",
-            isInstantWin: !!result.instantWin,
-            instantWin: result.instantWin ? `£${result.instantWin.prize.prize_amount}` : "NO",
-            submittedAt: new Date().toISOString(),
-            user_id: user.id,
-          };
+          const updatedAnswers: Answer[] = [
+            ...(prevGame.answers || []).map((a: Answer): Answer => {
+              if (a.answer && a.answer.toLowerCase() === answer.toLowerCase()) {
+                return { ...a, status: "NOT UNIQUE" };
+              }
+              return a;
+            }),
+            {
+              answer: answer,
+              status: result.isValidAnswer
+                ? (result.isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE")
+                : "INVALID",
+              isLuckyDip: false,
+              submittedAt: new Date().toISOString(),
+              instantWin: result.instantWin ? JSON.stringify(result.instantWin) : "",
+              isInstantWin: !!result.instantWin,
+              user_id: user.id,
+            } as Answer
+          ];
+
           return {
             ...prevGame,
-            answers: [...prevGame.answers, newAnswer]
-          };
+            answers: updatedAnswers,
+          } as Game;
         });
 
         setAnswer("");
@@ -112,7 +114,9 @@ export default function Question({
         onAnswerSubmitted(); // This should refresh the user answers
         refreshPage();
       } else {
-        toast.error(result.message || "Failed to submit answer. Please try again.");
+        toast.error(
+          result.message || "Failed to submit answer. Please try again."
+        );
       }
     } catch (error) {
       console.error("Error submitting answer:", error);
@@ -125,7 +129,11 @@ export default function Question({
   const handleLuckyDip = async () => {
     if (!user || !game) return;
     setIsSubmitting(true);
-    console.log('Starting handleLuckyDip', { userId: user.id, gameId: game.id, luckyDipPrice: game.lucky_dip_price });
+    console.log("Starting handleLuckyDip", {
+      userId: user.id,
+      gameId: game.id,
+      luckyDipPrice: game.lucky_dip_price,
+    });
 
     try {
       const result = await purchaseLuckyDip(
@@ -134,34 +142,45 @@ export default function Question({
         availableLuckyDips,
         game.lucky_dip_price ?? 0
       );
-      console.log('purchaseLuckyDip result:', result);
+      console.log("purchaseLuckyDip result:", result);
 
       if (result.success) {
-        toast.success(`Lucky Dip purchased! Your answer: ${result.answer} (${result.isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE"})`);
-        setAvailableLuckyDips(prevDips => prevDips.filter(dip => dip !== result.answer));
-        
+        toast.success(
+          `Lucky Dip purchased! Your answer: ${result.answer} (${
+            result.isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE"
+          })`
+        );
+        setAvailableLuckyDips((prevDips) =>
+          prevDips.filter((dip) => dip !== result.answer)
+        );
+
         // Update the game state with the new answer
-        setGame(prevGame => {
+        setGame((prevGame: Game | null): Game | null => {
           if (!prevGame) return null;
-          const updatedAnswers = [
-            ...(prevGame.answers || []).map(a => {
+          const updatedAnswers: Answer[] = [
+            ...(prevGame.answers || []).map((a: Answer): Answer => {
               if (a.answer === result.answer) {
-                console.log(`Updating existing answer: ${a.answer} from ${a.status} to NOT UNIQUE`);
+                console.log(
+                  `Updating existing answer: ${a.answer} from ${a.status} to NOT UNIQUE`
+                );
                 return { ...a, status: "NOT UNIQUE" };
               }
               return a;
             }),
-            { 
-              answer: result.answer, 
-              status: result.isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE", 
+            {
+              answer: result.answer,
+              status: result.isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE",
               isLuckyDip: true,
-              submittedAt: new Date().toISOString()
-            }
+              submittedAt: new Date().toISOString(),
+              instantWin: "", // Add this line
+              isInstantWin: false, // Add this line
+              user_id: user.id, // Add this line
+            } as Answer
           ];
-          console.log('Updated game answers:', updatedAnswers);
+          console.log("Updated game answers:", updatedAnswers);
           return {
             ...prevGame,
-            answers: updatedAnswers
+            answers: updatedAnswers,
           };
         });
 
@@ -186,9 +205,6 @@ export default function Question({
     >
       <h2 className="text-3xl font-bold mb-4 text-primary">{game.question}</h2>
       <div className="flex justify-between items-center mb-4">
-        <p className="text-lg">
-          Your Credits: £{user?.credit_balance?.toFixed(2)}
-        </p>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -225,7 +241,12 @@ export default function Question({
           <Button
             type="submit"
             className="bg-primary text-primary-foreground hover:bg-primary/90"
-            disabled={isSubmitting || !answer || answer.length === 0 || (user?.credit_balance ?? 0) < (game.price ?? 0)}
+            disabled={
+              isSubmitting ||
+              !answer ||
+              answer.length === 0 ||
+              (user?.credit_balance ?? 0) < (game.price ?? 0)
+            }
           >
             {isSubmitting ? "Submitting..." : "Answer!"}
           </Button>
@@ -244,7 +265,8 @@ export default function Question({
         </Button>
 
         <p className="text-sm text-muted-foreground">
-          Cost: £{game.price ?? 0} per play, £{game.lucky_dip_price ?? 0} for Lucky Dip
+          Cost: £{game.price ?? 0} per play, £{game.lucky_dip_price ?? 0} for
+          Lucky Dip
         </p>
       </form>
     </motion.div>
