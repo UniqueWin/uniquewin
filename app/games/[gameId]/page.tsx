@@ -21,7 +21,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -179,10 +178,14 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
           {/* Add a new Card component to display the current prize */}
           <Card className="mb-8">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold text-black">Prize</CardTitle>
+              <CardTitle className="text-2xl font-bold text-black">
+                Prize
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold text-green-600">£{game.current_prize}</p>
+              <p className="text-4xl font-bold text-green-600">
+                £{game.current_prize}
+              </p>
             </CardContent>
           </Card>
 
@@ -210,14 +213,13 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
               </CardHeader>
               <CardContent>
                 <Table>
-                  <TableCaption>Answers</TableCaption>
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-[100px]">Answer</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>Instant Win</TableHead>
+                      {/* <TableHead>Instant Win</TableHead> */}
                       <TableHead>Instant Win Prize</TableHead>
-                      <TableHead className="text-right">Submitted At</TableHead>
+                      {/* <TableHead className="text-right">Submitted At</TableHead> */}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -227,22 +229,20 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                           {answer.answer}
                         </TableCell>
                         <TableCell>{answer.status}</TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                           {answer.isInstantWin ? "Yes" : "No"}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell>
                           {answer.instantWin !== "NO" ? (
                             <ScratchCardComponent
                               prize={answer.instantWin}
                               onReveal={() => {}}
                             />
-                          ) : (
-                            "No"
-                          )}
+                          ) : null}
                         </TableCell>
-                        <TableCell className="text-right">
+                        {/* <TableCell className="text-right">
                           {new Date(answer.submittedAt).toLocaleString()}
-                        </TableCell>
+                        </TableCell> */}
                       </TableRow>
                     ))}
                   </TableBody>
@@ -262,9 +262,51 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
             </Card>
           )}
 
-          {showGameHistory && (
+          {/* Replace the existing Instant Win Prizes card with this new one */}
+          <Card className="my-8">
+            <CardHeader>
+              <CardTitle className="text-xl text-black font-bold mb-4">
+                Instant Win Prizes
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Winner</TableHead>
+                    <TableHead>Prize</TableHead>
+                    <TableHead>Scratch Card</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {instantWinPrizes.flatMap((prize, prizeIndex) => 
+                    Array.from({ length: prize.quantity }, (_, index) => (
+                      <TableRow key={`${prizeIndex}-${index}`}>
+                        <TableCell>{prize.winner_id ? `Winner ${prizeIndex + 1}-${index + 1}` : '______ ______'}</TableCell>
+                        <TableCell>
+                          {prize.prize.prize_type === "CASH" ? `£${prize.prize.prize_amount}` : 
+                           prize.prize.prize_type === "CREDITS" ? `${prize.prize.prize_amount}Q` : 
+                           prize.prize.prize_details}
+                        </TableCell>
+                        <TableCell>
+                          <ScratchCardComponent
+                            prize={prize.prize.prize_type === "CASH" ? `£${prize.prize.prize_amount}` : 
+                                   prize.prize.prize_type === "CREDITS" ? `${prize.prize.prize_amount}Q` : 
+                                   prize.prize.prize_details}
+                            onReveal={() => {}}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          {/* {showGameHistory && (
             <History game={game} instantWinPrizes={instantWinPrizes} />
-          )}
+          )} */}
 
           <Banner />
 

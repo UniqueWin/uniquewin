@@ -115,8 +115,24 @@ export default function Question({
         game.lucky_dip_price ?? 0
       );
       if (result.success) {
-        toast.success(`Lucky Dip purchased! Your answer: ${result.answer}`);
+        const isUniqueAnswer = !game.answers?.some(a => a.answer === result.answer);
+        const status = isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE";
+        
+        toast.success(`Lucky Dip purchased! Your answer: ${result.answer} (${status})`);
         setAvailableLuckyDips(prevDips => prevDips.filter(dip => dip !== result.answer));
+        
+        // Update the game state with the new answer
+        setGame(prevGame => {
+          if (!prevGame) return null;
+          return {
+            ...prevGame,
+            answers: [
+              ...(prevGame.answers || []),
+              { answer: result.answer, status, frequency: isUniqueAnswer ? 1 : 2 }
+            ]
+          };
+        });
+
         await refreshUser();
         onAnswerSubmitted();
         refreshPage();

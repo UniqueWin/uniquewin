@@ -104,59 +104,63 @@ function checkForInstantWin(prizes: GameInstantWinPrize[]): GameInstantWinPrize 
   return null;
 }
 
-export async function purchaseLuckyDip(
+export const purchaseLuckyDip = async (
   userId: string,
   gameId: string,
-  availableAnswers: string[],
+  availableLuckyDips: string[],
   luckyDipPrice: number
-) {
+): Promise<{ success: boolean; answer: string; isUniqueAnswer: boolean }> => {
   const supabase = createClient();
 
-  try {
-    // Fetch user's current credit balance
-    const { data: userData, error: userError } = await supabase
-      .from("profiles")
-      .select("credit_balance")
-      .eq("id", userId)
-      .single();
+  // Fetch current credit balance
+  const { data: userData, error: fetchError } = await supabase
+    .from('profiles')
+    .select('credit_balance')
+    .eq('id', userId)
+    .single();
 
-    if (userError) throw userError;
+  if (fetchError) throw fetchError;
 
-    // Deduct lucky dip price from user's credit balance
-    const { data: updatedUserData, error: updateError } = await supabase
-      .from("profiles")
-      .update({ credit_balance: (userData.credit_balance || 0) - luckyDipPrice })
-      .eq("id", userId)
-      .select()
-      .single();
+  // Calculate new balance
+  const newBalance = (userData.credit_balance || 0) - luckyDipPrice;
 
-    if (updateError) throw updateError;
-
-    if (updatedUserData.credit_balance < 0) {
-      throw new Error("Insufficient credits");
-    }
-
-    // Select a random answer from available answers
-    const randomAnswer = availableAnswers[Math.floor(Math.random() * availableAnswers.length)];
-
-    // Insert the answer
-    const { data: answerData, error: answerError } = await supabase
-      .from("answers")
-      .insert({
-        user_id: userId,
-        game_id: gameId,
-        answer_text: randomAnswer,
-        status: "pending",
-        is_lucky_dip: true,
-      })
-      .select()
-      .single();
-
-    if (answerError) throw answerError;
-
-    return { success: true, answer: randomAnswer };
-  } catch (error) {
-    console.error("Error purchasing lucky dip:", error);
-    throw error;
+  if (newBalance < 0) {
+    throw new Error("Insufficient credits");
   }
-}
+
+  // Update credit balance
+  const { error: updateError } = await supabase
+    .from('profiles')
+    .update({ credit_balance: newBalance })
+    .eq('id', userId);
+
+  if (updateError) throw updateError;
+
+  // Select a random answer from available Lucky Dips
+  const randomIndex = Math.floor(Math.random() * availableLuckyDips.length);
+  const selectedAnswer = availableLuckyDips[randomIndex];
+
+  // Check if the answer is unique
+  const { data: existingAnswers, error: answerError } = await supabase
+    .from('answers')
+    .select('answer_text')
+    .eq('game_id', gameId);
+
+  if (answerError) throw answerError;
+
+  const isUniqueAnswer = !existingAnswers?.some(a => a.answer_text === selectedAnswer);
+
+  // Insert the answer
+  const { error: insertError } = await supabase
+    .from('answers')
+    .insert({
+      user_id: userId,
+      game_id: gameId,
+      answer_text: selectedAnswer,
+      status: isUniqueAnswer ? 'UNIQUE' : 'NOT UNIQUE'
+    });
+
+  if (insertError) throw insertError;
+
+  return { success: true, answer: selectedAnswer, isUniqueAnswer };
+};
