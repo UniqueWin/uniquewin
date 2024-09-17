@@ -187,7 +187,7 @@ export const submitAnswer = async (
 ) => {
   try {
     console.log("Submitting answer:", gameId, userId, answer, instantWinPrizes);
-    console.log("Valid answers:", validAnswers); // Add this line for debugging
+    console.log("Valid answers:", validAnswers);
 
     // Fetch user's current credits
     const { data: userData, error: userError } = await supabase
@@ -215,7 +215,7 @@ export const submitAnswer = async (
     const isValidAnswer = validAnswers.some(validAnswer => 
       validAnswer.toLowerCase() === answer.toLowerCase()
     );
-    console.log("Is valid answer:", isValidAnswer); // Add this line for debugging
+    console.log("Is valid answer:", isValidAnswer);
 
     const instantWin = checkForInstantWin(instantWinPrizes);
 
@@ -237,7 +237,7 @@ export const submitAnswer = async (
       .insert({
         game_id: gameId,
         user_id: userId,
-        answer_text: answer,
+        answer_text: answer.toLowerCase(), // Store the answer in lowercase
         is_instant_win: !!instantWin,
         instant_win_amount: instantWin ? instantWin.prize.prize_amount : 0,
         status: isValidAnswer 
