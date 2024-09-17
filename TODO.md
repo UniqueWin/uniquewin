@@ -62,8 +62,8 @@ update status of other answers when someone else  answers the same as theirs so 
 
 order your answers 
 
-- check credits before purcahse
-    even if we dont have credits we can still play with custom answer, lucky dip disables the button
-- unique answers are case sensative, for example I put lilac and Lilac and they were both unique - this should not be unique
+- check credits before purcahse /
+    even if we dont have credits we can still play with custom answer, lucky dip disables the button /
+- unique answers are case sensative, for example I put lilac and Lilac and they were both unique - this should not be unique /
 - cant put same answer twice
     a user can enter the same guess twice - we should do a check to prevent this

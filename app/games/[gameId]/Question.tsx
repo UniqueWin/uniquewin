@@ -68,15 +68,6 @@ export default function Question({
       return;
     }
 
-    // Check if the user has already submitted this answer
-    const hasSubmittedAnswer = game.answers.some(
-      (a) => a.answer.toLowerCase() === answer.toLowerCase()
-    );
-    if (hasSubmittedAnswer) {
-      toast.error("You've already submitted this answer.");
-      return;
-    }
-
     try {
       setIsSubmitting(true);
       console.log("Submitting answer:", answer);
@@ -98,10 +89,30 @@ export default function Question({
         } else {
           toast.info("Invalid answer submitted.");
         }
+
+        // Update the game state with the new answer immediately
+        setGame(prevGame => {
+          if (!prevGame) return null;
+          const newAnswer: Answer = {
+            answer: answer,
+            status: result.isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE",
+            isInstantWin: !!result.instantWin,
+            instantWin: result.instantWin ? `£${result.instantWin.prize.prize_amount}` : "NO",
+            submittedAt: new Date().toISOString(),
+            user_id: user.id,
+          };
+          return {
+            ...prevGame,
+            answers: [...prevGame.answers, newAnswer]
+          };
+        });
+
         setAnswer("");
         await refreshUser();
         onAnswerSubmitted(); // This should refresh the user answers
         refreshPage();
+      } else {
+        toast.error(result.message || "Failed to submit answer. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting answer:", error);

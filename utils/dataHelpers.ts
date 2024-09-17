@@ -10,6 +10,7 @@ export interface Answer {
   isInstantWin: boolean;
   submittedAt: string;
   frequency?: number; // Optional property
+  user_id: string;
 }
 
 export type Game = {
@@ -26,7 +27,7 @@ export type Game = {
   start_time: string;
   lucky_dip_answers?: string[];
   hangmanWords?: string[];
-}
+};
 
 export interface InstantWinPrize {
   id: string;
@@ -43,7 +44,7 @@ export interface GameInstantWinPrize {
   quantity: number;
   custom_probability: number;
   prize: InstantWinPrize;
-  winner_id?: string | null; // Add this line
+  winner_id?: string | null;
 }
 
 export async function getCurrentGame(): Promise<Game | null> {
@@ -91,7 +92,8 @@ export async function getGameById(gameId: string): Promise<Game | null> {
   try {
     const { data, error } = await supabase
       .from("games")
-      .select(`
+      .select(
+        `
         *,
         answers:answers(
           id,
@@ -99,9 +101,11 @@ export async function getGameById(gameId: string): Promise<Game | null> {
           status,
           is_instant_win,
           instant_win_amount,
-          submitted_at
+          submitted_at,
+          user_id
         )
-      `)
+      `
+      )
       .eq("id", gameId)
       .single();
 
@@ -115,8 +119,11 @@ export async function getGameById(gameId: string): Promise<Game | null> {
       answer: answer.answer_text,
       status: answer.status || "PENDING",
       isInstantWin: answer.is_instant_win,
-      instantWin: answer.is_instant_win ? `£${answer.instant_win_amount}` : "NO",
+      instantWin: answer.is_instant_win
+        ? `£${answer.instant_win_amount}`
+        : "NO",
       submittedAt: answer.submitted_at,
+      user_id: answer.user_id,
     }));
 
     // Create the Game object with the transformed answers
@@ -189,6 +196,29 @@ export const submitAnswer = async (
     console.log("Submitting answer:", gameId, userId, answer, instantWinPrizes);
     console.log("Valid answers:", validAnswers);
 
+    console.log({ gameId, userId, answer });
+
+    // Check if the user has already submitted this answer
+    const { data: existingUserAnswer, error: existingAnswerError } =
+      await supabase
+        .from("answers")
+        .select("id")
+        .eq("game_id", gameId)
+        .eq("user_id", userId)
+        .ilike("answer_text", answer)
+        .limit(1);
+
+    console.log("Existing user answer:", existingUserAnswer);
+
+    if (existingAnswerError) throw existingAnswerError;
+
+    if (existingUserAnswer && existingUserAnswer.length > 0) {
+      return {
+        success: false,
+        message: "You've already submitted this answer.",
+      };
+    }
+
     // Fetch user's current credits
     const { data: userData, error: userError } = await supabase
       .from("profiles")
@@ -212,22 +242,23 @@ export const submitAnswer = async (
 
     if (updateError) throw updateError;
 
-    const isValidAnswer = validAnswers.some(validAnswer => 
-      validAnswer.toLowerCase() === answer.toLowerCase()
+    const isValidAnswer = validAnswers.some(
+      (validAnswer) => validAnswer.toLowerCase() === answer.toLowerCase()
     );
     console.log("Is valid answer:", isValidAnswer);
 
     const instantWin = checkForInstantWin(instantWinPrizes);
 
     // Check if the answer already exists for this game (case-insensitive)
-    const { data: existingAnswers, error: existingAnswerError } = await supabase
-      .from("answers")
-      .select("id")
-      .eq("game_id", gameId)
-      .ilike("answer_text", answer)
-      .limit(1);
+    const { data: existingAnswers, error: existingGameAnswerError } =
+      await supabase
+        .from("answers")
+        .select("id")
+        .eq("game_id", gameId)
+        .ilike("answer_text", answer)
+        .limit(1);
 
-    if (existingAnswerError) throw existingAnswerError;
+    if (existingGameAnswerError) throw existingGameAnswerError;
 
     const isUniqueAnswer = isValidAnswer && existingAnswers.length === 0;
 
@@ -240,8 +271,10 @@ export const submitAnswer = async (
         answer_text: answer.toLowerCase(), // Store the answer in lowercase
         is_instant_win: !!instantWin,
         instant_win_amount: instantWin ? instantWin.prize.prize_amount : 0,
-        status: isValidAnswer 
-          ? (isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE") 
+        status: isValidAnswer
+          ? isUniqueAnswer
+            ? "UNIQUE"
+            : "NOT UNIQUE"
           : "INVALID",
       })
       .select()

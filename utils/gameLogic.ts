@@ -13,6 +13,27 @@ export async function processAnswer(
   console.log('Valid answers:', validAnswers);
 
   try {
+    // Check if the user has already submitted this answer (case-insensitive)
+    const { data: existingUserAnswer, error: existingUserAnswerError } = await supabase
+      .from("answers")
+      .select("id")
+      .eq("game_id", gameId)
+      .eq("user_id", userId)
+      .ilike("answer_text", answer)
+      .limit(1);
+
+      console.log("Existing user answer:", existingUserAnswer);
+
+    if (existingUserAnswerError) throw existingUserAnswerError;
+
+    if (existingUserAnswer && existingUserAnswer.length > 0) {
+      console.log('User has already submitted this answer');
+      return {
+        success: false,
+        message: "You've already submitted this answer.",
+      };
+    }
+
     // Make the check case-insensitive
     const isValidAnswer = validAnswers.some(validAnswer => 
       validAnswer.toLowerCase() === answer.toLowerCase()
@@ -43,7 +64,7 @@ export async function processAnswer(
       .from("answers")
       .select("id, status")
       .eq("game_id", gameId)
-      .eq("answer_text", answer);
+      .ilike("answer_text", answer);
 
     if (existingAnswerError) throw existingAnswerError;
 
