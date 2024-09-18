@@ -67,8 +67,8 @@ export default function AddCreditsModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="secondary" size="sm">
-          <PlusIcon className="mr-2 h-4 w-4" />
+        <Button size="sm" className="bg-[#FFC700] hover:bg-[#FFD700] text-black">
+          {/* <PlusIcon className="mr-2 h-4 w-4" /> */}
           Add Credits
         </Button>
       </DialogTrigger>
