@@ -7,12 +7,14 @@ import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { LoginModal } from "@/components/LoginModal";
 import { useUser } from "@/utils/UserContext";
+import AddCreditsModal from "@/components/AddCreditsModal";
 
 const Navbar = () => {
   const { user, refreshUser } = useUser();
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isAddCreditsModalOpen, setIsAddCreditsModalOpen] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -50,23 +52,6 @@ const Navbar = () => {
     refreshUser();
   };
 
-  const handleBuyCredits = async () => {
-    if (user) {
-      const additionalCredits = 10; // You can adjust this value or make it dynamic
-      const { data, error } = await supabase
-        .from("profiles")
-        .update({ credit_balance: user.credit_balance + additionalCredits })
-        .eq("id", user.id)
-        .select();
-
-      if (error) {
-        console.error("Error updating credits:", error);
-      } else {
-        refreshUser();
-      }
-    }
-  };
-
   return (
     <>
       {/* Top Banner */}
@@ -98,14 +83,7 @@ const Navbar = () => {
                 </span>
                 <small className="text-xxs">Buy more credits</small>
               </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                className="bg-[#FFC700] text-black"
-                onClick={handleBuyCredits}
-              >
-                Buy Credits
-              </Button>
+              <AddCreditsModal />
             </div>
           ) : (
             <div>Sign in to see your credits</div>
