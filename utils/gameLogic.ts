@@ -246,3 +246,96 @@ export const scratchCard = async (gameId: string, prizeId: string) => {
     throw error;
   }
 };
+
+export async function processEndedGames() {
+  const supabase = createClient();
+
+  const { data: endedGames, error: gamesError } = await supabase
+    .from("games")
+    .select("id, current_prize")
+    .eq("status", "ended");
+
+  if (gamesError) {
+    console.error("Error fetching ended games:", gamesError);
+    return;
+  }
+
+  for (const game of endedGames) {
+    const { data: uniqueAnswers, error: answersError } = await supabase
+      .from("answers")
+      .select("id, user_id, answer_text")
+      .eq("game_id", game.id)
+      .eq("status", "UNIQUE");
+
+    if (answersError) {
+      console.error(`Error fetching answers for game ${game.id}:`, answersError);
+      continue;
+    }
+
+    // Group unique answers by user
+    const userAnswers = uniqueAnswers.reduce((acc: { [key: string]: any[] }, answer) => {
+      if (!acc[answer.user_id]) {
+        acc[answer.user_id] = [];
+      }
+      acc[answer.user_id].push(answer);
+      return acc;
+    }, {});
+
+    const totalUniqueAnswers = uniqueAnswers.length;
+    const prizePerAnswer = totalUniqueAnswers > 0 ? game.current_prize / totalUniqueAnswers : 0;
+
+    for (const [userId, answers] of Object.entries(userAnswers)) {
+      const userPrize = prizePerAnswer * answers.length;
+
+      // Update user balance
+      const { data: userData, error: fetchError } = await supabase
+        .from('profiles')
+        .select('account_balance')
+        .eq('id', userId)
+        .single();
+
+      if (fetchError) {
+        console.error(`Error fetching balance for user ${userId}:`, fetchError);
+        continue;
+      }
+
+      const newBalance = (userData.account_balance || 0) + userPrize;
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ account_balance: newBalance })
+        .eq('id', userId);
+
+      if (updateError) {
+        console.error(`Error updating balance for user ${userId}:`, updateError);
+        continue;
+      }
+
+      // Create winner entries
+      for (const answer of answers) {
+        const { error: winnerError } = await supabase
+          .from("winners")
+          .insert({
+            game_id: game.id,
+            user_id: userId,
+            answer_id: answer.id,
+            prize_amount: prizePerAnswer
+          });
+
+        if (winnerError) {
+          console.error(`Error inserting winner for game ${game.id}:`, winnerError);
+        }
+      }
+    }
+
+    // Update game status
+    const { error: updateGameError } = await supabase
+      .from("games")
+      .update({ status: "completed" })
+      .eq("id", game.id);
+
+    if (updateGameError) {
+      console.error(`Error updating game ${game.id} status:`, updateGameError);
+    }
+  }
+}

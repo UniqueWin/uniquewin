@@ -134,17 +134,23 @@ export default function AdminPage() {
 
   const handleCloseExpiredGames = async () => {
     try {
-      const response = await fetch("/api/close-expired-games", {
+      const closeResponse = await fetch("/api/close-expired-games", {
         method: "POST",
       });
-      const data = await response.json();
-      alert(data.message); // Show the result in an alert
-      // Optionally, refresh the games list after closing expired games
+      const closeData = await closeResponse.json();
+
+      const processResponse = await fetch("/api/process-ended-games", {
+        method: "GET",
+      });
+      const processData = await processResponse.json();
+
+      console.log(`${closeData.message}\n${processData.message}`);
+
       const updatedGames = await fetchGames();
       setGames(updatedGames);
     } catch (error) {
-      console.error("Error closing expired games:", error);
-      alert("Failed to close expired games. Please try again.");
+      console.error("Error closing and processing expired games:", error);
+      alert("Failed to close and process expired games. Please try again.");
     }
   };
 
