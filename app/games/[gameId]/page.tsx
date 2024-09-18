@@ -5,6 +5,7 @@ import {
   getGameById,
   getUserAnswers,
   getAnswerInstantWinPrizes,
+  getWinnerName,
 } from "@/utils/dataHelpers";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -47,6 +48,19 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const [userAnswersLoading, setUserAnswersLoading] = useState(true);
   const supabase = createClient();
+
+  const [winnerNames, setWinnerNames] = useState<{ [key: string]: string }>({});
+
+  const fetchWinnerNames = async (prizes: any[]) => {
+    const names: { [key: string]: string } = {};
+
+    for (const prize of prizes) {
+      if (prize.status === "WON" || prize.status === "SCRATCHED") {
+        names[prize.id] = await getWinnerName(prize.winner_id);
+      }
+    }
+    setWinnerNames(names);
+  };
 
   const fetchUserAndGame = async () => {
     const {
@@ -109,6 +123,8 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
           params.gameId
         );
         setInstantWinPrizes(gameInstantWinPrizes);
+
+        await fetchWinnerNames(gameInstantWinPrizes);
       } else {
         router.push("/games");
       }
@@ -180,8 +196,8 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     }
   };
 
-  const refreshPage = () => {
-    fetchUserAndGame();
+  const refreshPage = async () => {
+    await fetchUserAndGame();
   };
 
   if (!user || !game) return <div>Loading...</div>;
@@ -299,14 +315,22 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                   <TableRow>
                     <TableHead>Winner</TableHead>
                     <TableHead>Prize</TableHead>
-                    {/* <TableHead>Quantity</TableHead> */}
-                    {/* <TableHead>Winners</TableHead> */}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {instantWinPrizes.map((prize, index) => (
                     <TableRow key={index}>
-                      <TableCell>{prize.winner_id}</TableCell> {/* TODO - get winner name */}
+                      <TableCell>
+                        {prize.status === "LOCKED" ? (
+                          "Not won yet"
+                        ) : prize.status === "UNLOCKED" ? (
+                          "Waiting for winner to scratch"
+                        ) : prize.winner_id === user.id ? (
+                          <span className="font-bold text-green-600">You</span>
+                        ) : (
+                          winnerNames[prize.id] || "Loading..."
+                        )}
+                      </TableCell>
                       <TableCell>
                         <ScratchCardComponent
                           prize={
@@ -324,8 +348,6 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                           winnerId={prize.winner_id}
                         />
                       </TableCell>
-                      {/* <TableCell>{prize.quantity}</TableCell> */}
-                      {/* <TableCell>{prize.winners}</TableCell> */}
                     </TableRow>
                   ))}
                 </TableBody>

@@ -488,3 +488,21 @@ export async function getAnswerInstantWinPrizes(gameId: string) {
 
   return data || [];
 }
+
+export async function getWinnerName(winnerId: string | null): Promise<string> {
+  if (!winnerId) return "No winner yet";
+
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("username")
+    .eq("id", winnerId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching winner name:", error);
+    return "Unknown";
+  }
+
+  return data.username || "Anonymous";
+}
