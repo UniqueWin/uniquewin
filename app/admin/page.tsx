@@ -38,8 +38,8 @@ export default function AdminPage() {
   const [isAddGameModalOpen, setIsAddGameModalOpen] = useState(false);
   const [isEditGameModalOpen, setIsEditGameModalOpen] = useState(false);
   const [selectedGame, setSelectedGame] = useState<any>(null);
-  const [quickStats, setQuickStats] =
-    useState<QuickStatsProps["quickStats"]>(null);
+  const [quickStats, setQuickStats] = useState<QuickStatsProps["quickStats"]>(null);
+  const [prizesByGame, setPrizesByGame] = useState<QuickStatsProps["prizesByGame"]>(null);
   const [user, setUser] = useState<any>(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [allPlayers, setAllPlayers] = useState<any[]>([]);
@@ -67,6 +67,7 @@ export default function AdminPage() {
       const statsData = await fetchQuickStats();
       if (statsData) {
         setQuickStats(statsData.quickStats);
+        setPrizesByGame(statsData.prizesByGame);
         setRecentPlayerActivities(statsData.recentPlayerActivities);
       }
       const playersData = await fetchAllPlayers();
@@ -254,7 +255,7 @@ export default function AdminPage() {
         <div>
           <QuickStatsBox
             quickStats={quickStats}
-            prizesByGame={quickStats?.prizesByGame || null}
+            prizesByGame={prizesByGame}
           />
           <RecentPlayerActivities
             recentPlayerActivities={recentPlayerActivities}

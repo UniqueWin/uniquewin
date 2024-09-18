@@ -21,10 +21,7 @@ export interface QuickStatsProps {
   prizesByGame: { [gameId: string]: number } | null;
 }
 
-export function QuickStatsBox({
-  quickStats,
-  prizesByGame,
-}: QuickStatsProps) {
+export function QuickStatsBox({ quickStats, prizesByGame }: QuickStatsProps) {
   const formatCurrency = (value: number | undefined) =>
     value !== undefined ? `£${value.toFixed(2)}` : "N/A";
   const formatNumber = (value: number | undefined) =>

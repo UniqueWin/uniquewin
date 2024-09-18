@@ -85,6 +85,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         is_admin: profileData.is_admin || false,
         email: user.email || "",
         credit_balance: profileData.credit_balance || 0,
+        account_balance: profileData.account_balance || 0,
       };
       setUser(extendedUser);
 

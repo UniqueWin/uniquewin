@@ -56,12 +56,12 @@ export async function fetchQuickStats() {
   }
 
   // Group prizes by game and calculate total payout
-  const prizesByGame = winnersPrizes.reduce((acc, winner) => {
+  const prizesByGame: { [key: string]: any } = winnersPrizes.reduce((acc: { [key: string]: any }, winner) => {
     if (!acc[winner.game_id]) {
       acc[winner.game_id] = {
         totalPayout: 0,
         winnerCount: 0,
-        jackpot: winner.games.current_prize
+        jackpot: winner.games?.[0]?.current_prize || 0
       };
     }
     acc[winner.game_id].totalPayout += parseFloat(winner.prize_amount) || 0;
@@ -108,7 +108,7 @@ export async function fetchQuickStats() {
   console.log("Number of winners:", winnerCountOriginal);
 
   // Group prizes by game
-  const prizesByGameOriginal = winnersPrizesOriginal.reduce((acc, winner) => {
+  const prizesByGameOriginal: { [key: string]: number } = winnersPrizesOriginal.reduce((acc: { [key: string]: number }, winner) => {
     if (!acc[winner.game_id]) {
       acc[winner.game_id] = 0;
     }
@@ -222,7 +222,7 @@ export async function fetchQuickStats() {
       averageAnswersPerGame,
     },
     recentPlayerActivities,
-    prizesByGame,
+    prizesByGame, // Make sure this is included
   };
 };
 

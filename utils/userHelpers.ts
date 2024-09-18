@@ -12,13 +12,10 @@ export interface LocalUser {
 }
 
 export interface ExtendedUser extends SupabaseUser {
-  id: string;
   username: string;
   is_admin: boolean;
-  email: string;
   credit_balance: number;
   account_balance: number;
-  gameHistory?: GameHistoryItem[]; // Add this line
 }
 
 // Add this interface for the game history items
@@ -27,7 +24,7 @@ export interface GameHistoryItem {
   gameName: string;
   playedAt: string;
   result: string;
-  answers: Answer[]; // Add this line
+  answers: Answer[];
 }
 
 // Add this interface for the answers
@@ -83,8 +80,7 @@ export function useUser() {
       const updatedUser = {
         ...user,
         credit_balance: user.credit_balance + amount,
-        // account_balance: user.account_balance - amount,
-      } as ExtendedUser;
+      };
       setUser(updatedUser);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
     }
@@ -92,7 +88,7 @@ export function useUser() {
 
   const updateUser = (updatedUserData: Partial<ExtendedUser>) => {
     if (user) {
-      const updatedUser = { ...user, ...updatedUserData } as ExtendedUser;
+      const updatedUser = { ...user, ...updatedUserData };
       setUser(updatedUser);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
     }
@@ -117,5 +113,3 @@ export function emulateLogin(
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
 }
-
-export type User = ExtendedUser; // Add this line to export the User type

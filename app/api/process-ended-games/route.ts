@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { processEndedGames } from "@/utils/gameLogic";
-import { createClient } from "@/utils/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
 
 export async function GET() {
   const supabase = createClient();

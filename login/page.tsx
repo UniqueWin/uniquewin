@@ -13,17 +13,23 @@ export default function LoginPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const username = formData.get('username') as string;
+    const password = formData.get('password') as string;
+
     // Here you would typically validate the user credentials against your backend
     // For now, we'll just simulate a successful login
     login({
       id: "1",
-      username: formData.username,
-      email: `${formData.username}@example.com`, // Add a dummy email
-      credit_balance: 100,
+      username: username,
+      email: `${username}@example.com`, // Add a dummy email
+      credit_balance: 0, // Set an initial credit balance
+      account_balance: 0, // Add this line to include the account_balance
     });
-    router.push("/profile");
+
+    router.push('/games');
   };
 
   return (
