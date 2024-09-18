@@ -93,17 +93,21 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
 
         setUserAnswersLoading(true);
         const answers = await getUserAnswers(user.id, params.gameId);
-        setUserAnswers(answers.map((answer) => ({
-          answer: answer.answer,
-          status: answer.status,
-          isInstantWin: answer.isInstantWin,
-          instantWin: answer.instantWin,
-          submittedAt: answer.submittedAt,
-        })) || []);
+        setUserAnswers(
+          answers.map((answer) => ({
+            answer: answer.answer,
+            status: answer.status,
+            isInstantWin: answer.isInstantWin,
+            instantWin: answer.instantWin,
+            submittedAt: answer.submittedAt,
+          })) || []
+        );
 
         setUserAnswersLoading(false);
 
-        const gameInstantWinPrizes = await getAnswerInstantWinPrizes(params.gameId);
+        const gameInstantWinPrizes = await getAnswerInstantWinPrizes(
+          params.gameId
+        );
         setInstantWinPrizes(gameInstantWinPrizes);
       } else {
         router.push("/games");
@@ -293,35 +297,35 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Answer</TableHead>
-                    <TableHead>Prize Type</TableHead>
-                    <TableHead>Prize Amount</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>Winner</TableHead>
+                    <TableHead>Prize</TableHead>
+                    {/* <TableHead>Quantity</TableHead> */}
+                    {/* <TableHead>Winners</TableHead> */}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {instantWinPrizes.map((prize, index) => (
                     <TableRow key={index}>
-                      <TableCell>{prize.answer}</TableCell>
-                      <TableCell>{prize.prize_type}</TableCell>
+                      <TableCell>{prize.winner_id}</TableCell> {/* TODO - get winner name */}
                       <TableCell>
-                        {prize.prize_type === 'CASH' ? `£${prize.prize_amount}` :
-                         prize.prize_type === 'CREDITS' ? `${prize.prize_amount} credits` :
-                         prize.prize_type}
+                        <ScratchCardComponent
+                          prize={
+                            prize.prize_type === "CASH"
+                              ? `£${prize.prize_amount}`
+                              : prize.prize_type === "CREDITS"
+                              ? `${prize.prize_amount} credits`
+                              : prize.prize_type
+                          }
+                          onReveal={refreshPage}
+                          gameId={params.gameId}
+                          prizeId={prize.id}
+                          userId={user.id}
+                          status={prize.status}
+                          winnerId={prize.winner_id}
+                        />
                       </TableCell>
-                      <TableCell>
-                        {prize.status === 'LOCKED' ? (
-                          <ScratchCardComponent
-                            prize={prize.prize_type === 'CASH' ? `£${prize.prize_amount}` :
-                                   prize.prize_type === 'CREDITS' ? `${prize.prize_amount} credits` :
-                                   prize.prize_type}
-                            onReveal={() => {}}
-                            isLocked={true}
-                          />
-                        ) : (
-                          prize.status
-                        )}
-                      </TableCell>
+                      {/* <TableCell>{prize.quantity}</TableCell> */}
+                      {/* <TableCell>{prize.winners}</TableCell> */}
                     </TableRow>
                   ))}
                 </TableBody>

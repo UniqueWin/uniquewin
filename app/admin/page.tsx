@@ -173,7 +173,7 @@ export default function AdminPage() {
   const historicGames = games.filter((game) => game.status !== "active");
 
   return (
-    <div className="p-6 bg-gray-100 text-gray-900">
+    <div className="p-6 bg-gray-100 text-gray-900 min-w-[90vw]">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         <div className="space-x-2">

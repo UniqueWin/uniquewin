@@ -14,16 +14,18 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CustomSlider } from "@/components/CustomSlider";
-import InstantWinPrizeManager from './InstantWinPrizeManager';
+import InstantWinPrizeManager from "./InstantWinPrizeManager";
 
 function formatDateTimeLocal(date: Date): string {
-  return date.toLocaleString('sv-SE', { 
-    year: 'numeric', 
-    month: '2-digit', 
-    day: '2-digit', 
-    hour: '2-digit', 
-    minute: '2-digit'
-  }).replace(' ', 'T');
+  return date
+    .toLocaleString("sv-SE", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+    .replace(" ", "T");
 }
 
 interface InstantWinPrize {
@@ -103,22 +105,22 @@ export function AddGameModal({
     };
 
     switch (preset) {
-      case '15min':
-      case '30min':
-      case '45min':
-      case '60min':
+      case "15min":
+      case "30min":
+      case "45min":
+      case "60min":
         newStartTime = roundToNearest15(now);
         newEndTime = addMinutes(newStartTime, parseInt(preset));
         break;
-      case 'next15':
-      case 'next30':
-      case 'next45':
-      case 'next60':
+      case "next15":
+      case "next30":
+      case "next45":
+      case "next60":
         const minutesToAdd = parseInt(preset.slice(4));
         newStartTime = addMinutes(roundToNearest15(now), minutesToAdd);
         newEndTime = addMinutes(newStartTime, 15);
         break;
-      case 'nextHour':
+      case "nextHour":
         newStartTime = new Date(now.setMinutes(0, 0, 0));
         newStartTime.setHours(newStartTime.getHours() + 1);
         newEndTime = addMinutes(newStartTime, 60);
@@ -137,7 +139,7 @@ export function AddGameModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px] bg-white text-black">
+      <DialogContent className="sm:min-w-[90vw] bg-white text-black">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Add New Game</DialogTitle>
         </DialogHeader>
@@ -211,15 +213,60 @@ export function AddGameModal({
               <div>
                 <Label className="text-sm font-medium">Time Presets</Label>
                 <div className="mt-1 flex flex-wrap gap-2">
-                  <Button type="button" onClick={() => handlePresetTime('15min')}>15 min</Button>
-                  <Button type="button" onClick={() => handlePresetTime('30min')}>30 min</Button>
-                  <Button type="button" onClick={() => handlePresetTime('45min')}>45 min</Button>
-                  <Button type="button" onClick={() => handlePresetTime('60min')}>60 min</Button>
-                  <Button type="button" onClick={() => handlePresetTime('next15')}>Next +15</Button>
-                  <Button type="button" onClick={() => handlePresetTime('next30')}>Next +30</Button>
-                  <Button type="button" onClick={() => handlePresetTime('next45')}>Next +45</Button>
-                  <Button type="button" onClick={() => handlePresetTime('next60')}>Next +60</Button>
-                  <Button type="button" onClick={() => handlePresetTime('nextHour')}>Next Hour</Button>
+                  <Button
+                    type="button"
+                    onClick={() => handlePresetTime("15min")}
+                  >
+                    15 min
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => handlePresetTime("30min")}
+                  >
+                    30 min
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => handlePresetTime("45min")}
+                  >
+                    45 min
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => handlePresetTime("60min")}
+                  >
+                    60 min
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => handlePresetTime("next15")}
+                  >
+                    Next +15
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => handlePresetTime("next30")}
+                  >
+                    Next +30
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => handlePresetTime("next45")}
+                  >
+                    Next +45
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => handlePresetTime("next60")}
+                  >
+                    Next +60
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => handlePresetTime("nextHour")}
+                  >
+                    Next Hour
+                  </Button>
                 </div>
               </div>
               <div>
@@ -247,10 +294,10 @@ export function AddGameModal({
                 />
               </div>
             </div>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Instant Win Prizes</h3>
-            <InstantWinPrizeManager gameId={tempGameId} />
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Instant Win Prizes</h3>
+              <InstantWinPrizeManager gameId={tempGameId} />
+            </div>
           </div>
           <DialogFooter>
             <Button type="submit" className="w-full sm:w-auto">
