@@ -200,6 +200,18 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     await fetchUserAndGame();
   };
 
+  const [userWonPrizes, setUserWonPrizes] = useState<any[]>([]);
+  const [otherPrizes, setOtherPrizes] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (instantWinPrizes.length > 0 && user) {
+      const userWon = instantWinPrizes.filter(prize => prize.winner_id === user.id);
+      const others = instantWinPrizes.filter(prize => prize.winner_id !== user.id);
+      setUserWonPrizes(userWon);
+      setOtherPrizes(others);
+    }
+  }, [instantWinPrizes, user]);
+
   if (!user || !game) return <div>Loading...</div>;
 
   return (
@@ -310,6 +322,51 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
               </CardTitle>
             </CardHeader>
             <CardContent>
+              <h3 className="text-lg font-semibold mb-2">Your Won Prizes</h3>
+              {userWonPrizes.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Winner</TableHead>
+                      <TableHead>Prize</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {userWonPrizes.map((prize, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <span className="font-bold text-green-600">You</span>
+                        </TableCell>
+                        <TableCell>
+                          <ScratchCardComponent
+                            prize={
+                              prize.prize_type === "CASH"
+                                ? `£${prize.prize_amount}`
+                                : prize.prize_type === "CREDITS"
+                                ? `${prize.prize_amount} credits`
+                                : prize.prize_type
+                            }
+                            onReveal={refreshPage}
+                            gameId={params.gameId}
+                            prizeId={prize.id}
+                            userId={user.id}
+                            status={prize.status}
+                            winnerId={prize.winner_id}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <p className="text-black mb-4">
+                  Play again to increase your chances of winning an instant prize!
+                </p>
+              )}
+
+              <hr className="my-4 border-gray-300" />
+
+              <h3 className="text-lg font-semibold mb-2">Other Prizes</h3>
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -318,15 +375,13 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {instantWinPrizes.map((prize, index) => (
+                  {otherPrizes.map((prize, index) => (
                     <TableRow key={index}>
                       <TableCell>
                         {prize.status === "LOCKED" ? (
                           "Not won yet"
                         ) : prize.status === "UNLOCKED" ? (
                           "Waiting for winner to scratch"
-                        ) : prize.winner_id === user.id ? (
-                          <span className="font-bold text-green-600">You</span>
                         ) : (
                           winnerNames[prize.id] || "Loading..."
                         )}

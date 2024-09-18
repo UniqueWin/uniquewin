@@ -18,6 +18,7 @@ import { createClient } from "@/utils/supabase/client";
 import { useUser } from "@/utils/UserContext";
 
 const CREDIT_PRESETS = [10, 20, 50, 100];
+const MIN_CREDITS = 10;
 
 export default function AddCreditsModal() {
   const [credits, setCredits] = useState("");
@@ -37,8 +38,8 @@ export default function AddCreditsModal() {
 
     const additionalCredits = parseInt(credits, 10);
 
-    if (isNaN(additionalCredits) || additionalCredits <= 0) {
-      setError("Please enter a valid credit amount");
+    if (isNaN(additionalCredits) || additionalCredits < MIN_CREDITS) {
+      setError(`Please enter a valid credit amount (minimum ${MIN_CREDITS} credits)`);
       return;
     }
 
@@ -64,6 +65,15 @@ export default function AddCreditsModal() {
     }
   };
 
+  const handleCreditChange = (value: string) => {
+    setCredits(value);
+    if (parseInt(value, 10) < MIN_CREDITS) {
+      setError(`Minimum credit purchase is ${MIN_CREDITS} credits (£${MIN_CREDITS})`);
+    } else {
+      setError("");
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -76,7 +86,7 @@ export default function AddCreditsModal() {
         <DialogHeader>
           <DialogTitle>Add Credits</DialogTitle>
           <DialogDescription>
-            Choose a preset amount or enter a custom number of credits to add.
+            Choose a preset amount or enter a custom number of credits to add (minimum {MIN_CREDITS} credits).
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -88,7 +98,7 @@ export default function AddCreditsModal() {
                   type="button"
                   variant="outline"
                   className="bg-white text-black hover:text-white"
-                  onClick={() => setCredits(preset.toString())}
+                  onClick={() => handleCreditChange(preset.toString())}
                 >
                   {preset}
                 </Button>
@@ -103,8 +113,9 @@ export default function AddCreditsModal() {
                 type="number"
                 className="col-span-3 bg-white text-black"
                 value={credits}
-                onChange={(e) => setCredits(e.target.value)}
+                onChange={(e) => handleCreditChange(e.target.value)}
                 placeholder="Enter credits"
+                min={MIN_CREDITS}
               />
             </div>
           </div>
