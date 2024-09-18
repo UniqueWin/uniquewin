@@ -26,7 +26,7 @@ export const fetchInstantWinPrizes = async () => {
   return data || [];
 };
 
-export const fetchQuickStats = async () => {
+export async function fetchQuickStats() {
   const today = new Date().toISOString().split('T')[0];
   const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
 
@@ -39,11 +39,84 @@ export const fetchQuickStats = async () => {
     .from("profiles")
     .select("count", { count: "exact" });
 
-  const { data: winnersPrizes } = await supabase
+  // Fetch all winners and their prize amounts, along with the original jackpot
+  const { data: winnersPrizes, error: winnersError } = await supabase
     .from("winners")
-    .select("prize_amount");
+    .select(`
+      prize_amount,
+      game_id,
+      games (
+        current_prize
+      )
+    `);
 
-  const totalPrizeAwarded = winnersPrizes?.reduce((sum, winner) => sum + (winner.prize_amount || 0), 0) || 0;
+  if (winnersError) {
+    console.error("Error fetching winners:", winnersError);
+    return null;
+  }
+
+  // Group prizes by game and calculate total payout
+  const prizesByGame = winnersPrizes.reduce((acc, winner) => {
+    if (!acc[winner.game_id]) {
+      acc[winner.game_id] = {
+        totalPayout: 0,
+        winnerCount: 0,
+        jackpot: winner.games.current_prize
+      };
+    }
+    acc[winner.game_id].totalPayout += parseFloat(winner.prize_amount) || 0;
+    acc[winner.game_id].winnerCount += 1;
+    return acc;
+  }, {});
+
+  // Adjust payouts to avoid overspill
+  let totalPrizeAwarded = 0;
+  let totalWinnerCount = 0;
+
+  Object.values(prizesByGame).forEach((game: any) => {
+    if (game.totalPayout > game.jackpot) {
+      const adjustmentFactor = game.jackpot / game.totalPayout;
+      game.totalPayout = game.jackpot;
+      game.adjustedPrizePerWinner = game.jackpot / game.winnerCount;
+    } else {
+      game.adjustedPrizePerWinner = game.totalPayout / game.winnerCount;
+    }
+    totalPrizeAwarded += game.totalPayout;
+    totalWinnerCount += game.winnerCount;
+  });
+
+  console.log("Prizes by game (adjusted):", prizesByGame);
+  console.log("Total prize awarded (adjusted):", totalPrizeAwarded);
+  console.log("Total Unique Wins count:", totalWinnerCount);
+
+  // Fetch all winners and their prize amounts
+  const { data: winnersPrizesOriginal, error: winnersErrorOriginal } = await supabase
+    .from("winners")
+    .select("prize_amount, game_id");
+
+  if (winnersErrorOriginal) {
+    console.error("Error fetching winners:", winnersErrorOriginal);
+    return null;
+  }
+
+  // Calculate the total prize awarded and count winners
+  const totalPrizeAwardedOriginal = winnersPrizesOriginal.reduce((sum, winner) => sum + (parseFloat(winner.prize_amount) || 0), 0);
+  const winnerCountOriginal = winnersPrizesOriginal.length;
+
+  console.log("Winners prizes:", winnersPrizesOriginal.map(w => w.prize_amount));
+  console.log("Calculated totalPrizeAwarded:", totalPrizeAwardedOriginal);
+  console.log("Number of winners:", winnerCountOriginal);
+
+  // Group prizes by game
+  const prizesByGameOriginal = winnersPrizesOriginal.reduce((acc, winner) => {
+    if (!acc[winner.game_id]) {
+      acc[winner.game_id] = 0;
+    }
+    acc[winner.game_id] += parseFloat(winner.prize_amount) || 0;
+    return acc;
+  }, {});
+
+  console.log("Prizes by game:", prizesByGameOriginal);
 
   const { data: gamesLast24Hours } = await supabase
     .from("answers")
@@ -106,16 +179,50 @@ export const fetchQuickStats = async () => {
     gameQuestion: games.find((game) => game.id === answer.game_id)?.question || "Unknown Game",
   }));
 
+  const { data: totalAnswers } = await supabase
+    .from("answers")
+    .select("count", { count: "exact" });
+
+  const { data: totalGames } = await supabase
+    .from("games")
+    .select("count", { count: "exact" });
+
+  const averageAnswersPerGame = totalAnswers?.[0]?.count / totalGames?.[0]?.count || 0;
+
+  // Fetch unique winners
+  const { data: uniqueWinners, error: uniqueWinnersError } = await supabase
+    .from("winners")
+    .select("user_id")
+    .order('user_id');
+
+  if (uniqueWinnersError) {
+    console.error("Error fetching unique winners:", uniqueWinnersError);
+    return null;
+  }
+
+  // Count unique winners
+  const uniqueWinnerSet = new Set(uniqueWinners.map(winner => winner.user_id));
+  const totalWinners = uniqueWinnerSet.size;
+
+  const totalUniqueWins = winnersPrizes.length;
+
   return {
     quickStats: {
       activeGames: activeGames?.[0]?.count || 0,
       totalPlayers: totalPlayers?.[0]?.count || 0,
-      totalPrizeAwarded: totalPrizeAwarded,
+      totalPrizeAwarded,
+      totalUniqueWins,
+      totalWinners,
+      averagePrizePerAnswer: totalPrizeAwarded / (totalAnswers?.[0]?.count || 1),
+      averagePrizePerWinner: totalPrizeAwarded / (totalWinners || 1),
       gamesLast24Hours: gamesLast24Hours?.[0]?.count || 0,
       instantWinsToday: instantWinsToday?.[0]?.count || 0,
       totalLuckyDips: totalLuckyDips?.[0]?.count || 0,
+      totalAnswers: totalAnswers?.[0]?.count || 0,
+      averageAnswersPerGame,
     },
     recentPlayerActivities,
+    prizesByGame,
   };
 };
 

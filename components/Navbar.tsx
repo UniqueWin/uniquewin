@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Bell, Trophy } from "lucide-react";
+import { Bell, PoundSterlingIcon, Trophy } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { LoginModal } from "@/components/LoginModal";
@@ -72,12 +72,19 @@ const Navbar = () => {
         <div className="flex items-center space-x-4 border-l border-white pl-4">
           {user ? (
             <div className="flex items-center gap-2">
-              <Bell className="mr-" />
+              <div className="flex flex-col">
+                <span className="font-semibold">
+                  Cash:
+                  <span className="text-yellow-400">
+                    £{user.account_balance}
+                  </span>{" "}
+                </span>
+              </div>
               <div className="flex flex-col">
                 <span className="font-semibold">
                   You have{" "}
                   <span className="text-yellow-400">
-                    {user.credit_balance} credits
+                    {user.credit_balance} Q
                   </span>{" "}
                   left.
                 </span>

@@ -8,6 +8,7 @@ export interface LocalUser {
   username: string;
   email: string;
   credit_balance: number;
+  account_balance: number;
 }
 
 export interface ExtendedUser extends SupabaseUser {
@@ -16,6 +17,7 @@ export interface ExtendedUser extends SupabaseUser {
   is_admin: boolean;
   email: string;
   credit_balance: number;
+  account_balance: number;
   gameHistory?: GameHistoryItem[]; // Add this line
 }
 
@@ -81,6 +83,7 @@ export function useUser() {
       const updatedUser = {
         ...user,
         credit_balance: user.credit_balance + amount,
+        // account_balance: user.account_balance - amount,
       } as ExtendedUser;
       setUser(updatedUser);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
@@ -102,13 +105,15 @@ export function emulateLogin(
   userId: string,
   username: string,
   email: string,
-  initialBalance: number
+  initialBalance: number,
+  initialAccountBalance: number
 ) {
   const userData: LocalUser = {
     id: userId,
     username,
     email,
     credit_balance: initialBalance,
+    account_balance: initialAccountBalance
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
 }
