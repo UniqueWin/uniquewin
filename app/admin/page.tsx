@@ -6,6 +6,7 @@ import { EditGameModal } from "@/components/EditGameModal";
 import GameOverviewCard from "@/components/GameOverviewCard";
 import { LoginModal } from "@/components/LoginModal";
 import { QuickStatsBox, QuickStatsProps } from "@/components/QuickStatsBox";
+import { RecentPlayerActivities } from "@/components/RecentPlayerActivities";
 import {
   Card,
   CardContent,
@@ -249,10 +250,13 @@ export default function AdminPage() {
           />
         </div>
 
-        {/* Quick Stats Column */}
+        {/* Quick Stats and Recent Activities Column */}
         <div>
           <QuickStatsBox
             quickStats={quickStats}
+            prizesByGame={quickStats?.prizesByGame || null}
+          />
+          <RecentPlayerActivities
             recentPlayerActivities={recentPlayerActivities}
           />
         </div>
