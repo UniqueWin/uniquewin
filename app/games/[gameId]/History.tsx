@@ -1,22 +1,41 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import ScratchCardComponent from "./ScratchCardComponent";
 import { Game, GameInstantWinPrize } from "@/utils/dataHelpers";
+import { useParams } from 'next/navigation';
 
 type HistoryProps = {
   game: Game;
   instantWinPrizes: GameInstantWinPrize[];
 };
 
-function History({ game, instantWinPrizes }: HistoryProps) {
+export default function History({ game, instantWinPrizes }: HistoryProps) {
+  const { gameId } = useParams();
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // ... existing code to set userId ...
+  }, []);
+
   const calculateWinnings = () => {
     const uniqueAnswers =
       game?.answers?.filter((a) => a.status === "UNIQUE") || [];
     return uniqueAnswers.length
       ? (750 / uniqueAnswers.length).toFixed(2)
       : "0.00";
+  };
+
+  const getPrizeValue = (prize: GameInstantWinPrize | undefined): string | number => {
+    if (!prize) return '';
+    if (typeof prize.prize === 'string' || typeof prize.prize === 'number') return prize.prize;
+    return JSON.stringify(prize.prize);
+  };
+
+  const getWinners = (game: Game): string[] => {
+    const uniqueAnswers = game.answers?.filter(a => a.status === "UNIQUE") || [];
+    return uniqueAnswers.map(answer => answer.user_id);
   };
 
   return (
@@ -59,19 +78,14 @@ function History({ game, instantWinPrizes }: HistoryProps) {
                     <ScratchCardComponent
                       prize={
                         game.answers &&
-                        instantWinPrizes[game.answers.length - 1 - index]
-                          ? instantWinPrizes[game.answers.length - 1 - index]
-                              .prize.prize_type === "CASH"
-                            ? instantWinPrizes[game.answers.length - 1 - index]
-                                .prize.prize_amount
-                            : `${
-                                instantWinPrizes[
-                                  game.answers.length - 1 - index
-                                ].prize.prize_details
-                              }`
-                          : "£0"
+                        getPrizeValue(instantWinPrizes[game.answers.length - 1 - index])
                       }
                       onReveal={() => {}}
+                      gameId={gameId as string}
+                      prizeId={answer.answer || `prize-${index}`} // Using answer as prizeId, or a fallback
+                      userId={userId || ''}
+                      status="SCRATCHED"
+                      winnerId={getWinners(game).includes(answer.user_id) ? answer.user_id : ''}
                     />
                   ) : (
                     answer.instantWin
@@ -85,5 +99,3 @@ function History({ game, instantWinPrizes }: HistoryProps) {
     </motion.div>
   );
 }
-
-export default History;

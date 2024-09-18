@@ -27,6 +27,7 @@ export type Game = {
   start_time: string;
   lucky_dip_answers?: string[];
   hangmanWords?: string[];
+  winner?: string; // ID of the winning user
 };
 
 export interface InstantWinPrize {
