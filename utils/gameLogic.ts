@@ -228,34 +228,19 @@ export const scratchCard = async (gameId: string, prizeId: string) => {
   const supabase = createClient();
 
   try {
-    const { data: prize, error: fetchError } = await supabase
+    const { data: updatedPrize, error: updateError } = await supabase
       .from('answer_instant_wins')
-      .select('*')
+      .update({ status: 'SCRATCHED' })
       .eq('id', prizeId)
+      .select()
       .single();
 
-    if (fetchError) throw fetchError;
+    if (updateError) throw updateError;
 
-    if (prize.status === 'UNLOCKED') {
-      const { data: updatedPrize, error: updateError } = await supabase
-        .from('answer_instant_wins')
-        .update({ status: 'WON' })
-        .eq('id', prizeId)
-        .select()
-        .single();
-
-      if (updateError) throw updateError;
-
-      return {
-        status: updatedPrize.status,
-        prizeAmount: updatedPrize.prize_amount,
-      };
-    } else {
-      return {
-        status: prize.status,
-        prizeAmount: prize.prize_amount,
-      };
-    }
+    return {
+      status: updatedPrize.status,
+      prizeAmount: updatedPrize.prize_amount,
+    };
   } catch (error) {
     console.error('Error in scratchCard:', error);
     throw error;
