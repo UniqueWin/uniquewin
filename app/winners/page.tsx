@@ -250,7 +250,7 @@ export default function Winners() {
               {winnersByGame.map((game) => (
                 <div key={game.id} className="border-b pb-4">
                   <h3 className="text-xl font-semibold mb-2">{game.question}</h3>
-                  <p className="text-green-600 font-bold mb-2">Total Prize: £{game.totalPrize.toFixed(2)}</p>
+                  <p className="text-green-600 font-bold mb-2">Total Prize: £{game.totalPrize.toFixed()}</p>
                   {renderWinnersByGame(game)}
                 </div>
               ))}
