@@ -11,26 +11,50 @@ export async function GET() {
       .from("winners")
       .select(`
         id,
-        games (question),
-        users (
-          profiles (username)
-        ),
         prize_amount,
-        winning_answer
+        user_id,
+        game_id,
+        answer_id
       `)
-      .order('created_at', { ascending: false })
+      .order('announced_at', { ascending: false })
       .limit(5);
 
     if (error) throw error;
 
-    // Reshape the data to match the expected format
-    const formattedWinners = winners.map(winner => ({
-      id: winner.id,
-      games: winner.games,
-      profiles: { username: winner.users.profiles.username },
-      prize_amount: winner.prize_amount,
-      winning_answer: winner.winning_answer
-    }));
+    // Fetch related data separately
+    const userIds = winners.map(w => w.user_id);
+    const gameIds = winners.map(w => w.game_id);
+    const answerIds = winners.map(w => w.answer_id);
+
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id, username")
+      .in("id", userIds);
+
+    const { data: games } = await supabase
+      .from("games")
+      .select("id, question")
+      .in("id", gameIds);
+
+    const { data: answers } = await supabase
+      .from("answers")
+      .select("id, answer_text")
+      .in("id", answerIds);
+
+    // Combine the data
+    const formattedWinners = winners.map(winner => {
+      const profile = profiles?.find(p => p.id === winner.user_id);
+      const game = games?.find(g => g.id === winner.game_id);
+      const answer = answers?.find(a => a.id === winner.answer_id);
+
+      return {
+        id: winner.id,
+        games: { question: game?.question },
+        profiles: { username: profile?.username },
+        prize_amount: winner.prize_amount,
+        winning_answer: answer?.answer_text
+      };
+    });
 
     return NextResponse.json(formattedWinners);
   } catch (error: any) {
