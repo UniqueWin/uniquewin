@@ -151,9 +151,11 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
           setCountdown("GAME OVER");
           setShowGameHistory(false);
         } else {
-          const minutes = Math.floor(distance / (1000 * 60));
+          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
           const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-          setCountdown(`${minutes}:${seconds.toString().padStart(2, "0")}`);
+          setCountdown(`${days}d ${hours}h ${minutes}m ${seconds}s`);
           setShowGameHistory(minutes > 30);
         }
       }, 1000);
@@ -228,6 +230,14 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
+          <Card className="mb-8">
+            <CardContent className="flex justify-center items-center p-6">
+              <h2 className="text-4xl font-bold text-red-600">
+                Game ends in: <span className="text-black">{countdown}</span>
+              </h2>
+            </CardContent>
+          </Card>
+
           <Question
             game={game}
             setGame={setGame}

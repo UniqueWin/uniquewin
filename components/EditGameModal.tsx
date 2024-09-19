@@ -160,6 +160,13 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
 
   const prizeSteps = [0, 250, 500, 1000, 1500, 2000, 2500, 5000];
 
+  const handleManualPrizeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
+    if (!isNaN(value) && value >= 0 && value <= 5000) {
+      setCurrentPrize(value);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] bg-white text-black">
@@ -231,6 +238,15 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
                   steps={prizeSteps}
                   value={currentPrize}
                   onChange={(value) => setCurrentPrize(value)}
+                />
+                <Input
+                  id="manualPrize"
+                  type="number"
+                  value={currentPrize}
+                  onChange={handleManualPrizeInput}
+                  className="mt-2 bg-white"
+                  min={0}
+                  max={5000}
                 />
               </div>
               <div>
