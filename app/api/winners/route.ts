@@ -97,7 +97,7 @@ export async function GET() {
 
     // Sort users by total prize and slice to get top 5
     const topWinnersByUser = groupedByUser
-      .sort((a, b) => b.totalPrize - a.totalPrize)
+      .sort((a: GroupedUser, b: GroupedUser) => b.totalPrize - a.totalPrize)
       .slice(0, 5);
 
     // Group by game
@@ -149,4 +149,12 @@ export async function GET() {
       { status: 500 }
     );
   }
+}
+
+// Define an interface for the user object
+interface GroupedUser {
+  id: string;
+  username: string | undefined;
+  totalPrize: number;
+  winningAnswersByGame: Record<string, string[]>;
 }

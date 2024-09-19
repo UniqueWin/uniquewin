@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -8,10 +8,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Gift, Coins, HelpCircle } from "lucide-react";
-import confetti from "react-confetti";
+import { Sparkles, Gift, Coins, HelpCircle, LucideIcon } from "lucide-react";
+import Confetti from "react-confetti";
+import { PrizeType } from "@/types/prize";
 
-type PrizeType = "credits" | "cash" | "lucky dip" | "hangman";
+// Remove the enum definition here since we're now importing it
 
 interface Prize {
   id: number;
@@ -21,11 +22,11 @@ interface Prize {
   rarity: "common" | "rare" | "epic" | "legendary";
 }
 
-const prizeIcons = {
-  credits: Coins,
-  cash: Coins,
-  "lucky dip": Gift,
-  hangman: HelpCircle,
+// Define the type for prizeIcons using LucideIcon
+const prizeIcons: { [key in PrizeType]: LucideIcon } = {
+  [PrizeType.CASH]: Coins,
+  [PrizeType.CREDIT]: Coins,
+  [PrizeType.ITEM]: Gift,
 };
 
 const rarityColors = {
@@ -35,11 +36,10 @@ const rarityColors = {
   legendary: "border-yellow-400",
 };
 
-const tooltipContent = {
-  credits: "In-game currency to spend on various items",
-  cash: "Real money rewards",
-  "lucky dip": "A random prize from our selection",
-  hangman: "Play a game of Hangman to win more prizes",
+const tooltipContent: Record<PrizeType, string> = {
+  [PrizeType.CASH]: "Real money rewards",
+  [PrizeType.CREDIT]: "In-game currency to spend on various items",
+  [PrizeType.ITEM]: "A random prize from our selection",
 };
 
 export default function NewGameRewards() {
@@ -48,55 +48,57 @@ export default function NewGameRewards() {
       .fill(null)
       .map((_, i) => ({
         id: i + 1,
-        type: "credits" as PrizeType,
-        value: "1 credit",
+        type: PrizeType.CASH,
+        value: "£10",
         winner: null,
         rarity: "common" as const,
       })),
-    ...Array(5)
-      .fill(null)
-      .map((_, i) => ({
-        id: i + 11,
-        type: "credits" as PrizeType,
-        value: "10 credits",
-        winner: null,
-        rarity: "rare" as const,
-      })),
     {
-      id: 16,
-      type: "credits",
-      value: "50 credits",
+      id: 11,
+      type: PrizeType.CASH,
+      value: "£100",
+      winner: null,
+      rarity: "rare" as const,
+    },
+    {
+      id: 12,
+      type: PrizeType.CREDIT,
+      value: "100",
+      winner: null,
+      rarity: "rare" as const,
+    },
+    {
+      id: 13,
+      type: PrizeType.ITEM,
+      value: "Mystery Box",
       winner: null,
       rarity: "epic" as const,
     },
     {
-      id: 17,
-      type: "cash",
-      value: "£10",
+      id: 14,
+      type: PrizeType.CASH,
+      value: "£1000",
       winner: null,
       rarity: "legendary" as const,
-    },
-    ...Array(3)
-      .fill(null)
-      .map((_, i) => ({
-        id: i + 18,
-        type: "lucky dip",
-        value: "Mystery Prize",
-        winner: null,
-        rarity: "rare" as const,
-      })),
-    {
-      id: 21,
-      type: "hangman",
-      value: "h _ n g m _ n",
-      winner: null,
-      rarity: "epic" as const,
     },
   ]);
 
   const [selectedPrize, setSelectedPrize] = useState<Prize | null>(null);
   const [isRevealing, setIsRevealing] = useState(false);
   const [claimedCount, setClaimedCount] = useState(0);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const revealPrize = (prize: Prize) => {
     setSelectedPrize(prize);
@@ -108,11 +110,8 @@ export default function NewGameRewards() {
       setIsRevealing(false);
       setClaimedCount((count) => count + 1);
       if (prize.rarity === "legendary" || prize.rarity === "epic") {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-        });
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 5000);
       }
     }, 2000);
   };
@@ -127,6 +126,14 @@ export default function NewGameRewards() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-700 to-indigo-900 text-white p-4 relative overflow-hidden">
+      {showConfetti && (
+        <Confetti
+          width={windowSize.width}
+          height={windowSize.height}
+          recycle={false}
+          numberOfPieces={200}
+        />
+      )}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjMDAwMDAwMTAiPjwvcmVjdD4KPHBhdGggZD0iTTAgNUw1IDBaTTYgNEw0IDZaTS0xIDFMMSAtMVoiIHN0cm9rZT0iIzIwMjAyMDIwIiBzdHJva2Utd2lkdGg9IjEiPjwvcGF0aD4KPC9zdmc+')] animate-[spin_60s_linear_infinite]" />
       </div>
@@ -171,10 +178,9 @@ export default function NewGameRewards() {
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
-                            {prizeIcons[prize.type] &&
-                              React.createElement(prizeIcons[prize.type], {
-                                className: "w-12 h-12 text-blue-300 mb-2",
-                              })}
+                            {prizeIcons[prize.type] && (
+                              <prizeIcons[prize.type] className="w-12 h-12 text-blue-300 mb-2" />
+                            )}
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>{tooltipContent[prize.type]}</p>
@@ -230,10 +236,9 @@ export default function NewGameRewards() {
                 <>
                   <h2 className="text-2xl font-bold mb-4">You Won!</h2>
                   <div className="text-6xl mb-4">
-                    {prizeIcons[selectedPrize.type] &&
-                      React.createElement(prizeIcons[selectedPrize.type], {
-                        className: "inline",
-                      })}
+                    {prizeIcons[selectedPrize.type] && (
+                      <prizeIcons[selectedPrize.type] className="inline" />
+                    )}
                   </div>
                   <p className="text-xl mb-2">{selectedPrize.value}</p>
                   <Badge variant="secondary" className="mb-4">
