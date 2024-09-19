@@ -30,7 +30,7 @@ Lion UNIQUE
 
 Tiger UNIQUE  
 
-Eléphant UNIQUE  
+Elephant UNIQUE  
 
 This is because you have three UNIQUE answers but as there are multiple UNIQUE answers they appear in orange.  
 

@@ -13,7 +13,7 @@ interface ScratchCardProps {
   gameId: string;
   prizeId: string;
   userId: string;
-  status: 'LOCKED' | 'UNLOCKED' | 'SCRATCHED' | 'WON';
+  status: "LOCKED" | "UNLOCKED" | "SCRATCHED";
   winnerId: string | null;
 }
 
@@ -33,17 +33,27 @@ interface ExtendedScratchCardProps extends ScratchCardProps {
 const ScratchCardWithBrushColor =
   ScratchCard as React.ComponentType<ExtendedScratchCardProps>;
 
-const ScratchCardComponent: React.FC<ScratchCardProps> = ({ prize, onReveal, gameId, prizeId, userId, status, winnerId }) => {
-  const [isRevealed, setIsRevealed] = useState(status === 'SCRATCHED' || status === 'WON');
-  const [scratchedPercentage, setScratchedPercentage] = useState(isRevealed ? 100 : 0);
+const ScratchCardComponent: React.FC<ScratchCardProps> = ({
+  prize,
+  onReveal,
+  gameId,
+  prizeId,
+  userId,
+  status,
+  winnerId,
+}) => {
+  const [isRevealed, setIsRevealed] = useState(status === "SCRATCHED");
+  const [scratchedPercentage, setScratchedPercentage] = useState(
+    isRevealed ? 100 : 0
+  );
   const [localStatus, setLocalStatus] = useState(status);
 
   const handleComplete = async () => {
-    if (localStatus === 'UNLOCKED' && userId === winnerId) {
+    if (localStatus === "UNLOCKED" && userId === winnerId) {
       try {
         await scratchCard(gameId, prizeId);
         setIsRevealed(true);
-        setLocalStatus('SCRATCHED');
+        setLocalStatus("SCRATCHED");
         onReveal();
       } catch (error) {
         console.error("Error scratching card:", error);
@@ -52,30 +62,40 @@ const ScratchCardComponent: React.FC<ScratchCardProps> = ({ prize, onReveal, gam
   };
 
   const isWinner = userId === winnerId;
-  const isScratchable = localStatus === 'UNLOCKED' && isWinner;
+  const isScratchable = localStatus === "UNLOCKED" && isWinner;
 
   const getMessage = () => {
-    if (localStatus === 'LOCKED') return 'Locked';
-    if (localStatus === 'UNLOCKED' && !isWinner) return 'Waiting for winner to scratch';
-    if (localStatus === 'SCRATCHED' || localStatus === 'WON' || (localStatus === 'UNLOCKED' && isWinner)) return `Prize: ${prize}`;
-    return 'Scratch to reveal!';
+    if (localStatus === "LOCKED") return "Locked";
+    if (localStatus === "UNLOCKED" && !isWinner)
+      return "Waiting for winner to scratch";
+    if (localStatus === "SCRATCHED" || (localStatus === "UNLOCKED" && isWinner))
+      return `Prize: ${prize}`;
+    return "Scratch to reveal!";
   };
 
   useEffect(() => {
     setLocalStatus(status);
-    setIsRevealed(status === 'SCRATCHED' || status === 'WON' || (status === 'UNLOCKED' && isWinner));
+    setIsRevealed(
+      status === "SCRATCHED" || (status === "UNLOCKED" && isWinner)
+    );
   }, [status, isWinner]);
 
   return (
     <div className="bg-pink-200 p-1 rounded-lg w-fit">
       <div className="relative w-[250px] h-[75px] rounded bg-pink-500">
-        {isRevealed && (localStatus === 'WON' || (localStatus === 'UNLOCKED' && isWinner)) && <Confetti width={250} height={75} />}
+        {isRevealed && localStatus === "UNLOCKED" && isWinner && (
+          <Confetti width={250} height={75} />
+        )}
         <ScratchCardWithBrushColor
           width={250}
           height={75}
           finishPercent={70}
           onComplete={handleComplete}
-          image={isScratchable ? "https://st3.depositphotos.com/1022597/35608/i/450/depositphotos_356083076-stock-photo-grey-stone-texture-useful-background.jpg" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg=="}
+          image={
+            isScratchable
+              ? "https://st3.depositphotos.com/1022597/35608/i/450/depositphotos_356083076-stock-photo-grey-stone-texture-useful-background.jpg"
+              : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg=="
+          }
           brushSize={10}
           brushColor={isScratchable ? "#808080" : "transparent"}
           onScratch={(percentage) => setScratchedPercentage(percentage)}
@@ -89,9 +109,7 @@ const ScratchCardComponent: React.FC<ScratchCardProps> = ({ prize, onReveal, gam
         >
           <div className="flex items-center justify-center w-full h-full bg-purple-500 rounded-lg p-4">
             <div className="text-center">
-              <p className="text-white text-xl font-bold">
-                {getMessage()}
-              </p>
+              <p className="text-white text-xl font-bold">{getMessage()}</p>
             </div>
           </div>
         </ScratchCardWithBrushColor>

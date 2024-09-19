@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/table";
 import ScratchCardComponent from "./ScratchCardComponent";
 import { cn } from "@/lib/utils";
+import GameRewards from "./GameRewards";
 
 interface UserAnswer {
   answer: string;
@@ -55,7 +56,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     const names: { [key: string]: string } = {};
 
     for (const prize of prizes) {
-      if (prize.status === "WON" || prize.status === "SCRATCHED") {
+      if (prize.status === "SCRATCHED") {
         names[prize.id] = await getWinnerName(prize.winner_id);
       }
     }
@@ -206,8 +207,12 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
 
   useEffect(() => {
     if (instantWinPrizes.length > 0 && user) {
-      const userWon = instantWinPrizes.filter(prize => prize.winner_id === user.id);
-      const others = instantWinPrizes.filter(prize => prize.winner_id !== user.id);
+      const userWon = instantWinPrizes.filter(
+        (prize) => prize.winner_id === user.id
+      );
+      const others = instantWinPrizes.filter(
+        (prize) => prize.winner_id !== user.id
+      );
       setUserWonPrizes(userWon);
       setOtherPrizes(others);
     }
@@ -318,74 +323,36 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
           {/* Updated Instant Win Prizes card */}
           <Card className="my-8">
             <CardHeader>
-              <CardTitle className="text-xl text-black font-bold mb-4">
+              <CardTitle className="text-3xl text-black font-bold">
                 Instant Win Prizes
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <h3 className="text-lg font-semibold mb-2">Your Won Prizes</h3>
-              {userWonPrizes.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Winner</TableHead>
-                      <TableHead>Prize</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {userWonPrizes.map((prize, index) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <span className="font-bold text-green-600">You</span>
-                        </TableCell>
-                        <TableCell>
-                          <ScratchCardComponent
-                            prize={
-                              prize.prize_type === "CASH"
-                                ? `£${prize.prize_amount}`
-                                : prize.prize_type === "CREDITS"
-                                ? `${prize.prize_amount} credits`
-                                : prize.prize_type
-                            }
-                            onReveal={refreshPage}
-                            gameId={params.gameId}
-                            prizeId={prize.id}
-                            userId={user.id}
-                            status={prize.status}
-                            winnerId={prize.winner_id}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <p className="text-black mb-4">
-                  Play again to increase your chances of winning an instant prize!
-                </p>
-              )}
-
+              <GameRewards
+                prizes={instantWinPrizes}
+                userId={user.id}
+                gameId={params.gameId}
+                refreshPage={refreshPage}
+              />
               <hr className="my-4 border-gray-300" />
 
-              <h3 className="text-lg font-semibold mb-2">Other Prizes</h3>
-              <Table>
+              {/* <h3 className="text-lg font-semibold mb-2">Other Prizes</h3>
+              <Table className="overflow-y-scroll h-[300px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Winner</TableHead>
                     <TableHead>Prize</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody className="overflow-y-scroll h-[300px]">
                   {otherPrizes.map((prize, index) => (
                     <TableRow key={index}>
                       <TableCell>
-                        {prize.status === "LOCKED" ? (
-                          "Not won yet"
-                        ) : prize.status === "UNLOCKED" ? (
-                          "Waiting for winner to scratch"
-                        ) : (
-                          winnerNames[prize.id] || "Loading..."
-                        )}
+                        {prize.status === "LOCKED"
+                          ? "Not won yet"
+                          : prize.status === "UNLOCKED"
+                          ? "Waiting for winner to scratch"
+                          : winnerNames[prize.id] || "Loading..."}
                       </TableCell>
                       <TableCell>
                         <ScratchCardComponent
@@ -407,7 +374,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                     </TableRow>
                   ))}
                 </TableBody>
-              </Table>
+              </Table> */}
             </CardContent>
           </Card>
 
