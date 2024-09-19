@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
@@ -14,15 +14,29 @@ const itemVariants = {
   visible: { y: 0, opacity: 1 },
 };
 
+interface Winner {
+  id: string;
+  games: { question: string };
+  profiles: { username: string };
+  prize_amount: number;
+  winning_answer: string;
+}
+
 export default function Winners() {
-  // This would typically come from your database
-  const recentWinners = [
-    { name: "John Doe", prize: "100 UQ", game: "Boys names starting with 'T'", answer: "Thaddeus" },
-    { name: "Jane Smith", prize: "£500", game: "Fruits starting with 'P'", answer: "Pomelo" },
-    { name: "Bob Johnson", prize: "£250", game: "Countries starting with 'S'", answer: "San Marino" },
-    { name: "Alice Brown", prize: "£100", game: "Animals starting with 'Z'", answer: "Zebu" },
-    { name: "Charlie Davis", prize: "£50", game: "Colors starting with 'M'", answer: "Mauve" },
-  ];
+  const [recentWinners, setRecentWinners] = useState<Winner[]>([]);
+
+  useEffect(() => {
+    fetch('/api/winners')
+      .then(response => response.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setRecentWinners(data);
+        } else {
+          console.error('Unexpected data format:', data);
+        }
+      })
+      .catch(error => console.error('Error fetching winners:', error));
+  }, []);
 
   return (
     <motion.div
@@ -53,11 +67,11 @@ export default function Winners() {
                 </thead>
                 <tbody>
                   {recentWinners.map((winner, index) => (
-                    <tr key={index} className={index % 2 === 0 ? "bg-gray-50" : ""}>
-                      <td className="py-2 px-4 border-b">{winner.name}</td>
-                      <td className="py-2 px-4 border-b text-green-600 font-bold">{winner.prize}</td>
-                      <td className="py-2 px-4 border-b">{winner.game}</td>
-                      <td className="py-2 px-4 border-b italic">{winner.answer}</td>
+                    <tr key={winner.id} className={index % 2 === 0 ? "bg-gray-50" : ""}>
+                      <td className="py-2 px-4 border-b">{winner.profiles.username}</td>
+                      <td className="py-2 px-4 border-b text-green-600 font-bold">£{winner.prize_amount}</td>
+                      <td className="py-2 px-4 border-b">{winner.games.question}</td>
+                      <td className="py-2 px-4 border-b italic">{winner.winning_answer}</td>
                     </tr>
                   ))}
                 </tbody>
