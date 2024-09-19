@@ -202,7 +202,11 @@ export default function Question({
       transition={{ delay: 0.4, duration: 0.5 }}
       className="bg-card text-card-foreground p-6 rounded-lg shadow-md mb-6"
     >
+      <div className="flex justify-between w-full">
+
       <h2 className="text-3xl font-bold mb-4 text-primary">{game.question}</h2>
+      <h2 className="text-3xl font-bold mb-4 text-green-600">£{game.current_prize}</h2>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex space-x-4">
