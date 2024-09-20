@@ -88,7 +88,7 @@ export default function GameRewards({
       return <Unlock className="w-12 h-12 text-yellow-400 mb-2" />;
     } else {
       const Icon = prizeIcons[prize.prize_type];
-      return <Icon className="w-12 h-12 text-blue-300 mb-2" />;
+      return <Icon className={`w-12 h-12 mb-2 ${prize.prize_type === "CREDITS" ? "text-yellow-300" : "text-blue-300"}`} />;
     }
   };
 
