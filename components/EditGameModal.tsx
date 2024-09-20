@@ -118,6 +118,10 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
     };
 
     switch (preset) {
+      case 'now15min':
+        newStartTime = now;
+        newEndTime = addMinutes(now, 15);
+        break;
       case '15min':
       case '30min':
       case '45min':
@@ -252,6 +256,7 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
               <div>
                 <Label className="text-sm font-medium">Time Presets</Label>
                 <div className="mt-1 flex flex-wrap gap-2">
+                  <Button type="button" onClick={() => handlePresetTime('now15min')}>Now + 15 min</Button>
                   <Button type="button" onClick={() => handlePresetTime('15min')}>15 min</Button>
                   <Button type="button" onClick={() => handlePresetTime('30min')}>30 min</Button>
                   <Button type="button" onClick={() => handlePresetTime('45min')}>45 min</Button>

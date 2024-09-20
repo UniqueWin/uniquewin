@@ -125,6 +125,10 @@ export function AddGameModal({
         newStartTime.setHours(newStartTime.getHours() + 1);
         newEndTime = addMinutes(newStartTime, 60);
         break;
+      case "now15min":
+        newStartTime = now;
+        newEndTime = addMinutes(now, 15);
+        break;
       default:
         newStartTime = roundToNearest15(now);
         newEndTime = addMinutes(newStartTime, 60);
@@ -213,6 +217,12 @@ export function AddGameModal({
               <div>
                 <Label className="text-sm font-medium">Time Presets</Label>
                 <div className="mt-1 flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    onClick={() => handlePresetTime("now15min")}
+                  >
+                    Now + 15 min
+                  </Button>
                   <Button
                     type="button"
                     onClick={() => handlePresetTime("15min")}
