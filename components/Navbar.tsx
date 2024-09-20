@@ -68,6 +68,15 @@ const Navbar = () => {
               Play Now
             </Button>
           </Link>
+          <Link href="/admin">
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-transparent border-white text-white"
+            >
+              Admin
+            </Button>
+          </Link>
         </div>
         <div className="flex items-center space-x-4 border-l border-white pl-4">
           {user ? (

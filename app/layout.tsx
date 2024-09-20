@@ -2,9 +2,9 @@ import { GameProvider } from "@/contexts/GameContext";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import NavBar from "@/components/Navbar";
-import Footer from "@/components/Footer";  // Footer is imported here
+import Footer from "@/components/Footer"; // Footer is imported here
 import { Toaster } from "@/components/ui/sonner";
-import { UserProvider } from '@/utils/UserContext';
+import { UserProvider } from "@/utils/UserContext";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -28,7 +28,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={GeistSans.className}>
-      <body className="bg-background text-foreground">
+      <body className="bg-gradient-to-br from-red-700 to-fuchsia-900">
         <UserProvider>
           <GameProvider>
             <NavBar />
