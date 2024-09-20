@@ -268,9 +268,9 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
       </div>
       <div className="space-y-2">
         <h3 className="text-xl font-bold">Current Instant Win Prizes</h3>
-        <div className="flex flex-wrap gap-2 overflow-y-scroll h-[300px]">
+        <div className="flex flex-wrap gap-1 overflow-y-scroll max-h-[300px]">
           {prizes.map((prize) => (
-            <Badge key={prize.id} variant="secondary" className="text-sm py-1 px-2">
+            <Badge key={prize.id} variant="secondary" className="text-sm py-1 px-2 h-10">
               {prize.answer} ({prize.prize_type}: {prize.prize_amount})
               <button
                 onClick={() => handleEditPrize(prize)}
