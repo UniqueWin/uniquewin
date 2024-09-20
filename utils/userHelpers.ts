@@ -2,114 +2,106 @@
 
 import { useEffect, useState } from "react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
-
-export interface LocalUser {
-  id: string;
-  username: string;
-  email: string;
-  credit_balance: number;
-  account_balance: number;
-}
+import { createClient } from "@/utils/supabase/client";
 
 export interface ExtendedUser extends SupabaseUser {
   username: string;
   is_admin: boolean;
   credit_balance: number;
   account_balance: number;
+  full_name?: string;
+  date_of_birth?: string;
+  address?: string;
 }
-
-// Add this interface for the game history items
-export interface GameHistoryItem {
-  gameId: string;
-  gameName: string;
-  playedAt: string;
-  result: string;
-  answers: Answer[];
-}
-
-// Add this interface for the answers
-export interface Answer {
-  answer: string;
-  status: string;
-}
-
-const STORAGE_KEY = "currentUser";
 
 export function useUser() {
   const [user, setUser] = useState<ExtendedUser | null>(null);
+  const supabase = createClient();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem(STORAGE_KEY);
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser) as LocalUser;
-      // Convert LocalUser to ExtendedUser
+  const refreshUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profileData, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching user profile:", error);
+        return;
+      }
+
       const extendedUser: ExtendedUser = {
-        ...parsedUser,
-        is_admin: false, // Set a default value
-        app_metadata: {},
-        user_metadata: {},
-        aud: '',
-        created_at: '',
-        // Add any other required properties with default values
+        ...user,
+        username: profileData.username || "",
+        is_admin: profileData.is_admin || false,
+        credit_balance: profileData.credit_balance || 0,
+        account_balance: profileData.account_balance || 0,
       };
       setUser(extendedUser);
+    } else {
+      setUser(null);
     }
+  };
+
+  useEffect(() => {
+    refreshUser();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+        refreshUser();
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
-  const login = (userData: LocalUser) => {
-    const extendedUser: ExtendedUser = {
-      ...userData,
-      is_admin: false,
-      app_metadata: {},
-      user_metadata: {},
-      aud: '',
-      created_at: '',
-      // Add any other required properties with default values
-    };
-    setUser(extendedUser);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem(STORAGE_KEY);
-  };
-
-  const addCredits = (amount: number) => {
+  const addCredits = async (amount: number) => {
     if (user) {
-      const updatedUser = {
-        ...user,
-        credit_balance: user.credit_balance + amount,
-      };
-      setUser(updatedUser);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
+      const { data, error } = await supabase
+        .from("profiles")
+        .update({ credit_balance: user.credit_balance + amount })
+        .eq("id", user.id);
+
+      if (error) {
+        console.error("Error adding credits:", error);
+      } else {
+        refreshUser();
+      }
     }
   };
 
-  const updateUser = (updatedUserData: Partial<ExtendedUser>) => {
+  const updateUser = async (updatedUserData: Partial<ExtendedUser>) => {
     if (user) {
-      const updatedUser = { ...user, ...updatedUserData };
-      setUser(updatedUser);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
+      const { data, error } = await supabase
+        .from("profiles")
+        .update(updatedUserData)
+        .eq("id", user.id);
+
+      if (error) {
+        console.error("Error updating user:", error);
+      } else {
+        refreshUser();
+      }
     }
   };
 
-  return { user, login, logout, addCredits, updateUser };
-}
+  const getUserWinnings = async (userId: string) => {
+    const { data, error } = await supabase
+      .from("winners")
+      .select("prize_amount")
+      .eq("user_id", userId);
 
-export function emulateLogin(
-  userId: string,
-  username: string,
-  email: string,
-  initialBalance: number,
-  initialAccountBalance: number
-) {
-  const userData: LocalUser = {
-    id: userId,
-    username,
-    email,
-    credit_balance: initialBalance,
-    account_balance: initialAccountBalance
+    if (error) {
+      console.error("Error fetching user winnings:", error);
+      return 0;
+    }
+
+    return data.reduce((total, winner) => total + Number(winner.prize_amount), 0);
   };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+
+  return { user, refreshUser, addCredits, updateUser, getUserWinnings };
 }
