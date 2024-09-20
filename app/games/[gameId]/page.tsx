@@ -29,6 +29,7 @@ import {
 import ScratchCardComponent from "./ScratchCardComponent";
 import { cn } from "@/lib/utils";
 import GameRewards from "./GameRewards";
+import NewGameRewards from "./NewGameRewards";
 
 interface UserAnswer {
   answer: string;
@@ -36,6 +37,11 @@ interface UserAnswer {
   isInstantWin: boolean;
   instantWin: string;
   submittedAt: string;
+}
+
+function adjustToLocal(utcDateString: string): Date {
+  const date = new Date(utcDateString);
+  return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
 }
 
 export default function GamePage({ params }: { params: { gameId: string } }) {
@@ -143,7 +149,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     if (game) {
       const timer = setInterval(() => {
         const now = new Date();
-        const endTime = new Date(game.end_time);
+        const endTime = adjustToLocal(game.end_time);
         const distance = endTime.getTime() - now.getTime();
 
         if (distance < 0) {
@@ -152,8 +158,12 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
           setShowGameHistory(false);
         } else {
           const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const hours = Math.floor(
+            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          );
+          const minutes = Math.floor(
+            (distance % (1000 * 60 * 60)) / (1000 * 60)
+          );
           const seconds = Math.floor((distance % (1000 * 60)) / 1000);
           setCountdown(`${days}d ${hours}h ${minutes}m ${seconds}s`);
           setShowGameHistory(minutes > 30);
@@ -223,17 +233,18 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
   if (!user || !game) return <div>Loading...</div>;
 
   return (
-    <div className="bg-red-800 min-h-screen flex flex-col">
+    <div className="bg-black bg-opacity-10 rounded-xl my-2 min-h-screen flex flex-col">
       <div className="container mx-auto p-4 flex-grow">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <Card className="mb-8">
+          <Card className="mb-8 bg-transparent">
             <CardContent className="flex justify-center items-center p-6">
-              <h2 className="text-4xl font-bold text-red-600">
-                Game ends in: <span className="text-black">{countdown}</span>
+              <h2 className="text-4xl font-bold text-white">
+                Game ends in:{" "}
+                <span className="text-yellow-300">{countdown}</span>
               </h2>
             </CardContent>
           </Card>
@@ -264,9 +275,9 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[100px]">Answer</TableHead>
+                      <TableHead className="w-[100px]">Your Answer</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>Instant Win Prize</TableHead>
+                      <TableHead>Frequency</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -286,16 +297,24 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                       return (
                         <TableRow key={index}>
                           <TableCell className="font-medium">
-                            {answer.answer}
+                            {answer.answer.charAt(0).toUpperCase() +
+                              answer.answer.slice(1)}
                           </TableCell>
                           <TableCell className={cn("font-medium", statusColor)}>
                             {answer.status}
                           </TableCell>
                           <TableCell>
+                            {
+                              game.answers?.filter(
+                                (a) => a.answer_text === answer.answer
+                              ).length
+                            }
+                          </TableCell>
+                          {/* <TableCell>
                             {answer.instantWin !== "NO"
                               ? answer.instantWin
                               : "No instant win"}
-                          </TableCell>
+                          </TableCell> */}
                         </TableRow>
                       );
                     })}
@@ -331,46 +350,8 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                 refreshPage={refreshPage}
               />
               <hr className="my-4 border-gray-300" />
-
-              {/* <h3 className="text-lg font-semibold mb-2">Other Prizes</h3>
-              <Table className="overflow-y-scroll h-[300px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Winner</TableHead>
-                    <TableHead>Prize</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody className="overflow-y-scroll h-[300px]">
-                  {otherPrizes.map((prize, index) => (
-                    <TableRow key={index}>
-                      <TableCell>
-                        {prize.status === "LOCKED"
-                          ? "Not won yet"
-                          : prize.status === "UNLOCKED"
-                          ? "Waiting for winner to scratch"
-                          : winnerNames[prize.id] || "Loading..."}
-                      </TableCell>
-                      <TableCell>
-                        <ScratchCardComponent
-                          prize={
-                            prize.prize_type === "CASH"
-                              ? `£${prize.prize_amount}`
-                              : prize.prize_type === "CREDITS"
-                              ? `${prize.prize_amount} credits`
-                              : prize.prize_type
-                          }
-                          onReveal={refreshPage}
-                          gameId={params.gameId}
-                          prizeId={prize.id}
-                          userId={user.id}
-                          status={prize.status}
-                          winnerId={prize.winner_id}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table> */}
+              {/* <NewGameRewards />
+              <hr className="my-4 border-gray-300" /> */}
             </CardContent>
           </Card>
 
