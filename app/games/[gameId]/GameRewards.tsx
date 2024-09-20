@@ -120,8 +120,9 @@ export default function GameRewards({
                 <Badge variant="secondary" className="mb-2">
                   {prize.prize_type.toLowerCase()}
                 </Badge>
+
                 <p className="text-center font-semibold">
-                  {getPrizeValue(prize)}
+                  {/* {getPrizeValue(prize)} */}
                 </p>
 
                 {prize.status === "SCRATCHED" && (
