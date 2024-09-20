@@ -169,7 +169,7 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px] bg-white text-black">
+      <DialogContent className="sm:max-w-[800px] bg-white text-black max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Edit Game</DialogTitle>
         </DialogHeader>

@@ -139,7 +139,7 @@ export function AddGameModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:min-w-[90vw] bg-white text-black">
+      <DialogContent className="sm:min-w-[90vw] bg-white text-black max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Add New Game</DialogTitle>
         </DialogHeader>
