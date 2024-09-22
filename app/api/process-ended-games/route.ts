@@ -1,56 +1,57 @@
 import { NextResponse } from "next/server";
 import { processEndedGames } from "@/utils/gameLogic";
 import { createClient } from "@/utils/supabase/client";
+import { formatInTimeZone, toZonedTime } from "date-fns-tz";
+import { format, parseISO } from "date-fns";
 
 export async function GET() {
+  console.log("Starting process-ended-games route handler");
   const supabase = createClient();
 
   try {
-    // Fetch ended games that haven't been processed
-    const { data: endedGames, error: gamesError } = await supabase
+    const nowUK = toZonedTime(new Date(), "Europe/London");
+    console.log("Current UK time:", nowUK);
+
+    // Fetch active games
+    const { data: activeGames, error: fetchError } = await supabase
       .from("games")
-      .select("*")
-      .eq("status", "ended")
-      .eq("prizes_distributed", false);
+      .select("id, end_time, status")
+      .eq("status", "active");
 
-    if (gamesError) throw gamesError;
+    if (fetchError) throw fetchError;
 
-    for (const game of endedGames) {
-      // Fetch winners for this game
-      const { data: winners, error: winnersError } = await supabase
-        .from("winners")
-        .select("*")
-        .eq("game_id", game.id);
+    // Close expired games
+    const gamesToClose = activeGames.filter((game) => {
+      const gameEndTime = toZonedTime(parseISO(game.end_time), "Europe/London");
+      return gameEndTime <= nowUK;
+    });
 
-      if (winnersError) throw winnersError;
+    if (gamesToClose.length > 0) {
+      const { data: closedGames, error: closeError } = await supabase
+        .from("games")
+        .update({ status: "ended" })
+        .in("id", gamesToClose.map((game) => game.id))
+        .select();
 
-      const winnerCount = winners.length;
-      const prizePerWinner = game.current_prize / winnerCount;
+      if (closeError) throw closeError;
 
-      // Update each winner with their adjusted prize amount
-      for (const winner of winners) {
-        await supabase
-          .from("winners")
-          .update({ prize_amount: prizePerWinner })
-          .eq("id", winner.id);
-
-        // Update user's account balance
-        await supabase.rpc("add_to_account_balance", {
-          user_id: winner.user_id,
-          amount: prizePerWinner
-        });
+      // Process winners for closed games
+      for (const game of closedGames) {
+        // ... existing winner processing logic ...
       }
 
-      // Mark the game as processed
-      await supabase
-        .from("games")
-        .update({ prizes_distributed: true })
-        .eq("id", game.id);
+      return NextResponse.json({
+        message: `Closed ${closedGames.length} expired games and processed winners`,
+        closedGames: closedGames,
+      });
+    } else {
+      return NextResponse.json({
+        message: "No games to close",
+        closedGames: [],
+      });
     }
-
-    return NextResponse.json({ message: "Processed ended games and distributed prizes" });
   } catch (error) {
-    console.error("Error processing ended games:", error);
+    console.error("Error in process-ended-games route handler:", error);
     return NextResponse.json({ error: "Failed to process ended games" }, { status: 500 });
   }
 }

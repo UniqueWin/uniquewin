@@ -293,8 +293,8 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                 refreshPage={refreshPage}
               />
               <hr className="my-4 border-gray-300" />
-              {/* <NewGameRewards />
-              <hr className="my-4 border-gray-300" /> */}
+              {/* <NewGameRewards /> */}
+              {/* <hr className="my-4 border-gray-300" /> */}
             </CardContent>
           </Card>
 
