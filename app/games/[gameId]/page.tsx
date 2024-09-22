@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
 import GameRewards from "./GameRewards";
 import NewGameRewards from "./NewGameRewards";
 import RealTimeAnswers from "./RealTimeAnswers";
+import YourAnswers from "./YourAnswers"; // Import the new component
 
 interface UserAnswer {
   answer: string;
@@ -109,6 +110,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
           console.error("Error fetching game answers:", answersError);
         } else {
           currentGame.answers = allAnswers;
+          setGameAnswers(allAnswers); // Set initial game answers
         }
 
         setGame(currentGame);
@@ -231,6 +233,8 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
     }
   }, [instantWinPrizes, user]);
 
+  const [gameAnswers, setGameAnswers] = useState<any[]>([]); // New state for game answers
+
   if (!user || !game) return <div>Loading...</div>;
 
   return (
@@ -239,6 +243,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         gameId={params.gameId}
         userId={user?.id}
         setUserAnswers={setUserAnswers}
+        setGameAnswers={setGameAnswers} // Pass the new setter
       />
       <div className="container mx-auto p-4 flex-grow">
         <motion.div
@@ -267,78 +272,11 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
             onAnswerSubmitted={refreshUserAnswers}
           />
 
-          {userAnswersLoading ? (
-            <div>Loading your answers...</div>
-          ) : userAnswers.length > 0 ? (
-            <Card className="my-8">
-              <CardHeader>
-                <CardTitle className="text-xl text-black font-bold mb-4">
-                  Your Answers
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[100px]">Your Answer</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Frequency</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {userAnswers.map((answer, index) => {
-                      const uniqueAnswersCount =
-                        game.answers?.filter((a) => a.status === "UNIQUE")
-                          .length || 0;
-                      const statusColor =
-                        answer.status === "UNIQUE" && uniqueAnswersCount === 1
-                          ? "text-green-500"
-                          : answer.status === "UNIQUE"
-                          ? "text-orange-500"
-                          : answer.status === "NOT UNIQUE"
-                          ? "text-red-500"
-                          : "text-black";
-
-                      return (
-                        <TableRow key={index}>
-                          <TableCell className="font-medium">
-                            {answer.answer.charAt(0).toUpperCase() +
-                              answer.answer.slice(1)}
-                          </TableCell>
-                          <TableCell className={cn("font-medium", statusColor)}>
-                            {answer.status}
-                          </TableCell>
-                          <TableCell>
-                            {
-                              game.answers?.filter(
-                                (a) => a.answer_text === answer.answer
-                              ).length
-                            }
-                          </TableCell>
-                          {/* <TableCell>
-                            {answer.instantWin !== "NO"
-                              ? answer.instantWin
-                              : "No instant win"}
-                          </TableCell> */}
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="my-8 text-black">
-              <CardHeader>
-                <CardTitle className="text-4xl font-bold text-red-700">
-                  No answers submitted yet
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-black p-4">
-                You haven't submitted any answers for this game yet.
-              </CardContent>
-            </Card>
-          )}
+          <YourAnswers
+            userAnswers={userAnswers}
+            gameAnswers={gameAnswers} // Use the new state
+            loading={userAnswersLoading}
+          />
 
           {/* Updated Instant Win Prizes card */}
           <Card className="my-8">
