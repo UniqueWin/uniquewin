@@ -13,7 +13,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* <Header /> */}
-      <main className="container mx-auto px-4">
+      <main className="container mx-auto p-0">
         <HeroSection />
         <WaysToWin />
         <SeoTitleSection />

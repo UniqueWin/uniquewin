@@ -28,7 +28,6 @@ type QuestionProps = {
   getPartiallyHiddenWord: (word: string) => string;
   updateNavbarCredits: () => void;
   onAnswerSubmitted: () => void;
-  refreshPage: () => void;
 };
 
 export default function Question({
@@ -41,7 +40,6 @@ export default function Question({
   getPartiallyHiddenWord,
   updateNavbarCredits,
   onAnswerSubmitted,
-  refreshPage,
 }: QuestionProps) {
   const { user, refreshUser } = useUser();
   const [answer, setAnswer] = useState("");
@@ -75,7 +73,9 @@ export default function Question({
             toast.info("Valid answer, but already submitted by someone else.");
           }
           if (result.isInstantWin) {
-            toast.success(`Congratulations! You've won an instant prize: ${result.instantWinAmount}`);
+            toast.success(
+              `Congratulations! You've won an instant prize: ${result.instantWinAmount}`
+            );
           }
         } else {
           toast.info("Invalid answer submitted.");
@@ -94,14 +94,18 @@ export default function Question({
             {
               answer: answer,
               status: result.isValidAnswer
-                ? (result.isUniqueAnswer ? "UNIQUE" : "NOT UNIQUE")
+                ? result.isUniqueAnswer
+                  ? "UNIQUE"
+                  : "NOT UNIQUE"
                 : "PENDING",
               isLuckyDip: false,
               submittedAt: new Date().toISOString(),
-              instantWin: result.isInstantWin ? String(result.instantWinAmount) : "NO",
+              instantWin: result.isInstantWin
+                ? String(result.instantWinAmount)
+                : "NO",
               isInstantWin: result.isInstantWin,
               user_id: user.id,
-            } as Answer
+            } as Answer,
           ];
 
           return {
@@ -113,9 +117,10 @@ export default function Question({
         setAnswer("");
         await refreshUser();
         onAnswerSubmitted();
-        refreshPage();
       } else {
-        toast.error(result.message || "Failed to submit answer. Please try again.");
+        toast.error(
+          result.message || "Failed to submit answer. Please try again."
+        );
       }
     } catch (error) {
       console.error("Error submitting answer:", error);
@@ -174,7 +179,7 @@ export default function Question({
               instantWin: "",
               isInstantWin: false,
               user_id: user.id,
-            } as Answer
+            } as Answer,
           ];
           console.log("Updated game answers:", updatedAnswers);
           return {
@@ -185,7 +190,7 @@ export default function Question({
 
         await refreshUser();
         onAnswerSubmitted();
-        refreshPage();
+        // refreshPage();
       }
     } catch (error) {
       console.error("Error purchasing Lucky Dip:", error);
@@ -203,9 +208,12 @@ export default function Question({
       className="bg-card text-card-foreground p-6 rounded-lg shadow-md mb-6"
     >
       <div className="flex justify-between w-full">
-
-      <h2 className="text-3xl font-bold mb-4 text-primary">{game.question}</h2>
-      <h2 className="text-3xl font-bold mb-4 text-green-600">£{game.current_prize}</h2>
+        <h2 className="text-3xl font-bold mb-4 text-primary">
+          {game.question}
+        </h2>
+        <h2 className="text-3xl font-bold mb-4 text-green-600">
+          £{game.current_prize}
+        </h2>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">

@@ -30,6 +30,7 @@ import ScratchCardComponent from "./ScratchCardComponent";
 import { cn } from "@/lib/utils";
 import GameRewards from "./GameRewards";
 import NewGameRewards from "./NewGameRewards";
+import RealTimeAnswers from "./RealTimeAnswers";
 
 interface UserAnswer {
   answer: string;
@@ -234,6 +235,11 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
 
   return (
     <div className="bg-black bg-opacity-10 rounded-xl my-2 min-h-screen flex flex-col">
+      <RealTimeAnswers
+        gameId={params.gameId}
+        userId={user?.id}
+        setUserAnswers={setUserAnswers}
+      />
       <div className="container mx-auto p-4 flex-grow">
         <motion.div
           initial={{ opacity: 0 }}
@@ -259,7 +265,6 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
             getPartiallyHiddenWord={getPartiallyHiddenWord}
             updateNavbarCredits={updateNavbarCredits}
             onAnswerSubmitted={refreshUserAnswers}
-            refreshPage={refreshPage}
           />
 
           {userAnswersLoading ? (
