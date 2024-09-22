@@ -29,7 +29,6 @@ import {
 import ScratchCardComponent from "./ScratchCardComponent";
 import { cn } from "@/lib/utils";
 import GameRewards from "./GameRewards";
-import NewGameRewards from "./NewGameRewards";
 import RealTimeAnswers from "./RealTimeAnswers";
 import YourAnswers from "./YourAnswers"; // Import the new component
 

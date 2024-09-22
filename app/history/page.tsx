@@ -1,10 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ExtendedUser, GameHistoryItem, Answer } from "@/utils/userHelpers";
+import { ExtendedUser } from "@/utils/userHelpers";
 import { createClient } from "@/utils/supabase/client";
 
 const supabase = createClient();
+
+// Define the GameHistoryItem type
+interface GameHistoryItem {
+  gameId: string;
+  gameName: string;
+  playedAt: string;
+  result: string;
+  answers: { answer: string; status: string }[]; // Define the structure of answers
+}
 
 export default function HistoryPage() {
   const [user, setUser] = useState<ExtendedUser | null>(null);
@@ -93,7 +102,7 @@ export default function HistoryPage() {
             <tr key={game.gameId}>
               <td>{game.gameId}</td>
               <td>
-                {game.answers.map((ans: Answer) => (
+                {game.answers.map((ans) => (
                   <div key={ans.answer}>
                     {ans.answer} - {ans.status}
                   </div>
