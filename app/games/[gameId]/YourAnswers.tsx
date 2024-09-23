@@ -69,11 +69,14 @@ const YourAnswers: React.FC<YourAnswersProps> = ({
                   (a) => a.answer_text.trim().toLowerCase() === normalizedAnswer
                 ).length || 0; // Adjusted to match the answer structure
 
+              const totalUniqueAnswersCount =
+                gameAnswers?.filter((a) => a.status === "UNIQUE").length || 0;
+
               const statusColor =
-                answer.status === "UNIQUE" && uniqueAnswersCount === 1
-                  ? "text-green-500"
-                  : answer.status === "UNIQUE"
+                totalUniqueAnswersCount > 1 && answer.status === "UNIQUE"
                   ? "text-orange-500"
+                  : answer.status === "UNIQUE" && uniqueAnswersCount === 1
+                  ? "text-green-500"
                   : answer.status === "NOT UNIQUE"
                   ? "text-red-500"
                   : "text-black";
