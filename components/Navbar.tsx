@@ -141,9 +141,12 @@ const Navbar = () => {
         <div className="flex space-x-4 items-center">
           {user ? (
             <>
-              <span className="text-sm font-semibold text-black">
+              <Link
+                href="/profile"
+                className="text-sm font-semibold text-black"
+              >
                 Welcome, {user.email}
-              </span>
+              </Link>
               <Button
                 variant="outline"
                 size="sm"
