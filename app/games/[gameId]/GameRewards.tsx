@@ -56,9 +56,7 @@ export default function NewGameRewards({
   const [winnerNames, setWinnerNames] = useState<WinnerNames>({}); // Declare winnerNames state
   const [userWonPrizes, setUserWonPrizes] = useState<Prize[]>([]);
   const [otherPrizes, setOtherPrizes] = useState<Prize[]>([]);
-  const [groupedPrizes, setGroupedPrizes] = useState<
-    Record<PrizeType, Prize[]>
-  >({});
+  const [groupedPrizes, setGroupedPrizes] = useState<Record<PrizeType, Prize[]>>({} as Record<PrizeType, Prize[]>);
 
   useEffect(() => {
     const fetchWinnerNames = async () => {
