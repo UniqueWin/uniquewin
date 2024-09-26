@@ -74,6 +74,8 @@ export default function NewGameRewards({
   const [isRevealing, setIsRevealing] = useState(false);
   const [claimedCount, setClaimedCount] = useState(0);
   const [winnerNames, setWinnerNames] = useState<WinnerNames>({}); // Declare winnerNames state
+  const [userWonPrizes, setUserWonPrizes] = useState<Prize[]>([]);
+  const [otherPrizes, setOtherPrizes] = useState<Prize[]>([]);
 
   useEffect(() => {
     const fetchWinnerNames = async () => {
@@ -88,6 +90,11 @@ export default function NewGameRewards({
 
     fetchWinnerNames();
   }, [prizes]); // Fetch winner names whenever prizes change
+
+  useEffect(() => {
+    setUserWonPrizes(prizes.filter((prize) => prize.winner_id === userId));
+    setOtherPrizes(prizes.filter((prize) => prize.winner_id !== userId));
+  }, [prizes, userId]);
 
   const revealPrize = (prize: Prize) => {
     setSelectedPrize(prize);
@@ -142,20 +149,87 @@ export default function NewGameRewards({
             </TabsTrigger>
           ))}
         </TabsList>
-        {Object.entries(groupedPrizes).map(([type, prizes]) => (
-          <TabsContent key={type} value={type}>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {prizes.map((prize) => (
-                <PrizeCard
-                  key={prize.id}
-                  prize={prize}
-                  onReveal={revealPrize}
-                  winnerName={winnerNames[prize.id]} // Pass winner name to PrizeCard
-                />
-              ))}
-            </div>
-          </TabsContent>
-        ))}
+        {Object.entries(groupedPrizes).map(([type, prizes]) => {
+          const wonPrizesOfType = userWonPrizes.filter(prize => prize.prize_type === type);
+          const otherPrizesOfType = otherPrizes.filter(prize => prize.prize_type === type);
+
+          return (
+            <TabsContent key={type} value={type}>
+              {/* For "ALL" type, display all prizes */}
+              {type === "ALL" ? (
+                <>
+                  {/* Render Won Prizes */}
+                  {userWonPrizes.length > 0 && (
+                    <>
+                      <h2 className="text-2xl font-bold mb-4">Won</h2>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
+                        {userWonPrizes.map((prize) => (
+                          <PrizeCard
+                            key={prize.id}
+                            prize={prize}
+                            onReveal={revealPrize}
+                            winnerName={winnerNames[prize.id]} // Pass winner name to PrizeCard
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                  {/* Render Other Prizes */}
+                  {otherPrizes.length > 0 && (
+                    <>
+                      <h2 className="text-2xl font-bold mb-4">Other Prizes</h2>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
+                        {otherPrizes.map((prize) => (
+                          <PrizeCard
+                            key={prize.id}
+                            prize={prize}
+                            onReveal={revealPrize}
+                            winnerName={winnerNames[prize.id]} // Pass winner name to PrizeCard
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  {/* Render Won Prizes */}
+                  {wonPrizesOfType.length > 0 && (
+                    <>
+                      <h2 className="text-2xl font-bold mb-4">Won</h2>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
+                        {wonPrizesOfType.map((prize) => (
+                          <PrizeCard
+                            key={prize.id}
+                            prize={prize}
+                            onReveal={revealPrize}
+                            winnerName={winnerNames[prize.id]} // Pass winner name to PrizeCard
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                  {/* Render Other Prizes */}
+                  {otherPrizesOfType.length > 0 && (
+                    <>
+                      <h2 className="text-2xl font-bold mb-4">Other Prizes</h2>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
+                        {otherPrizesOfType.map((prize) => (
+                          <PrizeCard
+                            key={prize.id}
+                            prize={prize}
+                            onReveal={revealPrize}
+                            winnerName={winnerNames[prize.id]} // Pass winner name to PrizeCard
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+            </TabsContent>
+          );
+        })}
       </Tabs>
       <AnimatePresence>
         {selectedPrize && (
