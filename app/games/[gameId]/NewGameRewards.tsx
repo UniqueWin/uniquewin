@@ -40,6 +40,21 @@ const tooltipContent = {
   HANGMAN: "Play a game of Hangman to win more prizes",
 };
 
+const getPrizeValue = (prize: Prize) => {
+  switch (prize.prize_type) {
+    case "CASH":
+      return `£${prize.prize_amount}`;
+    case "CREDITS":
+      return `${prize.prize_amount} CREDITS`;
+    case "LUCKY_DIP":
+      return "Mystery Prize";
+    case "HANGMAN":
+      return "h _ n g m _ n";
+    default:
+      return "Unknown";
+  }
+};
+
 interface WinnerNames {
   [key: number]: string; // Define the type for winner names
 }
@@ -77,7 +92,7 @@ export default function NewGameRewards({
   const revealPrize = (prize: Prize) => {
     setSelectedPrize(prize);
     setIsRevealing(true);
-    if (prize.status === "UNLOCKED") {
+    if (prize.status !== "LOCKED") {
       // Show confetti only if the prize is unlocked
       confetti({
         particleCount: 100,
@@ -177,9 +192,8 @@ export default function NewGameRewards({
                   </h2>{" "}
                   <div className="my-4 flex justify-center w-full">
                     <ScratchCardComponent
-                      className="mx-auto"
-                      prize={selectedPrize} // Pass the selected prize to the ScratchCardComponent
-                      onReveal={() => setSelectedPrize(null)} // Handle reveal action
+                      prize={getPrizeValue(selectedPrize)}
+                      onReveal={() => console.log("null")} // Handle reveal action
                       gameId={gameId} // Pass gameId
                       prizeId={selectedPrize.id.toString()} // Pass prizeId
                       userId={userId} // Pass userId
@@ -254,7 +268,7 @@ function PrizeCard({
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
       <Card
         className={`bg-opacity-20 backdrop-blur-lg bg-white cursor-pointer overflow-hidden border-2 min-h-[160px] flex items-center justify-center`}
-        onClick={() => !prize.winner_id && onReveal(prize)}
+        onClick={() => onReveal(prize)}
       >
         <CardContent className="p-4 flex flex-col items-center justify-center h-full">
           <motion.div

@@ -69,7 +69,7 @@ const ScratchCardComponent: React.FC<ScratchCardProps> = ({
     if (localStatus === "UNLOCKED" && !isWinner)
       return "Waiting for winner to scratch";
     if (localStatus === "SCRATCHED" || (localStatus === "UNLOCKED" && isWinner))
-      return `Prize: ${prize}`;
+      return ` ${prize}`;
     return "Scratch to reveal!";
   };
 
