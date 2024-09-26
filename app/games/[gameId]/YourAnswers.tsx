@@ -146,20 +146,6 @@ const YourAnswers: React.FC<YourAnswersProps> = ({
                           <TooltipContent className="bg-white border border-gray-300 rounded-lg p-4 shadow-lg">
                             <div className="flex flex-col gap-2">
                               <div className="flex items-center mb-2">
-                                <div className="w-3 h-3 rounded-full bg-orange-500 mr-2" />
-                                <p
-                                  className={`text-sm ${
-                                    uniqueUsersCount > 1 &&
-                                    answer.status === "UNIQUE"
-                                      ? "font-bold"
-                                      : ""
-                                  }`}
-                                >
-                                  Unique (Orange): More than 1 person has a
-                                  unique answer
-                                </p>
-                              </div>
-                              <div className="flex items-center mb-2">
                                 <div className="w-3 h-3 rounded-full bg-green-500 mr-2" />
                                 <p
                                   className={`text-sm ${
@@ -170,6 +156,20 @@ const YourAnswers: React.FC<YourAnswersProps> = ({
                                   }`}
                                 >
                                   Unique (Green): You are the only player with a
+                                  unique answer
+                                </p>
+                              </div>
+                              <div className="flex items-center mb-2">
+                                <div className="w-3 h-3 rounded-full bg-orange-500 mr-2" />
+                                <p
+                                  className={`text-sm ${
+                                    uniqueUsersCount > 1 &&
+                                    answer.status === "UNIQUE"
+                                      ? "font-bold"
+                                      : ""
+                                  }`}
+                                >
+                                  Unique (Orange): More than 1 person has a
                                   unique answer
                                 </p>
                               </div>
