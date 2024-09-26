@@ -150,8 +150,12 @@ export default function NewGameRewards({
           ))}
         </TabsList>
         {Object.entries(groupedPrizes).map(([type, prizes]) => {
-          const wonPrizesOfType = userWonPrizes.filter(prize => prize.prize_type === type);
-          const otherPrizesOfType = otherPrizes.filter(prize => prize.prize_type === type);
+          const wonPrizesOfType = userWonPrizes.filter(
+            (prize) => prize.prize_type === type
+          );
+          const otherPrizesOfType = otherPrizes.filter(
+            (prize) => prize.prize_type === type
+          );
 
           return (
             <TabsContent key={type} value={type}>
@@ -346,10 +350,12 @@ function PrizeCard({
       >
         <CardContent className="p-4 flex flex-col items-center justify-center h-full">
           <motion.div
-            animate={{ rotateY: prize.status === "LOCKED" ? [0, 360] : 0 }} // Animate padlock rotation
+            animate={{
+              rotateY: prize.status === "LOCKED" ? [0, 360] : [0, 360],
+            }}
             transition={{
               duration: 2,
-              repeat: prize.status === "LOCKED" ? Infinity : 0,
+              repeat: Infinity,
               ease: "linear",
             }}
           >
