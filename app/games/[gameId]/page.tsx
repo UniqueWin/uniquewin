@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
 import GameRewards from "./GameRewards";
 import RealTimeAnswers from "./RealTimeAnswers";
 import YourAnswers from "./YourAnswers"; // Import the new component
+import NewGameRewards from "./NewGameRewards";
 
 interface UserAnswer {
   answer: string;
@@ -291,6 +292,8 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
                 gameId={params.gameId}
                 refreshPage={refreshPage}
               />
+              <hr className="my-4 border-gray-300" />
+              <NewGameRewards prizes={instantWinPrizes} />
               <hr className="my-4 border-gray-300" />
             </CardContent>
           </Card>
