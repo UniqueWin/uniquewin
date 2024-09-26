@@ -29,7 +29,6 @@ const RealTimeInstantWinPrizes: React.FC<RealTimeInstantWinPrizesProps> = ({
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "answer_instant_wins" },
         async (payload) => {
-          console.log("Change received (INSERT)!", payload); // Check if this log appears
           try {
             const { data, error } = await supabase
               .from("answer_instant_wins")
@@ -51,7 +50,6 @@ const RealTimeInstantWinPrizes: React.FC<RealTimeInstantWinPrizesProps> = ({
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "answer_instant_wins" },
         async (payload) => {
-          console.log("Change received (UPDATE)!", payload); // Check if this log appears
           try {
             const { data, error } = await supabase
               .from("answer_instant_wins")

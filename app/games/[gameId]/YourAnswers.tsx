@@ -99,10 +99,11 @@ const YourAnswers: React.FC<YourAnswersProps> = ({
                 const normalizedAnswer = answer.answer.trim().toLowerCase();
 
                 // Count how many times this answer has been guessed by any user
-                const frequencyCount = gameAnswers?.filter(
-                  (a) =>
-                    a.answer_text.trim().toLowerCase() === normalizedAnswer // Check against all users
-                ).length || 0; // Count all occurrences of the same answer
+                const frequencyCount =
+                  gameAnswers?.filter(
+                    (a) =>
+                      a.answer_text.trim().toLowerCase() === normalizedAnswer // Check against all users
+                  ).length || 0; // Count all occurrences of the same answer
 
                 // Count how many unique answers each user has
                 const uniqueAnswersByUser =

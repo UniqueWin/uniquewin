@@ -56,6 +56,9 @@ export default function NewGameRewards({
   const [winnerNames, setWinnerNames] = useState<WinnerNames>({}); // Declare winnerNames state
   const [userWonPrizes, setUserWonPrizes] = useState<Prize[]>([]);
   const [otherPrizes, setOtherPrizes] = useState<Prize[]>([]);
+  const [groupedPrizes, setGroupedPrizes] = useState<
+    Record<PrizeType, Prize[]>
+  >({});
 
   useEffect(() => {
     const fetchWinnerNames = async () => {
@@ -75,6 +78,18 @@ export default function NewGameRewards({
     setUserWonPrizes(prizes.filter((prize) => prize.winner_id === userId));
     setOtherPrizes(prizes.filter((prize) => prize.winner_id !== userId));
     setClaimedCount(userWonPrizes.length); // Update claimedCount based on userWonPrizes
+
+    const grouped = prizes.reduce((acc, prize) => {
+      if (!acc[prize.prize_type]) {
+        acc[prize.prize_type] = [];
+      }
+      acc[prize.prize_type].push(prize);
+      return acc;
+    }, {} as Record<PrizeType, Prize[]>);
+
+    grouped["ALL"] = prizes;
+
+    setGroupedPrizes(grouped);
   }, [prizes, userId]);
 
   const revealPrize = (prize: Prize) => {
@@ -93,17 +108,6 @@ export default function NewGameRewards({
       setIsRevealing(false);
     }, 2000);
   };
-
-  const groupedPrizes = prizes.reduce((acc, prize) => {
-    if (!acc[prize.prize_type]) {
-      acc[prize.prize_type] = [];
-    }
-    acc[prize.prize_type].push(prize);
-    return acc;
-  }, {} as Record<PrizeType, Prize[]>);
-
-  // Add this line to create an "ALL" category
-  groupedPrizes["ALL"] = prizes; // Include all prizes
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-red-700 to-fuchsia-900 text-white p-4 relative overflow-hidden rounded-xl">
