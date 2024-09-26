@@ -14,6 +14,9 @@ import { cn } from "@/lib/utils";
 interface UserAnswer {
   answer: string;
   status: string;
+  isInstantWin: boolean;
+  instantWin: string;
+  submittedAt: string;
 }
 
 interface YourAnswersProps {
@@ -58,6 +61,7 @@ const YourAnswers: React.FC<YourAnswersProps> = ({
               <TableHead className="w-[100px]">Your Answer</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Frequency</TableHead>
+              <TableHead>Instant Win</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -93,6 +97,7 @@ const YourAnswers: React.FC<YourAnswersProps> = ({
                   <TableCell>
                     {uniqueAnswersCount} {/* Display the frequency */}
                   </TableCell>
+                  <TableCell>{answer.isInstantWin ? "Yes" : "No"}</TableCell>
                 </TableRow>
               );
             })}
