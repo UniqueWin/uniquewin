@@ -77,7 +77,9 @@ export default function NewGameRewards({
   useEffect(() => {
     setUserWonPrizes(prizes.filter((prize) => prize.winner_id === userId));
     setOtherPrizes(prizes.filter((prize) => prize.winner_id !== userId));
-    setClaimedCount(userWonPrizes.length); // Update claimedCount based on userWonPrizes
+    setClaimedCount(
+      prizes.filter((prize) => prize.winner_id === userId).length
+    );
 
     const grouped = prizes.reduce((acc, prize) => {
       if (!acc[prize.prize_type]) {
@@ -125,14 +127,19 @@ export default function NewGameRewards({
       </div>
       <Tabs defaultValue="ALL" className="w-full">
         <TabsList className="grid w-full grid-cols-5 mb-4 bg-black bg-opacity-20">
-          {[
-            "ALL",
-            ...Object.keys(groupedPrizes).filter((type) => type !== "ALL"),
-          ].map((type) => (
-            <TabsTrigger key={type} value={type} className="capitalize bg-">
-              {type}
-            </TabsTrigger>
-          ))}
+          {["ALL", ...Object.keys(groupedPrizes)]
+            .filter((type, index, self) =>
+              type === "ALL" ? self.indexOf(type) === index : true
+            )
+            .map((type) => (
+              <TabsTrigger
+                key={`prizes-${type}`}
+                value={type}
+                className="capitalize bg-"
+              >
+                {type}
+              </TabsTrigger>
+            ))}
         </TabsList>
         {Object.entries(groupedPrizes).map(([type, prizes]) => {
           const wonPrizesOfType = userWonPrizes.filter(
