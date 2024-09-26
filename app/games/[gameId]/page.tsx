@@ -1,37 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  getGameById,
-  getUserAnswers,
-  getAnswerInstantWinPrizes,
-  getWinnerName,
-} from "@/utils/dataHelpers";
-import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { Game } from "@/utils/dataHelpers";
-import { ExtendedUser } from "@/utils/userHelpers";
-import Footer from "@/components/Footer";
-import Banner from "./Banner";
-import TrustPilot from "./Trustpilot";
-import History from "./History";
-import Question from "./Question";
-import { createClient } from "@/utils/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import ScratchCardComponent from "./ScratchCardComponent";
-import { cn } from "@/lib/utils";
+  Game,
+  getAnswerInstantWinPrizes,
+  getGameById,
+  getUserAnswers,
+  getWinnerName,
+} from "@/utils/dataHelpers";
+import { createClient } from "@/utils/supabase/client";
+import { ExtendedUser } from "@/utils/userHelpers";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Banner from "./Banner";
 import GameRewards from "./GameRewards";
+import Question from "./Question";
 import RealTimeAnswers from "./RealTimeAnswers";
+import TrustPilot from "./Trustpilot";
 import YourAnswers from "./YourAnswers"; // Import the new component
-import NewGameRewards from "./NewGameRewards";
 
 interface UserAnswer {
   answer: string;
@@ -287,13 +274,6 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
             </CardHeader>
             <CardContent>
               <GameRewards
-                prizes={instantWinPrizes}
-                userId={user.id}
-                gameId={params.gameId}
-                refreshPage={refreshPage}
-              />
-              <hr className="my-4 border-gray-300" />
-              <NewGameRewards
                 prizes={instantWinPrizes}
                 userId={user.id}
                 gameId={params.gameId}
