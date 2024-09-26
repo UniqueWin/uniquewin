@@ -46,6 +46,10 @@ export default function NewGameRewards({
   userId,
   gameId,
 }: NewGameRewardsProps) {
+  if (!Array.isArray(prizes)) {
+    return <div>No prizes available.</div>;
+  }
+
   const [selectedPrize, setSelectedPrize] = useState<Prize | null>(null);
   const [isRevealing, setIsRevealing] = useState(false);
   const [claimedCount, setClaimedCount] = useState(0);

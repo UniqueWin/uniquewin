@@ -19,6 +19,7 @@ import Question from "./Question";
 import RealTimeAnswers from "./RealTimeAnswers";
 import TrustPilot from "./Trustpilot";
 import YourAnswers from "./YourAnswers"; // Import the new component
+import RealTimeInstantWinPrizes from "./RealTimeInstantWinPrizes"; // Import the new component
 
 interface UserAnswer {
   answer: string;
@@ -26,7 +27,7 @@ interface UserAnswer {
   isInstantWin: boolean;
   instantWin: string;
   submittedAt: string;
-  userId: string;
+  user_id: string;
 }
 
 function adjustToLocal(utcDateString: string): Date {
@@ -113,17 +114,13 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
             isInstantWin: answer.isInstantWin,
             instantWin: answer.instantWin,
             submittedAt: answer.submittedAt,
+            user_id: answer.user_id,
           })) || []
         );
 
         setUserAnswersLoading(false);
 
-        const gameInstantWinPrizes = await getAnswerInstantWinPrizes(
-          params.gameId
-        );
-        setInstantWinPrizes(gameInstantWinPrizes);
-
-        await fetchWinnerNames(gameInstantWinPrizes);
+        await fetchWinnerNames(instantWinPrizes);
       } else {
         router.push("/games");
       }
@@ -195,6 +192,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
           isInstantWin: answer.isInstantWin,
           instantWin: answer.instantWin,
           submittedAt: answer.submittedAt,
+          user_id: answer.user_id,
         })) || []
       );
       setUserAnswersLoading(false);
@@ -223,7 +221,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
 
   const [gameAnswers, setGameAnswers] = useState<any[]>([]); // New state for game answers
 
-  if (!user || !game) return <div>Loading...</div>;
+  if (!user || !game || !gameAnswers) return <div>Loading...</div>;
 
   return (
     <div className="bg-black bg-opacity-10 rounded-xl my-2 min-h-screen flex flex-col">
@@ -232,6 +230,10 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         userId={user?.id}
         setUserAnswers={setUserAnswers}
         setGameAnswers={setGameAnswers} // Pass the new setter
+      />
+      <RealTimeInstantWinPrizes
+        gameId={params.gameId}
+        setInstantWinPrizes={setInstantWinPrizes}
       />
       <div className="container mx-auto p-4 flex-grow">
         <motion.div
