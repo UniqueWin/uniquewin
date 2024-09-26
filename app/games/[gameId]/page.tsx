@@ -26,6 +26,7 @@ interface UserAnswer {
   isInstantWin: boolean;
   instantWin: string;
   submittedAt: string;
+  userId: string;
 }
 
 function adjustToLocal(utcDateString: string): Date {

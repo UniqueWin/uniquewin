@@ -12,12 +12,13 @@ import {
 import { cn } from "@/lib/utils";
 
 interface UserAnswer {
-  answer: string;
-  status: string;
-  isInstantWin: boolean;
-  instantWin: string;
-  submittedAt: string;
-}
+    answer: string;
+    status: string;
+    isInstantWin: boolean;
+    instantWin: string;
+    submittedAt: string;
+    userId: string;
+  }
 
 interface YourAnswersProps {
   userAnswers: UserAnswer[];
@@ -77,11 +78,11 @@ const YourAnswers: React.FC<YourAnswersProps> = ({
                 const normalizedAnswer = answer.answer.trim().toLowerCase();
                 const uniqueAnswersCount =
                   gameAnswers?.filter(
-                    (a) => a.answer_text.trim().toLowerCase() === normalizedAnswer
+                    (a) => a.answer_text.trim().toLowerCase() === normalizedAnswer && a.userId === answer.userId // Check if the answer is from the same user
                   ).length || 0; // Adjusted to match the answer structure
 
                 const totalUniqueAnswersCount =
-                  gameAnswers?.filter((a) => a.status === "UNIQUE").length || 0;
+                  gameAnswers?.filter((a) => a.status === "UNIQUE" && a.userId === answer.userId).length || 0; // Count unique answers from the same user
 
                 const statusColor =
                   totalUniqueAnswersCount > 1 && answer.status === "UNIQUE"
