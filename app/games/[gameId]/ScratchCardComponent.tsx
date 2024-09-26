@@ -89,14 +89,14 @@ const ScratchCardComponent: React.FC<ScratchCardProps> = ({
         <ScratchCardWithBrushColor
           width={250}
           height={75}
-          finishPercent={70}
+          finishPercent={50}
           onComplete={handleComplete}
           image={
             isScratchable
               ? "https://st3.depositphotos.com/1022597/35608/i/450/depositphotos_356083076-stock-photo-grey-stone-texture-useful-background.jpg"
               : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg=="
           }
-          brushSize={10}
+          brushSize={15}
           brushColor={isScratchable ? "#808080" : "transparent"}
           onScratch={(percentage) => setScratchedPercentage(percentage)}
           prize={prize}

@@ -77,11 +77,14 @@ export default function NewGameRewards({
   const revealPrize = (prize: Prize) => {
     setSelectedPrize(prize);
     setIsRevealing(true);
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
+    if (prize.status === "UNLOCKED") {
+      // Show confetti only if the prize is unlocked
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
+    }
     setTimeout(() => {
       setClaimedCount((count) => count + 1);
       setIsRevealing(false);
@@ -159,7 +162,10 @@ export default function NewGameRewards({
                 <div className="flex flex-col items-center">
                   <Sparkles className="w-16 h-16 text-yellow-400 mb-4 animate-pulse" />
                   <h2 className="text-2xl font-bold mb-4">
-                    Revealing Prize...
+                    {selectedPrize.status === "LOCKED" ||
+                    selectedPrize.winner_id !== userId
+                      ? "Prize Details"
+                      : "Revealing Prize..."}
                   </h2>
                 </div>
               ) : (
@@ -214,14 +220,17 @@ export default function NewGameRewards({
                           This prize is unlocked! Scratch to reveal your prize.
                         </p>
                       )}
+                      <button
+                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-200"
+                        onClick={() => setSelectedPrize(null)}
+                      >
+                        {selectedPrize.status === "LOCKED" ||
+                        selectedPrize.winner_id !== userId
+                          ? "Okay"
+                          : "Awesome!"}
+                      </button>
                     </>
                   )}
-                  <button
-                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-200"
-                    onClick={() => setSelectedPrize(null)}
-                  >
-                    Awesome!
-                  </button>
                 </>
               )}
             </motion.div>
@@ -244,7 +253,7 @@ function PrizeCard({
   return (
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
       <Card
-        className={`bg-opacity-20 backdrop-blur-lg bg-white cursor-pointer overflow-hidden border-2`}
+        className={`bg-opacity-20 backdrop-blur-lg bg-white cursor-pointer overflow-hidden border-2 min-h-[160px] flex items-center justify-center`}
         onClick={() => !prize.winner_id && onReveal(prize)}
       >
         <CardContent className="p-4 flex flex-col items-center justify-center h-full">
@@ -265,14 +274,16 @@ function PrizeCard({
           <Badge variant="secondary" className="mb-2">
             {prize.prize_type}
           </Badge>
-          {prize.winner_id && (
-            <div className="mt-2 text-center">
-              <p className="text-xs text-green-300">Claimed!</p>
-              <p className="text-xs text-green-300">
-                Winner: {winnerName} {/* Display winner's name */}
-              </p>
-            </div>
+          {prize.status === "SCRATCHED" && winnerName && (
+            <p className="text-xs mb-4 text-green-300">
+              Claimed by: {winnerName}
+            </p>
           )}
+          {/* {prize.winner_id && (
+            <div className="mt-2 text-center">
+              <p className="text-xs text-green-300">Won</p>
+            </div>
+          )} */}
         </CardContent>
       </Card>
     </motion.div>
