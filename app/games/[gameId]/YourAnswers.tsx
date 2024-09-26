@@ -65,42 +65,49 @@ const YourAnswers: React.FC<YourAnswersProps> = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {userAnswers.map((answer, index) => {
-              // Trim and normalize case for comparison
-              const normalizedAnswer = answer.answer.trim().toLowerCase();
-              const uniqueAnswersCount =
-                gameAnswers?.filter(
-                  (a) => a.answer_text.trim().toLowerCase() === normalizedAnswer
-                ).length || 0; // Adjusted to match the answer structure
+            {userAnswers
+              .sort((a, b) => {
+                // Sort by status: UNIQUE first, then NOT UNIQUE
+                if (a.status === "UNIQUE" && b.status !== "UNIQUE") return -1;
+                if (a.status !== "UNIQUE" && b.status === "UNIQUE") return 1;
+                return 0; // Keep original order for equal statuses
+              })
+              .map((answer, index) => {
+                // Trim and normalize case for comparison
+                const normalizedAnswer = answer.answer.trim().toLowerCase();
+                const uniqueAnswersCount =
+                  gameAnswers?.filter(
+                    (a) => a.answer_text.trim().toLowerCase() === normalizedAnswer
+                  ).length || 0; // Adjusted to match the answer structure
 
-              const totalUniqueAnswersCount =
-                gameAnswers?.filter((a) => a.status === "UNIQUE").length || 0;
+                const totalUniqueAnswersCount =
+                  gameAnswers?.filter((a) => a.status === "UNIQUE").length || 0;
 
-              const statusColor =
-                totalUniqueAnswersCount > 1 && answer.status === "UNIQUE"
-                  ? "text-orange-500"
-                  : answer.status === "UNIQUE" && uniqueAnswersCount === 1
-                  ? "text-green-500"
-                  : answer.status === "NOT UNIQUE"
-                  ? "text-red-500"
-                  : "text-black";
+                const statusColor =
+                  totalUniqueAnswersCount > 1 && answer.status === "UNIQUE"
+                    ? "text-orange-500"
+                    : answer.status === "UNIQUE" && uniqueAnswersCount === 1
+                    ? "text-green-500"
+                    : answer.status === "NOT UNIQUE"
+                    ? "text-red-500"
+                    : "text-black";
 
-              return (
-                <TableRow key={index}>
-                  <TableCell className="font-medium">
-                    {answer.answer.charAt(0).toUpperCase() +
-                      answer.answer.slice(1)}
-                  </TableCell>
-                  <TableCell className={cn("font-medium", statusColor)}>
-                    {answer.status}
-                  </TableCell>
-                  <TableCell>
-                    {uniqueAnswersCount} {/* Display the frequency */}
-                  </TableCell>
-                  <TableCell>{answer.isInstantWin ? "Yes" : "No"}</TableCell>
-                </TableRow>
-              );
-            })}
+                return (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">
+                      {answer.answer.charAt(0).toUpperCase() +
+                        answer.answer.slice(1)}
+                    </TableCell>
+                    <TableCell className={cn("font-medium", statusColor)}>
+                      {answer.status}
+                    </TableCell>
+                    <TableCell>
+                      {uniqueAnswersCount} {/* Display the frequency */}
+                    </TableCell>
+                    <TableCell>{answer.isInstantWin ? "Yes" : "No"}</TableCell>
+                  </TableRow>
+                );
+              })}
           </TableBody>
         </Table>
       </CardContent>
