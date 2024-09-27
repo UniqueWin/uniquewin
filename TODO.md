@@ -67,3 +67,36 @@ order your answers
 - unique answers are case sensative, for example I put lilac and Lilac and they were both unique - this should not be unique /
 - cant put same answer twice
     a user can enter the same guess twice - we should do a check to prevent this
+
+
+
+
+
+    work on making everything realtime - decrease number of api calls
+
+add instant win column back in /
+lower scratchcard threshold /
+unique answers to the top /
+Green if all unique from same player /
+Tooltip to explain /
+Realtime instant wins  /
+check order of tooltip - unique green first /
+Filter for answers /
+flash word if unique status changes /
+
+
+work in hangman and lucky dip
+
+
+assign prizes on game end
+
+
+Longer popup
+
+
+# of players 
+
+Pagination for answers
+
+
+lucky dip button answer flicker - like homepage
