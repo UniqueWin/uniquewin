@@ -207,10 +207,11 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
   };
 
   const flashStatus = (payload: any, answers: any[]) => {
-    if (rowRefs.current[payload.id]) {
-      rowRefs.current[payload.id].classList.add("bg-yellow-300");
+    const rowRef = rowRefs.current[payload.id];
+    if (rowRef) {
+      rowRef.classList.add("bg-yellow-300");
       setTimeout(() => {
-        rowRefs.current[payload.id].classList.remove("bg-yellow-300");
+        rowRef.classList.remove("bg-yellow-300");
       }, 1000); // Adjust the duration as needed
     }
   };
@@ -233,7 +234,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
 
   const [gameAnswers, setGameAnswers] = useState<any[]>([]); // New state for game answers
 
-  const rowRefs = useRef<(HTMLTableRowElement | null)[]>([]); // Lifted rowRefs here
+  const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({}); // Change to Record for string keys
 
   if (!user || !game || !gameAnswers) return <div>Loading...</div>;
 

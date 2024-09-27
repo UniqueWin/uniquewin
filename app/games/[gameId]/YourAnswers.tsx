@@ -33,7 +33,7 @@ interface YourAnswersProps {
   userAnswers: UserAnswer[];
   gameAnswers: any[]; // Adjust type as necessary
   loading: boolean;
-  rowRefs: React.RefObject<(HTMLTableRowElement | null)[]>; // Add rowRefs prop
+  rowRefs: React.RefObject<Record<string, HTMLTableRowElement | null>>; // Change to Record for string keys
 }
 
 const YourAnswers: React.FC<YourAnswersProps> = ({
@@ -150,7 +150,11 @@ const YourAnswers: React.FC<YourAnswersProps> = ({
                   return (
                     <TableRow
                       key={index}
-                      ref={(el) => (rowRefs.current[answer.id] = el)} // Assign ref to each row
+                      ref={(el) => {
+                        if (rowRefs.current) {
+                          rowRefs.current[answer.id] = el; // Assign ref to each row
+                        }
+                      }}
                     >
                       <TableCell className="font-medium">
                         {answer.answer.charAt(0).toUpperCase() +
