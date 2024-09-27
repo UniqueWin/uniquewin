@@ -55,7 +55,7 @@ const Navbar = () => {
   return (
     <>
       {/* Top Banner */}
-      <div className="bg-pink-950 p-2 flex justify-between items-center text-white text-sm">
+      <div className="bg-pink-950 w-full max-w-screen overflow-x-hidden p-2 flex justify-between items-center text-white text-sm">
         <div className="flex items-center space-x-4">
           <Trophy className="text-yellow-400" />
           <div>Live jackpot £1,500</div>
@@ -108,7 +108,7 @@ const Navbar = () => {
       </div>
 
       {/* Header */}
-      <div className="bg-white p-4 flex justify-between items-center">
+      <div className="bg-white p-4 flex justify-between items-center w-full max-w-screen overflow-x-hidden">
         <div className="flex justify-start items-center gap-4 text-black">
           <div className="text-lg font-bold">
             <Link href="/">Logo</Link>

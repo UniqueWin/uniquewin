@@ -12,7 +12,7 @@ import { createClient } from "@/utils/supabase/client";
 import { ExtendedUser } from "@/utils/userHelpers";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react"; // Import useRef
 import Banner from "./Banner";
 import GameRewards from "./GameRewards";
 import Question from "./Question";
@@ -22,6 +22,7 @@ import YourAnswers from "./YourAnswers"; // Import the new component
 import RealTimeInstantWinPrizes from "./RealTimeInstantWinPrizes"; // Import the new component
 
 interface UserAnswer {
+  id: string;
   answer: string;
   status: string;
   isInstantWin: boolean;
@@ -109,6 +110,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         const answers = await getUserAnswers(user.id, params.gameId);
         setUserAnswers(
           answers.map((answer) => ({
+            id: answer.id,
             answer: answer.answer,
             status: answer.status,
             isInstantWin: answer.isInstantWin,
@@ -187,6 +189,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
       const answers = await getUserAnswers(user.id, params.gameId);
       setUserAnswers(
         answers.map((answer) => ({
+          id: answer.id,
           answer: answer.answer,
           status: answer.status,
           isInstantWin: answer.isInstantWin,
@@ -201,6 +204,15 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
 
   const refreshPage = async () => {
     await fetchUserAndGame();
+  };
+
+  const flashStatus = (payload: any, answers: any[]) => {
+    if (rowRefs.current[payload.id]) {
+      rowRefs.current[payload.id].classList.add(
+        "bg-yellow-300",
+        "animate-pulse"
+      );
+    }
   };
 
   const [userWonPrizes, setUserWonPrizes] = useState<any[]>([]);
@@ -221,6 +233,8 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
 
   const [gameAnswers, setGameAnswers] = useState<any[]>([]); // New state for game answers
 
+  const rowRefs = useRef<(HTMLTableRowElement | null)[]>([]); // Lifted rowRefs here
+
   if (!user || !game || !gameAnswers) return <div>Loading...</div>;
 
   return (
@@ -230,6 +244,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
         userId={user?.id}
         setUserAnswers={setUserAnswers}
         setGameAnswers={setGameAnswers} // Pass the new setter
+        flashStatus={flashStatus}
       />
       <RealTimeInstantWinPrizes
         gameId={params.gameId}
@@ -266,6 +281,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
             userAnswers={userAnswers}
             gameAnswers={gameAnswers} // Use the new state
             loading={userAnswersLoading}
+            rowRefs={rowRefs} // Pass rowRefs to YourAnswers
           />
 
           {/* Updated Instant Win Prizes card */}

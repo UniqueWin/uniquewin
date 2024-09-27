@@ -9,6 +9,7 @@ interface RealTimeAnswersProps {
   userId: string;
   setUserAnswers: (answers: any[]) => void;
   setGameAnswers: (answers: any[]) => void; // New prop to set game answers
+  flashStatus: (payload: any, answers: any[]) => void; // Accept flashStatus prop
 }
 
 const RealTimeAnswers: React.FC<RealTimeAnswersProps> = ({
@@ -16,6 +17,7 @@ const RealTimeAnswers: React.FC<RealTimeAnswersProps> = ({
   userId,
   setUserAnswers,
   setGameAnswers, // New prop
+  flashStatus, // Accept flashStatus prop
 }) => {
   const supabase = createClient();
 
@@ -29,6 +31,37 @@ const RealTimeAnswers: React.FC<RealTimeAnswersProps> = ({
           try {
             const answers = await getUserAnswers(userId, gameId);
             setUserAnswers(answers);
+
+            // Fetch the latest game answers
+            const { data: allAnswers, error } = await supabase
+              .from("answers")
+              .select("*")
+              .eq("game_id", gameId);
+
+            if (error) {
+              console.error("Error fetching game answers:", error);
+            } else {
+              setGameAnswers(allAnswers); // Update game answers
+            }
+          } catch (error) {
+            console.error("Error fetching answers:", error); // Log if fetching fails
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "answers" },
+        async (payload) => {
+          try {
+            const answers = await getUserAnswers(userId, gameId);
+            setUserAnswers(answers);
+
+            if (
+              payload.new.user_id === userId &&
+              payload.new.game_id === gameId
+            ) {
+              flashStatus(payload.new, answers);
+            }
 
             // Fetch the latest game answers
             const { data: allAnswers, error } = await supabase

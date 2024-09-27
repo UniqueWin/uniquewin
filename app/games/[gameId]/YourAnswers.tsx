@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -20,6 +20,7 @@ import {
 import { Switch } from "@/components/ui/switch"; // Importing Switch component from shadcn
 
 interface UserAnswer {
+  id: string;
   answer: string;
   status: string;
   isInstantWin: boolean;
@@ -32,12 +33,14 @@ interface YourAnswersProps {
   userAnswers: UserAnswer[];
   gameAnswers: any[]; // Adjust type as necessary
   loading: boolean;
+  rowRefs: React.RefObject<(HTMLTableRowElement | null)[]>; // Add rowRefs prop
 }
 
 const YourAnswers: React.FC<YourAnswersProps> = ({
   userAnswers,
   gameAnswers,
   loading,
+  rowRefs, // Destructure rowRefs
 }) => {
   // New state for filtering non-unique and pending answers
   const [showNonUnique, setShowNonUnique] = useState(true);
@@ -145,7 +148,10 @@ const YourAnswers: React.FC<YourAnswersProps> = ({
                       : "text-black";
 
                   return (
-                    <TableRow key={index}>
+                    <TableRow
+                      key={index}
+                      ref={(el) => (rowRefs.current[answer.id] = el)} // Assign ref to each row
+                    >
                       <TableCell className="font-medium">
                         {answer.answer.charAt(0).toUpperCase() +
                           answer.answer.slice(1)}

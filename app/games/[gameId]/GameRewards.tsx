@@ -281,7 +281,7 @@ export default function NewGameRewards({
                         className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-200"
                         onClick={() => setSelectedPrize(null)}
                       >
-                        Awesome!
+                        Close!
                       </button>
                     </>
                   ) : (
@@ -309,7 +309,7 @@ export default function NewGameRewards({
                         {selectedPrize.status === "LOCKED" ||
                         selectedPrize.winner_id !== userId
                           ? "Okay"
-                          : "Awesome!"}
+                          : "Close!"}
                       </button>
                     </>
                   )}

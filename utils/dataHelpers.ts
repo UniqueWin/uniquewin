@@ -4,6 +4,7 @@ import { ExtendedUser } from "./userHelpers";
 const supabase = createClient();
 
 export type Answer = {
+  id: string;
   answer: string;
   status: string;
   isLuckyDip: boolean;
@@ -430,12 +431,14 @@ export async function getUserAnswers(
     }
 
     return data.map((answer) => ({
+      id: answer.id,
       answer: answer.answer_text,
       status: answer.status || "PENDING",
       isInstantWin: answer.is_instant_win,
       instantWin: answer.is_instant_win ? `${answer.instant_win_amount}` : "NO",
       submittedAt: answer.submitted_at,
       isLuckyDip: false,
+      game_id: gameId,
       user_id: answer.user_id,
     }));
   } catch (error) {

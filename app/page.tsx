@@ -259,7 +259,7 @@ export default function Home() {
   }, [supabase]);
 
   return (
-    <div className="min-h-screen bg-[#7f102c] max-w-7xl mx-auto">
+    <div className="min-h-screen bg-[#7f102c] w-full sm:max-w-7xl mx-auto">
       <div className="text-center mt-20 px-4">
         <h1 className="text-[#FFC700] text-5xl font-extrabold mb-6">
           Find a Unique Answer and WIN!

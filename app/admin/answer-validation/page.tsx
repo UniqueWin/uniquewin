@@ -55,7 +55,7 @@ export default function AnswerValidationPage() {
   };
 
   return (
-    <div className="p-6 bg-gray-100 text-gray-900">
+    <div className="p-6 bg-gray-100 text-gray-900 w-full max-w-screen-lg mx-auto">
       <h1 className="text-3xl font-bold mb-6">Answer Validation</h1>
       <div className="mb-4">
         <Button
@@ -78,35 +78,43 @@ export default function AnswerValidationPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {pendingAnswers.map((answer) =>  (
-            <TableRow key={answer.id}>
-              <TableCell>{answer.games.question}</TableCell>
-              <TableCell>{answer.games.status}</TableCell>
-              <TableCell>{answer.answer_text}</TableCell>
-              <TableCell>{answer.user_id}</TableCell>
-              <TableCell>
-                {new Date(answer.updated_at).toLocaleString()}
-              </TableCell>
-              <TableCell>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-white"
-                  onClick={() => handleValidation(answer.id, false)}
-                >
-                  Reject
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mr-2 text-white bg-green-800 hover:bg-green-600"
-                  onClick={() => handleValidation(answer.id, true)}
-                >
-                  Approve
-                </Button>
+          {pendingAnswers.length ? (
+            pendingAnswers.map((answer) => (
+              <TableRow key={answer.id}>
+                <TableCell>{answer.games.question}</TableCell>
+                <TableCell>{answer.games.status}</TableCell>
+                <TableCell>{answer.answer_text}</TableCell>
+                <TableCell>{answer.user_id}</TableCell>
+                <TableCell>
+                  {new Date(answer.updated_at).toLocaleString()}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-white"
+                    onClick={() => handleValidation(answer.id, false)}
+                  >
+                    Reject
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mr-2 text-white bg-green-800 hover:bg-green-600"
+                    onClick={() => handleValidation(answer.id, true)}
+                  >
+                    Approve
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center font-bold">
+                No pending answers found
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>
