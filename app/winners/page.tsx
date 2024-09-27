@@ -50,18 +50,18 @@ export default function Winners() {
   const [groupWinnersByAnswer, setGroupWinnersByAnswer] = useState(false);
 
   useEffect(() => {
-    fetch('/api/winners')
-      .then(response => response.json())
-      .then(data => {
+    fetch("/api/winners")
+      .then((response) => response.json())
+      .then((data) => {
         if (data.originalWinners && data.groupedByUser && data.groupedByGame) {
           setOriginalWinners(data.originalWinners);
           setWinnersByUser(data.groupedByUser);
           setWinnersByGame(data.groupedByGame);
         } else {
-          console.error('Unexpected data format:', data);
+          console.error("Unexpected data format:", data);
         }
       })
-      .catch(error => console.error('Error fetching winners:', error));
+      .catch((error) => console.error("Error fetching winners:", error));
   }, []);
 
   const renderWinningAnswers = (answers: Record<string, string[]>) => {
@@ -110,7 +110,9 @@ export default function Winners() {
               {winners.map((winner, index) => (
                 <tr key={index} className={index % 2 === 0 ? "bg-gray-50" : ""}>
                   <td className="py-2 px-4 border-b">{winner.username}</td>
-                  <td className="py-2 px-4 border-b text-green-600 font-bold">£{winner.prize.toFixed(2)}</td>
+                  <td className="py-2 px-4 border-b text-green-600 font-bold">
+                    £{winner.prize.toFixed(2)}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -131,7 +133,9 @@ export default function Winners() {
             {game.winners.map((winner, index) => (
               <tr key={index} className={index % 2 === 0 ? "bg-gray-50" : ""}>
                 <td className="py-2 px-4 border-b">{winner.username}</td>
-                <td className="py-2 px-4 border-b text-green-600 font-bold">£{winner.prize.toFixed(2)}</td>
+                <td className="py-2 px-4 border-b text-green-600 font-bold">
+                  £{winner.prize.toFixed(2)}
+                </td>
                 <td className="py-2 px-4 border-b italic">{winner.answer}</td>
               </tr>
             ))}
@@ -149,7 +153,7 @@ export default function Winners() {
       animate="visible"
     >
       <h1 className="text-4xl font-bold mb-8 text-white">Winners</h1>
-      
+
       <motion.div variants={itemVariants}>
         <Card className="mb-8">
           <CardHeader>
@@ -170,11 +174,18 @@ export default function Winners() {
                 </thead>
                 <tbody>
                   {originalWinners.map((winner, index) => (
-                    <tr key={winner.id} className={index % 2 === 0 ? "bg-gray-50" : ""}>
+                    <tr
+                      key={winner.id}
+                      className={index % 2 === 0 ? "bg-gray-50" : ""}
+                    >
                       <td className="py-2 px-4 border-b">{winner.username}</td>
-                      <td className="py-2 px-4 border-b text-green-600 font-bold">£{winner.prize_amount.toFixed(2)}</td>
+                      <td className="py-2 px-4 border-b text-green-600 font-bold">
+                        £{winner.prize_amount.toFixed(2)}
+                      </td>
                       <td className="py-2 px-4 border-b">{winner.question}</td>
-                      <td className="py-2 px-4 border-b italic">{winner.winning_answer}</td>
+                      <td className="py-2 px-4 border-b italic">
+                        {winner.winning_answer}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -197,7 +208,9 @@ export default function Winners() {
                 onCheckedChange={setShowAnswersAsList}
               />
               <Label htmlFor="answer-display-toggle">
-                {showAnswersAsList ? "Show answers as list" : "Show answers comma-separated"}
+                {showAnswersAsList
+                  ? "Show answers as list"
+                  : "Show answers comma-separated"}
               </Label>
             </div>
           </CardHeader>
@@ -213,9 +226,14 @@ export default function Winners() {
                 </thead>
                 <tbody>
                   {winnersByUser.map((winner, index) => (
-                    <tr key={winner.id} className={index % 2 === 0 ? "bg-gray-50" : ""}>
+                    <tr
+                      key={winner.id}
+                      className={index % 2 === 0 ? "bg-gray-50" : ""}
+                    >
                       <td className="py-2 px-4 border-b">{winner.username}</td>
-                      <td className="py-2 px-4 border-b text-green-600 font-bold">£{winner.totalPrize.toFixed(2)}</td>
+                      <td className="py-2 px-4 border-b text-green-600 font-bold">
+                        £{winner.totalPrize.toFixed(2)}
+                      </td>
                       <td className="py-2 px-4 border-b">
                         {renderWinningAnswers(winner.winningAnswersByGame)}
                       </td>
@@ -249,8 +267,12 @@ export default function Winners() {
             <div className="space-y-4">
               {winnersByGame.map((game) => (
                 <div key={game.id} className="border-b pb-4">
-                  <h3 className="text-xl font-semibold mb-2">{game.question}</h3>
-                  <p className="text-green-600 font-bold mb-2">Total Prize: £{game.totalPrize.toFixed()}</p>
+                  <h3 className="text-xl font-semibold mb-2">
+                    {game.question}
+                  </h3>
+                  <p className="text-green-600 font-bold mb-2">
+                    Total Prize: £{game.totalPrize.toFixed()}
+                  </p>
                   {renderWinnersByGame(game)}
                 </div>
               ))}
@@ -269,13 +291,16 @@ export default function Winners() {
           <CardContent>
             <div className="space-y-4">
               <blockquote className="italic border-l-4 border-red-500 pl-4">
-                "I never thought I'd win with such a simple answer! UniqueWin is amazing!" - John D.
+                "I never thought I'd win with such a simple answer! UniqueWin is
+                amazing!" - John D.
               </blockquote>
               <blockquote className="italic border-l-4 border-red-500 pl-4">
-                "The thrill of seeing my answer was unique is unbeatable. Thanks, UniqueWin!" - Sarah T.
+                "The thrill of seeing my answer was unique is unbeatable.
+                Thanks, UniqueWin!" - Sarah T.
               </blockquote>
               <blockquote className="italic border-l-4 border-red-500 pl-4">
-                "I've won twice now. This game is addictive and so much fun!" - Mike R.
+                "I've won twice now. This game is addictive and so much fun!" -
+                Mike R.
               </blockquote>
             </div>
           </CardContent>
