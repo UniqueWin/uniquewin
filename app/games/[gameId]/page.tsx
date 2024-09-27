@@ -208,10 +208,10 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
 
   const flashStatus = (payload: any, answers: any[]) => {
     if (rowRefs.current[payload.id]) {
-      rowRefs.current[payload.id].classList.add(
-        "bg-yellow-300",
-        "animate-pulse"
-      );
+      rowRefs.current[payload.id].classList.add("bg-yellow-300");
+      setTimeout(() => {
+        rowRefs.current[payload.id].classList.remove("bg-yellow-300");
+      }, 1000); // Adjust the duration as needed
     }
   };
 
