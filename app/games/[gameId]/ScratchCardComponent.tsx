@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Confetti from "react-confetti";
 import { ScratchCard } from "next-scratchcard";
 import { scratchCard } from "@/utils/gameLogic";
+import { BonusGameModal } from "@/components/BonusGameModal";
 
 // Define our own interface for ScratchCard props
 interface ScratchCardProps {
@@ -47,6 +48,8 @@ const ScratchCardComponent: React.FC<ScratchCardProps> = ({
     isRevealed ? 100 : 0
   );
   const [localStatus, setLocalStatus] = useState(status);
+  const [showBonusGame, setShowBonusGame] = useState(false);
+  const [bonusGameType, setBonusGameType] = useState<BonusGameType | null>(null);
 
   const handleComplete = async () => {
     if (localStatus === "UNLOCKED" && userId === winnerId) {
@@ -79,6 +82,18 @@ const ScratchCardComponent: React.FC<ScratchCardProps> = ({
       status === "SCRATCHED" || (status === "UNLOCKED" && isWinner)
     );
   }, [status, isWinner]);
+
+  const handleScratchComplete = async () => {
+    if (prize.bonus_game_type) {
+      setBonusGameType(prize.bonus_game_type);
+      setShowBonusGame(true);
+    }
+  };
+
+  const handleBonusGameComplete = (result: number) => {
+    console.log(`Bonus game result: ${result}`);
+    // Update prize or user credits based on the result
+  };
 
   return (
     <div className="bg-pink-200 p-1 rounded-lg w-fit">
@@ -114,6 +129,14 @@ const ScratchCardComponent: React.FC<ScratchCardProps> = ({
           </div>
         </ScratchCardWithBrushColor>
       </div>
+      {showBonusGame && bonusGameType && (
+        <BonusGameModal
+          isOpen={showBonusGame}
+          onClose={() => setShowBonusGame(false)}
+          gameType={bonusGameType}
+          onGameComplete={handleBonusGameComplete}
+        />
+      )}
     </div>
   );
 };

@@ -33,6 +33,13 @@ interface InstantWinPrize {
   winner_id: string | null;
   prize_type: "CASH" | "CREDITS" | "LUCKY_DIP" | "HANGMAN";
   prize_amount: number | null;
+  bonus_game_type: BonusGameType | null;
+}
+
+enum BonusGameType {
+  COIN_FLIP = 'COIN_FLIP',
+  DICE_ROLL = 'DICE_ROLL',
+  MYSTERY_BOX = 'MYSTERY_BOX'
 }
 
 export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
@@ -43,6 +50,7 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
     status: "LOCKED",
     prize_type: "CASH",
     prize_amount: 0,
+    bonus_game_type: null,
   });
   const [quantity, setQuantity] = useState(1);
   const [validAnswers, setValidAnswers] = useState<string[]>([]);
@@ -50,6 +58,7 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [bonusGameType, setBonusGameType] = useState<BonusGameType | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -99,6 +108,7 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
       status: "LOCKED",
       prize_type: newPrize.prize_type,
       prize_amount: newPrize.prize_amount,
+      bonus_game_type: bonusGameType,
     });
 
     const { error } = await supabase.from("answer_instant_wins").insert(prizesToAdd);
@@ -115,6 +125,7 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
       status: "LOCKED",
       prize_type: "CASH",
       prize_amount: 0,
+      bonus_game_type: null,
     });
     setQuantity(1);
   };
@@ -144,6 +155,7 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
         answer: newPrize.answer,
         prize_type: newPrize.prize_type,
         prize_amount: newPrize.prize_amount,
+        bonus_game_type: bonusGameType,
       })
       .eq("id", editingId);
 
@@ -159,6 +171,7 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
       status: "LOCKED",
       prize_type: "CASH",
       prize_amount: 0,
+      bonus_game_type: null,
     });
     setEditingId(null);
   };
@@ -245,6 +258,22 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
               }
               className="text-black bg-white"
             />
+          </div>
+          <div>
+            <Label htmlFor="bonus-game">Bonus Game</Label>
+            <Select
+              value={bonusGameType || ''}
+              onValueChange={(value: BonusGameType) => setBonusGameType(value)}
+            >
+              <SelectTrigger className="w-full text-black bg-white">
+                <SelectValue placeholder="Select bonus game type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={BonusGameType.COIN_FLIP}>Coin Flip</SelectItem>
+                <SelectItem value={BonusGameType.DICE_ROLL}>Dice Roll</SelectItem>
+                <SelectItem value={BonusGameType.MYSTERY_BOX}>Mystery Box</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <Label htmlFor="quantity">Quantity</Label>

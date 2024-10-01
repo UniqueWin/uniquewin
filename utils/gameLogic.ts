@@ -339,3 +339,43 @@ export async function processEndedGames() {
     }
   }
 }
+
+export const handleBonusGameResult = async (userId: string, gameResult: number, bonusGameType: BonusGameType) => {
+  const supabase = createClient();
+  let prizeMultiplier = 1;
+
+  switch (bonusGameType) {
+    case BonusGameType.COIN_FLIP:
+      prizeMultiplier = gameResult === 1 ? 2 : 1; // Double prize for tails
+      break;
+    case BonusGameType.DICE_ROLL:
+      prizeMultiplier = gameResult; // Multiply prize by dice roll
+      break;
+    case BonusGameType.MYSTERY_BOX:
+      prizeMultiplier = [1, 2, 3][gameResult]; // Different multipliers for each box
+      break;
+  }
+
+  // Update user's prize or credits based on the multiplier
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('credit_balance')
+    .eq('id', userId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching user credits:', error);
+    return;
+  }
+
+  const newBalance = data.credit_balance * prizeMultiplier;
+
+  const { error: updateError } = await supabase
+    .from('profiles')
+    .update({ credit_balance: newBalance })
+    .eq('id', userId);
+
+  if (updateError) {
+    console.error('Error updating user credits:', updateError);
+  }
+};

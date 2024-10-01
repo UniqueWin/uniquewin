@@ -7,6 +7,12 @@ import { Game } from "@/utils/dataHelpers";
 import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+
+// Dynamically import the CoinFlipAnimation component
+const CoinFlipAnimation = dynamic(() => import('@/components/CoinFlipAnimation'), {
+  ssr: false,
+});
 
 const supabase = createClient();
 
@@ -379,6 +385,14 @@ export default function Home() {
             </li>
           ))}
         </ul>
+      </div>
+
+      {/* Add the CoinFlipAnimation preview */}
+      <div className="mt-20 text-center">
+        <h2 className="text-3xl font-bold text-white mb-6">Bonus Game Preview: Coin Flip</h2>
+        <div className="flex justify-center">
+          <CoinFlipAnimation onFlipComplete={(result) => console.log(`Coin flip result: ${result}`)} />
+        </div>
       </div>
     </div>
   );
