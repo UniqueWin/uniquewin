@@ -50,7 +50,7 @@ function Coin({ isFlipping, onFlipComplete }: CoinProps) {
         ),
         spinAxis: new THREE.Vector3(0, 1, 0),
         flipSpeed: 10 + Math.random() * 5,
-        spinSpeed: 2 + Math.random() * 2, // Reduced spin speed
+        spinSpeed: 0.5 + Math.random() * 0.5, // Significantly reduced spin speed
         maxHeight: 3 + Math.random() * 2,
         duration: 1.5 + Math.random() * 0.5,
         startTime: Date.now(),
