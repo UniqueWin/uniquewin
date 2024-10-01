@@ -8,7 +8,7 @@ import React, {
   useCallback,
 } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useGLTF, PerspectiveCamera } from "@react-three/drei";
+import { useGLTF, PerspectiveCamera, Text } from "@react-three/drei";
 import * as THREE from "three";
 
 interface CoinProps {
@@ -119,7 +119,11 @@ function Coin({ isFlipping, onFlipComplete }: CoinProps) {
     }
   });
 
-  return <primitive object={scene} ref={meshRef} scale={0.1} />;
+  return (
+    <group ref={meshRef}>
+      <primitive object={scene} scale={0.1} />
+    </group>
+  );
 }
 
 interface ThreeDCoinFlipProps {
@@ -164,24 +168,55 @@ function CameraController({ isFlipping, isFlipComplete }: { isFlipping: boolean,
   return null;
 }
 
+function ResultText({ result, isVisible }: { result: string, isVisible: boolean }) {
+  const { camera } = useThree();
+  const textRef = useRef<THREE.Mesh>(null);
+
+  useFrame(() => {
+    if (textRef.current) {
+      textRef.current.quaternion.copy(camera.quaternion);
+      textRef.current.position.set(0, 0.6, 0);
+    }
+  });
+
+  if (!isVisible) return null;
+
+  return (
+    <Text
+      ref={textRef}
+      fontSize={0.5}
+      color="gold"
+      anchorX="center"
+      anchorY="middle"
+    >
+      {result.toUpperCase()}
+    </Text>
+  );
+}
+
 export default function ThreeDCoinFlip({
   onFlipComplete,
 }: ThreeDCoinFlipProps) {
   const [isFlipping, setIsFlipping] = useState(false);
   const [isFlipComplete, setIsFlipComplete] = useState(false);
+  const [flipResult, setFlipResult] = useState<"heads" | "tails" | null>(null);
 
   const handleFlip = useCallback(() => {
     if (!isFlipping) {
       setIsFlipping(true);
       setIsFlipComplete(false);
+      setFlipResult(null);
     }
   }, [isFlipping]);
 
   const handleFlipComplete = useCallback(
     (result: "heads" | "tails") => {
       setIsFlipping(false);
-      setTimeout(() => setIsFlipComplete(true), 500); // Delay camera movement
-      onFlipComplete(result);
+      setFlipResult(result);
+      setTimeout(() => {
+        setIsFlipComplete(true);
+        onFlipComplete(result);
+      }, 500);
     },
     [onFlipComplete]
   );
@@ -201,6 +236,7 @@ export default function ThreeDCoinFlip({
         <directionalLight position={[-5, 5, -5]} intensity={0.8} /> {/* Adjusted position and increased intensity */}
         <pointLight position={[0, 3, 0]} intensity={0.5} /> {/* Added a point light above the coin */}
         <Coin isFlipping={isFlipping} onFlipComplete={handleFlipComplete} />
+        <ResultText result={flipResult || ""} isVisible={isFlipComplete} />
       </Canvas>
       <button
         onClick={handleFlip}
