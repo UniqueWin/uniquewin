@@ -7,7 +7,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, PerspectiveCamera } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -126,20 +126,61 @@ interface ThreeDCoinFlipProps {
   onFlipComplete: (result: "heads" | "tails") => void;
 }
 
+function CameraController({ isFlipping, isFlipComplete }: { isFlipping: boolean, isFlipComplete: boolean }) {
+  const { camera } = useThree();
+  const initialPosition = useMemo(() => new THREE.Vector3(0, 5, 8), []);
+  const initialRotation = useMemo(() => new THREE.Euler(-0.2, 0, 0), []);
+  const midPosition = useMemo(() => new THREE.Vector3(0, 8, 0), []); // Position directly above the coin
+  const finalPosition = useMemo(() => new THREE.Vector3(0, 4, 0), []); // Zoomed in position
+  const targetRotation = useMemo(() => new THREE.Euler(-Math.PI / 2, 0, 0), []); // Looking straight down
+
+  const [stage, setStage] = useState(0); // 0: initial, 1: move above, 2: zoom in
+
+  useEffect(() => {
+    if (isFlipComplete) {
+      setStage(1);
+      setTimeout(() => setStage(2), 1000); // Start zoom in after 1 second
+    } else {
+      setStage(0);
+    }
+  }, [isFlipComplete]);
+
+  useFrame(() => {
+    if (stage === 0) {
+      camera.position.lerp(initialPosition, 0.1);
+      camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, initialRotation.x, 0.1);
+      camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, initialRotation.y, 0.1);
+      camera.rotation.z = THREE.MathUtils.lerp(camera.rotation.z, initialRotation.z, 0.1);
+    } else if (stage === 1) {
+      camera.position.lerp(midPosition, 0.05);
+      camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, targetRotation.x, 0.05);
+      camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, targetRotation.y, 0.05);
+      camera.rotation.z = THREE.MathUtils.lerp(camera.rotation.z, targetRotation.z, 0.05);
+    } else if (stage === 2) {
+      camera.position.lerp(finalPosition, 0.05);
+    }
+  });
+
+  return null;
+}
+
 export default function ThreeDCoinFlip({
   onFlipComplete,
 }: ThreeDCoinFlipProps) {
   const [isFlipping, setIsFlipping] = useState(false);
+  const [isFlipComplete, setIsFlipComplete] = useState(false);
 
   const handleFlip = useCallback(() => {
     if (!isFlipping) {
       setIsFlipping(true);
+      setIsFlipComplete(false);
     }
   }, [isFlipping]);
 
   const handleFlipComplete = useCallback(
     (result: "heads" | "tails") => {
       setIsFlipping(false);
+      setTimeout(() => setIsFlipComplete(true), 500); // Delay camera movement
       onFlipComplete(result);
     },
     [onFlipComplete]
@@ -154,6 +195,7 @@ export default function ThreeDCoinFlip({
           fov={60}
           rotation={[-0.2, 0, 0]}
         />
+        <CameraController isFlipping={isFlipping} isFlipComplete={isFlipComplete} />
         <ambientLight intensity={0.6} /> {/* Slightly increased ambient light */}
         <directionalLight position={[5, 5, 5]} intensity={1.2} /> {/* Increased intensity and adjusted position */}
         <directionalLight position={[-5, 5, -5]} intensity={0.8} /> {/* Adjusted position and increased intensity */}
