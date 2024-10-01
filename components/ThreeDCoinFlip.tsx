@@ -33,9 +33,9 @@ function Coin({ isFlipping, onFlipComplete }: CoinProps) {
   const coinMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        color: new THREE.Color("#FFD700"),
-        metalness: 0.8,
-        roughness: 0.2,
+        color: new THREE.Color("#E0E0E0"), // Lighter silver color
+        metalness: 0.7, // Reduced metalness
+        roughness: 0.3, // Increased roughness slightly
       }),
     []
   );
@@ -154,9 +154,10 @@ export default function ThreeDCoinFlip({
           fov={60}
           rotation={[-0.2, 0, 0]}
         />
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[5, 5, 5]} intensity={1} />
-        <directionalLight position={[-5, -5, -5]} intensity={0.5} />
+        <ambientLight intensity={0.6} /> {/* Slightly increased ambient light */}
+        <directionalLight position={[5, 5, 5]} intensity={1.2} /> {/* Increased intensity and adjusted position */}
+        <directionalLight position={[-5, 5, -5]} intensity={0.8} /> {/* Adjusted position and increased intensity */}
+        <pointLight position={[0, 3, 0]} intensity={0.5} /> {/* Added a point light above the coin */}
         <Coin isFlipping={isFlipping} onFlipComplete={handleFlipComplete} />
       </Canvas>
       <button
