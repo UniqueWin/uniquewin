@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, PerspectiveCamera } from "@react-three/drei";
 import * as THREE from "three";
@@ -44,26 +50,38 @@ function Coin({ isFlipping, onFlipComplete }: CoinProps) {
     if (meshRef.current) {
       meshRef.current.rotation.z = Math.PI / 2;
     }
+
+    return () => {
+      scene.traverse((child: THREE.Object3D) => {
+        if (child instanceof THREE.Mesh) {
+          child.material.dispose();
+        }
+      });
+    };
   }, [scene, coinMaterial]);
+
+  const initializeFlip = useCallback(() => {
+    return {
+      flipAxis: new THREE.Vector3(1, 0, 0).applyAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        Math.random() * Math.PI * 2
+      ),
+      spinAxis: new THREE.Vector3(0, 1, 0),
+      flipSpeed: 8 + Math.random() * 4,
+      spinSpeed: 0.2 + Math.random() * 0.3,
+      maxHeight: 2.5 + Math.random() * 1.5,
+      duration: 1.5 + Math.random() * 0.5,
+      startTime: performance.now(),
+    };
+  }, []);
 
   useEffect(() => {
     if (isFlipping) {
-      animationRef.current = {
-        flipAxis: new THREE.Vector3(1, 0, 0).applyAxisAngle(
-          new THREE.Vector3(0, 1, 0),
-          Math.random() * Math.PI * 2
-        ),
-        spinAxis: new THREE.Vector3(0, 1, 0),
-        flipSpeed: 8 + Math.random() * 4,
-        spinSpeed: 0.2 + Math.random() * 0.3,
-        maxHeight: 2.5 + Math.random() * 1.5,
-        duration: 1.5 + Math.random() * 0.5,
-        startTime: performance.now(),
-      };
+      animationRef.current = initializeFlip();
     } else {
       animationRef.current = null;
     }
-  }, [isFlipping]);
+  }, [isFlipping, initializeFlip]);
 
   useFrame(() => {
     if (isFlipping && meshRef.current && animationRef.current) {
@@ -79,23 +97,16 @@ function Coin({ isFlipping, onFlipComplete }: CoinProps) {
       const elapsedTime = (performance.now() - startTime) / 1000;
       const progress = Math.min(elapsedTime / duration, 1);
 
-      const flipRotation = new THREE.Quaternion().setFromAxisAngle(
-        flipAxis,
-        flipSpeed * progress * Math.PI * 2
-      );
+      meshRef.current.quaternion
+        .setFromAxisAngle(flipAxis, flipSpeed * progress * Math.PI * 2)
+        .multiply(
+          new THREE.Quaternion().setFromAxisAngle(
+            spinAxis,
+            spinSpeed * progress * Math.PI * 2
+          )
+        );
 
-      const spinRotation = new THREE.Quaternion().setFromAxisAngle(
-        spinAxis,
-        spinSpeed * progress * Math.PI * 2
-      );
-
-      meshRef.current.quaternion.multiplyQuaternions(
-        flipRotation,
-        spinRotation
-      );
-
-      const bounceHeight = Math.sin(progress * Math.PI) * maxHeight;
-      meshRef.current.position.y = bounceHeight;
+      meshRef.current.position.y = Math.sin(progress * Math.PI) * maxHeight;
 
       if (progress >= 1) {
         meshRef.current.rotation.set(Math.PI / 2, 0, 0);
@@ -120,16 +131,19 @@ export default function ThreeDCoinFlip({
 }: ThreeDCoinFlipProps) {
   const [isFlipping, setIsFlipping] = useState(false);
 
-  const handleFlip = () => {
+  const handleFlip = useCallback(() => {
     if (!isFlipping) {
       setIsFlipping(true);
     }
-  };
+  }, [isFlipping]);
 
-  const handleFlipComplete = (result: "heads" | "tails") => {
-    setIsFlipping(false);
-    onFlipComplete(result);
-  };
+  const handleFlipComplete = useCallback(
+    (result: "heads" | "tails") => {
+      setIsFlipping(false);
+      onFlipComplete(result);
+    },
+    [onFlipComplete]
+  );
 
   return (
     <div className="w-64 h-64">
