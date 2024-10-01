@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, PerspectiveCamera } from "@react-three/drei";
 import * as THREE from "three";
@@ -24,22 +24,27 @@ function Coin({ isFlipping, onFlipComplete }: CoinProps) {
 
   const { scene } = useGLTF("/coin1/coin.gltf");
 
+  const coinMaterial = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        color: new THREE.Color("#FFD700"),
+        metalness: 0.8,
+        roughness: 0.2,
+      }),
+    []
+  );
+
   useEffect(() => {
     scene.traverse((child: THREE.Object3D) => {
       if (child instanceof THREE.Mesh) {
-        child.material = new THREE.MeshStandardMaterial({
-          color: new THREE.Color("#FFD700"),
-          metalness: 0.8,
-          roughness: 0.2,
-        });
+        child.material = coinMaterial;
       }
     });
 
     if (meshRef.current) {
-      // Rotate the coin 90 degrees around the Z-axis to make it lie flat
-      meshRef.current.rotation.z = 90 * (Math.PI / 180);
+      meshRef.current.rotation.z = Math.PI / 2;
     }
-  }, [scene]);
+  }, [scene, coinMaterial]);
 
   useEffect(() => {
     if (isFlipping) {
@@ -49,11 +54,11 @@ function Coin({ isFlipping, onFlipComplete }: CoinProps) {
           Math.random() * Math.PI * 2
         ),
         spinAxis: new THREE.Vector3(0, 1, 0),
-        flipSpeed: 10 + Math.random() * 5,
-        spinSpeed: 0.5 + Math.random() * 0.5, // Significantly reduced spin speed
-        maxHeight: 3 + Math.random() * 2,
+        flipSpeed: 8 + Math.random() * 4,
+        spinSpeed: 0.2 + Math.random() * 0.3,
+        maxHeight: 2.5 + Math.random() * 1.5,
         duration: 1.5 + Math.random() * 0.5,
-        startTime: Date.now(),
+        startTime: performance.now(),
       };
     } else {
       animationRef.current = null;
@@ -71,51 +76,39 @@ function Coin({ isFlipping, onFlipComplete }: CoinProps) {
         duration,
         startTime,
       } = animationRef.current;
-      const elapsedTime = (Date.now() - startTime) / 1000;
+      const elapsedTime = (performance.now() - startTime) / 1000;
       const progress = Math.min(elapsedTime / duration, 1);
 
-      // Flip rotation
       const flipRotation = new THREE.Quaternion().setFromAxisAngle(
         flipAxis,
         flipSpeed * progress * Math.PI * 2
       );
 
-      // Spin rotation
       const spinRotation = new THREE.Quaternion().setFromAxisAngle(
         spinAxis,
         spinSpeed * progress * Math.PI * 2
       );
 
-      // Combine rotations
       meshRef.current.quaternion.multiplyQuaternions(
         flipRotation,
         spinRotation
       );
 
-      // Bouncing effect
       const bounceHeight = Math.sin(progress * Math.PI) * maxHeight;
       meshRef.current.position.y = bounceHeight;
 
       if (progress >= 1) {
-        // Ensure the coin lands flat on its side
-        meshRef.current.rotation.x = Math.PI / 2;
-        meshRef.current.rotation.y = 0;
-        meshRef.current.rotation.z = 0;
+        meshRef.current.rotation.set(Math.PI / 2, 0, 0);
         meshRef.current.position.y = 0;
         onFlipComplete(Math.random() < 0.5 ? "heads" : "tails");
       }
     } else if (!isFlipping && meshRef.current) {
-      // When not flipping, ensure the coin lies flat
-      meshRef.current.rotation.set(0, 0, 90 * (Math.PI / 180));
+      meshRef.current.rotation.set(0, 0, Math.PI / 2);
       meshRef.current.position.y = 0;
     }
   });
 
-  return (
-    <group>
-      <primitive object={scene} ref={meshRef} scale={[0.1, 0.1, 0.1]} />
-    </group>
-  );
+  return <primitive object={scene} ref={meshRef} scale={0.1} />;
 }
 
 interface ThreeDCoinFlipProps {
@@ -145,7 +138,7 @@ export default function ThreeDCoinFlip({
           makeDefault
           position={[0, 5, 8]}
           fov={60}
-          rotation={[-0.2, 0, 0]} // Tilted camera slightly downward
+          rotation={[-0.2, 0, 0]}
         />
         <ambientLight intensity={0.5} />
         <directionalLight position={[5, 5, 5]} intensity={1} />
