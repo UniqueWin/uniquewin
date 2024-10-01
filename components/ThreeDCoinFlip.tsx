@@ -11,9 +11,11 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, PerspectiveCamera, Text } from "@react-three/drei";
 import * as THREE from "three";
 
+const PRIZES = ["£1", "100Q", "10Q", "£10", "5Q", "1Q", "£5"];
+
 interface CoinProps {
   isFlipping: boolean;
-  onFlipComplete: (result: "heads" | "tails") => void;
+  onFlipComplete: (result: string) => void;
 }
 
 function Coin({ isFlipping, onFlipComplete }: CoinProps) {
@@ -111,7 +113,8 @@ function Coin({ isFlipping, onFlipComplete }: CoinProps) {
       if (progress >= 1) {
         meshRef.current.rotation.set(Math.PI / 2, 0, 0);
         meshRef.current.position.y = 0;
-        onFlipComplete(Math.random() < 0.5 ? "heads" : "tails");
+        const randomPrize = PRIZES[Math.floor(Math.random() * PRIZES.length)];
+        onFlipComplete(randomPrize);
       }
     } else if (!isFlipping && meshRef.current) {
       meshRef.current.rotation.set(0, 0, Math.PI / 2);
@@ -127,10 +130,16 @@ function Coin({ isFlipping, onFlipComplete }: CoinProps) {
 }
 
 interface ThreeDCoinFlipProps {
-  onFlipComplete: (result: "heads" | "tails") => void;
+  onFlipComplete: (result: string) => void;
 }
 
-function CameraController({ isFlipping, isFlipComplete }: { isFlipping: boolean, isFlipComplete: boolean }) {
+function CameraController({
+  isFlipping,
+  isFlipComplete,
+}: {
+  isFlipping: boolean;
+  isFlipComplete: boolean;
+}) {
   const { camera } = useThree();
   const initialPosition = useMemo(() => new THREE.Vector3(0, 5, 8), []);
   const initialRotation = useMemo(() => new THREE.Euler(-0.2, 0, 0), []);
@@ -152,14 +161,38 @@ function CameraController({ isFlipping, isFlipComplete }: { isFlipping: boolean,
   useFrame(() => {
     if (stage === 0) {
       camera.position.lerp(initialPosition, 0.1);
-      camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, initialRotation.x, 0.1);
-      camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, initialRotation.y, 0.1);
-      camera.rotation.z = THREE.MathUtils.lerp(camera.rotation.z, initialRotation.z, 0.1);
+      camera.rotation.x = THREE.MathUtils.lerp(
+        camera.rotation.x,
+        initialRotation.x,
+        0.1
+      );
+      camera.rotation.y = THREE.MathUtils.lerp(
+        camera.rotation.y,
+        initialRotation.y,
+        0.1
+      );
+      camera.rotation.z = THREE.MathUtils.lerp(
+        camera.rotation.z,
+        initialRotation.z,
+        0.1
+      );
     } else if (stage === 1) {
       camera.position.lerp(midPosition, 0.05);
-      camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, targetRotation.x, 0.05);
-      camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, targetRotation.y, 0.05);
-      camera.rotation.z = THREE.MathUtils.lerp(camera.rotation.z, targetRotation.z, 0.05);
+      camera.rotation.x = THREE.MathUtils.lerp(
+        camera.rotation.x,
+        targetRotation.x,
+        0.05
+      );
+      camera.rotation.y = THREE.MathUtils.lerp(
+        camera.rotation.y,
+        targetRotation.y,
+        0.05
+      );
+      camera.rotation.z = THREE.MathUtils.lerp(
+        camera.rotation.z,
+        targetRotation.z,
+        0.05
+      );
     } else if (stage === 2) {
       camera.position.lerp(finalPosition, 0.05);
     }
@@ -168,7 +201,13 @@ function CameraController({ isFlipping, isFlipComplete }: { isFlipping: boolean,
   return null;
 }
 
-function ResultText({ result, isVisible }: { result: string, isVisible: boolean }) {
+function ResultText({
+  result,
+  isVisible,
+}: {
+  result: string;
+  isVisible: boolean;
+}) {
   const { camera } = useThree();
   const textRef = useRef<THREE.Mesh>(null);
 
@@ -182,14 +221,8 @@ function ResultText({ result, isVisible }: { result: string, isVisible: boolean 
   if (!isVisible) return null;
 
   return (
-    <Text
-      ref={textRef}
-      fontSize={0.5}
-      color="gold"
-      anchorX="center"
-      anchorY="middle"
-    >
-      {result.toUpperCase()}
+    <Text ref={textRef} fontSize={0.5} anchorX="center" anchorY="middle">
+      {result}
     </Text>
   );
 }
@@ -199,7 +232,7 @@ export default function ThreeDCoinFlip({
 }: ThreeDCoinFlipProps) {
   const [isFlipping, setIsFlipping] = useState(false);
   const [isFlipComplete, setIsFlipComplete] = useState(false);
-  const [flipResult, setFlipResult] = useState<"heads" | "tails" | null>(null);
+  const [flipResult, setFlipResult] = useState<string | null>(null);
 
   const handleFlip = useCallback(() => {
     if (!isFlipping) {
@@ -210,7 +243,7 @@ export default function ThreeDCoinFlip({
   }, [isFlipping]);
 
   const handleFlipComplete = useCallback(
-    (result: "heads" | "tails") => {
+    (result: string) => {
       setIsFlipping(false);
       setFlipResult(result);
       setTimeout(() => {
@@ -230,11 +263,18 @@ export default function ThreeDCoinFlip({
           fov={60}
           rotation={[-0.2, 0, 0]}
         />
-        <CameraController isFlipping={isFlipping} isFlipComplete={isFlipComplete} />
-        <ambientLight intensity={0.6} /> {/* Slightly increased ambient light */}
-        <directionalLight position={[5, 5, 5]} intensity={1.2} /> {/* Increased intensity and adjusted position */}
-        <directionalLight position={[-5, 5, -5]} intensity={0.8} /> {/* Adjusted position and increased intensity */}
-        <pointLight position={[0, 3, 0]} intensity={0.5} /> {/* Added a point light above the coin */}
+        <CameraController
+          isFlipping={isFlipping}
+          isFlipComplete={isFlipComplete}
+        />
+        <ambientLight intensity={0.6} />{" "}
+        {/* Slightly increased ambient light */}
+        <directionalLight position={[5, 5, 5]} intensity={1.2} />{" "}
+        {/* Increased intensity and adjusted position */}
+        <directionalLight position={[-5, 5, -5]} intensity={0.8} />{" "}
+        {/* Adjusted position and increased intensity */}
+        <pointLight position={[0, 3, 0]} intensity={0.5} />{" "}
+        {/* Added a point light above the coin */}
         <Coin isFlipping={isFlipping} onFlipComplete={handleFlipComplete} />
         <ResultText result={flipResult || ""} isVisible={isFlipComplete} />
       </Canvas>
