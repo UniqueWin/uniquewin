@@ -280,11 +280,11 @@ export default function Home() {
         <div className="absolute inset-0 overflow-hidden">
           <div
             className="
-              [--aurora:repeating-conic-gradient(from_0deg,#4B0082_0deg_11deg,rgba(255,255,255,0.1)_11deg_12deg)]
+              [--aurora:repeating-conic-gradient(from_0deg_at_50%_50%,#4B0082_0deg_10deg,rgba(255,255,255,0.1)_10deg_20deg)]
               [background-image:var(--aurora)]
               [background-size:100%_100%]
               [background-position:center_center]
-              absolute -inset-[10px] opacity-50
+              absolute -inset-[10px] opacity-100
             "
           ></div>
         </div>
