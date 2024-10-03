@@ -189,6 +189,7 @@ export default function Home() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.value);
   };
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("submitted");
@@ -273,53 +274,68 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen w-full sm:max-w-7xl mx-auto">
-      <div className="text-center mt-20 px-4">
-        <h1 className="text-[#FFC700] text-5xl font-extrabold mb-6">
-          Find a Unique Answer and WIN!
-        </h1>
-        {currentGame ? (
-          <div className="flex justify-center mb-4">
-            <TextRevealCard
-              text={currentGame.question}
-              revealText={`Jackpot: £${
-                currentGame.current_prize ?? currentGame.jackpot
-              }`}
-              className="-rotate-3"
-            />
-          </div>
-        ) : (
-          <p className="text-white mb-4">
-            No active games at the moment. Check back soon!
-          </p>
-        )}
+    <div className="min-h-sgcreen w-full sm:max-w-7xl mx-auto bg-purple-600">
+      {/* <AuroraBackground showRadialGradient={true} className="h-[87vh]"> */}
+      <div className="h-[87vh] relative overflow-hidden bg-[#4B0082]">
+        <div className="absolute inset-0 overflow-hidden">
+          <div
+            className="
+              [--aurora:repeating-conic-gradient(from_0deg,#4B0082_0deg_11deg,rgba(255,255,255,0.1)_11deg_12deg)]
+              [background-image:var(--aurora)]
+              [background-size:100%_100%]
+              [background-position:center_center]
+              absolute -inset-[10px] opacity-50
+            "
+          ></div>
+        </div>
+        <div className="relative z-10 text-center mt-20 px-4">
+          <h1 className="text-[#FFC700] text-5xl font-extrabold mb-6">
+            Find a Unique Answer and WIN!
+          </h1>
+          {currentGame ? (
+            <div className="flex justify-center mb-4">
+              <TextRevealCard
+                text={currentGame.question}
+                revealText={`Jackpot: £${
+                  currentGame.current_prize ?? currentGame.jackpot
+                }`}
+                className="-rotate-3"
+              />
+            </div>
+          ) : (
+            <p className="text-white mb-4">
+              No active games at the moment. Check back soon!
+            </p>
+          )}
 
-        <div className="flex justify-center mb-4">
-          <PlaceholdersAndVanishInput
-            placeholders={placeholders.map(
-              (placeholder) => placeholder.question
-            )}
-            onChange={handleChange}
-            onSubmit={onSubmit}
-          />
-          <div className="flex flex-col gap-2">
-            <Button
-              variant="secondary"
-              size="lg"
-              className="bg-yellow-400 text-black font-semibold text-lg"
-            >
-              Answer!
-            </Button>
-            <div className="flex items-center justify-center space-x-2">
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-              </label>
-              <span className="text-white">Lucky Dip</span>
+          <div className="flex justify-center mb-4">
+            <PlaceholdersAndVanishInput
+              placeholders={placeholders.map(
+                (placeholder) => placeholder.question
+              )}
+              onChange={handleChange}
+              onSubmit={onSubmit}
+            />
+            <div className="flex flex-col gap-2">
+              <Button
+                variant="secondary"
+                size="lg"
+                className="bg-yellow-400 text-black font-semibold text-lg"
+              >
+                Answer!
+              </Button>
+              <div className="flex items-center justify-center space-x-2">
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                </label>
+                <span className="text-white">Lucky Dip</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      {/* </AuroraBackground> */}
 
       {/* 3 Ways to Win Section */}
       <div className="mt-20 text-center px-4 text-black bg-white py-20">

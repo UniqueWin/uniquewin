@@ -30,16 +30,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.className}>
       <body className="">
-        <AuroraBackground>
-          <UserProvider>
-            <GameProvider>
-              <NavBar />
+        <UserProvider>
+          <GameProvider>
+            <NavBar />
+            {/* <AuroraBackground showRadialGradient={true} className=""> */}
               <main className="">{children}</main>
-              <Footer />
-            </GameProvider>
-            <Toaster />
-          </UserProvider>
-        </AuroraBackground>
+            {/* </AuroraBackground> */}
+            <Footer />
+          </GameProvider>
+          <Toaster />
+        </UserProvider>
       </body>
     </html>
   );
