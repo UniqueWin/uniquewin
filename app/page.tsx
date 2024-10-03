@@ -274,8 +274,8 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="h-[87vh] w-full bg-[#4B0082] overflow-hidden">
-      <div className="relative h-full overflow-hidden">
+    <div className="min-h-screen w-full bg-[#4B0082] flex flex-col">
+      <div className="h-[87vh] relative overflow-hidden">
         <div className="absolute inset-[-100%]">
           <div
             className="
@@ -337,93 +337,96 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 3 Ways to Win Section */}
-      <div className="mt-20 text-center px-4 text-black bg-white py-20">
-        <small className="text-xs">Discover</small>
-        <h2 className="text-3xl font-bold mb-4 text-pink-800 py-5">
-          3 Ways to Win Big Prizes
-        </h2>
-        <p className="mb-10 max-w-lgo mx-auto">
-          Explore our exciting opportunities to win unique prizes, instant
-          rewards, and participate in live raffles.
-        </p>
+      {/* The rest of your content */}
+      <div className="flex-grow bg-white">
+        {/* 3 Ways to Win Section */}
+        <div className="text-center px-4 text-black py-20">
+          <small className="text-xs">Discover</small>
+          <h2 className="text-3xl font-bold mb-4 text-pink-800 py-5">
+            3 Ways to Win Big Prizes
+          </h2>
+          <p className="mb-10 max-w-lgo mx-auto">
+            Explore our exciting opportunities to win unique prizes, instant
+            rewards, and participate in live raffles.
+          </p>
 
-        <div className="flex justify-center space-x-8">
-          {/* Card 1 */}
-          <div className="w-72 p-6 rounded-lg bg-white text-black">
-            <Image
-              src="/unique-answer-icon.png"
-              alt="Unique Answer"
-              width={64}
-              height={64}
-              className="mx-auto mb-4"
-            />
-            <h3 className="font-bold text-xl mb-2">Find a Unique Answer</h3>
-            <p>
-              Unleash your creativity and stand a chance to win exclusive prizes
-              by providing a one-of-a-kind answer.
-            </p>
-          </div>
+          <div className="flex justify-center space-x-8">
+            {/* Card 1 */}
+            <div className="w-72 p-6 rounded-lg bg-white text-black">
+              <Image
+                src="/unique-answer-icon.png"
+                alt="Unique Answer"
+                width={64}
+                height={64}
+                className="mx-auto mb-4"
+              />
+              <h3 className="font-bold text-xl mb-2">Find a Unique Answer</h3>
+              <p>
+                Unleash your creativity and stand a chance to win exclusive prizes
+                by providing a one-of-a-kind answer.
+              </p>
+            </div>
 
-          {/* Card 2 */}
-          <div className="w-72 p-6 rounded-lg bg-white text-black">
-            <Image
-              src="/instant-prizes-icon.png"
-              alt="Instant Prizes"
-              width={64}
-              height={64}
-              className="mx-auto mb-4"
-            />
-            <h3 className="font-bold text-xl mb-2">Instant Prizes</h3>
-            <p>
-              Get rewarded instantly with exciting prizes just by participating
-              in our engaging contests.
-            </p>
-          </div>
+            {/* Card 2 */}
+            <div className="w-72 p-6 rounded-lg bg-white text-black">
+              <Image
+                src="/instant-prizes-icon.png"
+                alt="Instant Prizes"
+                width={64}
+                height={64}
+                className="mx-auto mb-4"
+              />
+              <h3 className="font-bold text-xl mb-2">Instant Prizes</h3>
+              <p>
+                Get rewarded instantly with exciting prizes just by participating
+                in our engaging contests.
+              </p>
+            </div>
 
-          {/* Card 3 */}
-          <div className="w-72 p-6 rounded-lg bg-white text-black">
-            <Image
-              src="/live-raffle-icon.png"
-              alt="Live Raffle"
-              width={64}
-              height={64}
-              className="mx-auto mb-4"
-            />
-            <h3 className="font-bold text-xl mb-2">Live Raffle</h3>
-            <p>
-              Experience the thrill of our live raffles and stand a chance to
-              win big prizes in real-time.
-            </p>
+            {/* Card 3 */}
+            <div className="w-72 p-6 rounded-lg bg-white text-black">
+              <Image
+                src="/live-raffle-icon.png"
+                alt="Live Raffle"
+                width={64}
+                height={64}
+                className="mx-auto mb-4"
+              />
+              <h3 className="font-bold text-xl mb-2">Live Raffle</h3>
+              <p>
+                Experience the thrill of our live raffles and stand a chance to
+                win big prizes in real-time.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Past Games Section */}
-      <div className="mt-20 text-center px-4 text-white">
-        <h2 className="text-3xl font-bold mb-4">Past Games</h2>
-        <ul className="space-y-2">
-          {pastGames.map((game) => (
-            <li key={game.id} className="bg-[#C0163D] p-4 rounded-lg">
-              <h3 className="font-bold">{game.question}</h3>
-              <p>Jackpot: £{game.current_prize ?? game.jackpot}</p>
-              <p>Ended: {new Date(game.end_time).toLocaleString()}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
+        {/* Past Games Section */}
+        <div className="text-center px-4 text-white bg-[#4B0082] py-20">
+          <h2 className="text-3xl font-bold mb-4">Past Games</h2>
+          <ul className="space-y-2">
+            {pastGames.map((game) => (
+              <li key={game.id} className="bg-[#C0163D] p-4 rounded-lg">
+                <h3 className="font-bold">{game.question}</h3>
+                <p>Jackpot: £{game.current_prize ?? game.jackpot}</p>
+                <p>Ended: {new Date(game.end_time).toLocaleString()}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-      {/* Dice Roll Animation */}
-      <div className="mt-20 text-center">
-        <h2 className="text-3xl font-bold text-white mb-6">
-          Bonus Game Preview: Dice Roll
-        </h2>
-        <div className="flex justify-center">
-          <DiceRollAnimation
-            onRollComplete={(result) =>
-              console.log(`Dice roll result: ${result}`)
-            }
-          />
+        {/* Dice Roll Animation */}
+        <div className="text-center bg-[#4B0082] py-20">
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Bonus Game Preview: Dice Roll
+          </h2>
+          <div className="flex justify-center">
+            <DiceRollAnimation
+              onRollComplete={(result) =>
+                console.log(`Dice roll result: ${result}`)
+              }
+            />
+          </div>
         </div>
       </div>
     </div>
