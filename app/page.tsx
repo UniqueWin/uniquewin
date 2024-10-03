@@ -274,22 +274,22 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-sgcreen w-full sm:max-w-7xl mx-auto bg-purple-600">
-      {/* <AuroraBackground showRadialGradient={true} className="h-[87vh]"> */}
-      <div className="h-[87vh] relative overflow-hidden bg-[#4B0082]">
-        <div className="absolute inset-0 overflow-hidden">
+    <div className="h-[87vh] w-full bg-[#4B0082] overflow-hidden">
+      <div className="relative h-full overflow-hidden">
+        <div className="absolute inset-[-100%]">
           <div
             className="
               [--aurora:repeating-conic-gradient(from_0deg_at_50%_50%,#4B0082_0deg_10deg,rgba(255,255,255,0.1)_10deg_20deg)]
               [background-image:var(--aurora)]
-              [background-size:100%_100%]
+              [background-size:200%_200%]
               [background-position:center_center]
-              absolute -inset-[10px] opacity-100
+              absolute inset-0 opacity-100
+              animate-spin-slow
             "
           ></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,rgba(75,0,130,0.3)_50%,rgba(75,0,130,0.7)_100%)]"></div>
         </div>
-        <div className="relative z-10 text-center mt-20 px-4">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,rgba(75,0,130,0.3)_50%,rgba(75,0,130,0.7)_100%)]"></div>
+        <div className="relative z-10 h-full flex flex-col items-center justify-start pt-20 px-4 overflow-y-auto">
           <h1 className="text-[#FFC700] text-5xl font-extrabold mb-6">
             Find a Unique Answer and WIN!
           </h1>
@@ -336,7 +336,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {/* </AuroraBackground> */}
 
       {/* 3 Ways to Win Section */}
       <div className="mt-20 text-center px-4 text-black bg-white py-20">
