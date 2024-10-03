@@ -8,11 +8,16 @@ import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 
-// Dynamically import the CoinFlipAnimation component
-const CoinFlipAnimation = dynamic(() => import('@/components/CoinFlipAnimation'), {
-  ssr: false,
-});
+// Dynamically import the DiceRollAnimation component
+const DiceRollAnimation = dynamic(
+  () => import("@/components/DiceRollAnimation"),
+  {
+    ssr: false,
+  }
+);
 
 const supabase = createClient();
 
@@ -228,16 +233,19 @@ export default function Home() {
         const lastRunUK = ukTimeFormatter.format(lastRun);
         const nowUK = ukTimeFormatter.format(now);
 
-        const minutesSinceLastRun = (now.getTime() - lastRun.getTime()) / (1000 * 60);
+        const minutesSinceLastRun =
+          (now.getTime() - lastRun.getTime()) / (1000 * 60);
 
         console.log(`Last cleanup run (UK): ${lastRunUK}`);
         console.log(`Current time (UK): ${nowUK}`);
-        console.log(`Minutes since last run: ${minutesSinceLastRun.toFixed(2)}`);
+        console.log(
+          `Minutes since last run: ${minutesSinceLastRun.toFixed(2)}`
+        );
 
         if (minutesSinceLastRun >= 1) {
           console.log("Triggering cleanup...");
-          const response = await fetch("/api/close-expired-games", {
-            method: "GET",
+          const response = await fetch("/api/process-ended-games", {
+            method: "POST",
           });
           if (!response.ok) {
             throw new Error("Failed to trigger cleanup");
@@ -262,10 +270,10 @@ export default function Home() {
 
     // Clean up interval on component unmount
     return () => clearInterval(intervalId);
-  }, [supabase]);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#7f102c] w-full sm:max-w-7xl mx-auto">
+    <div className="min-h-screen w-full sm:max-w-7xl mx-auto">
       <div className="text-center mt-20 px-4">
         <h1 className="text-[#FFC700] text-5xl font-extrabold mb-6">
           Find a Unique Answer and WIN!
@@ -274,7 +282,9 @@ export default function Home() {
           <div className="flex justify-center mb-4">
             <TextRevealCard
               text={currentGame.question}
-              revealText={`Jackpot: £${currentGame.current_prize ?? currentGame.jackpot}`}
+              revealText={`Jackpot: £${
+                currentGame.current_prize ?? currentGame.jackpot
+              }`}
               className="-rotate-3"
             />
           </div>
@@ -387,11 +397,17 @@ export default function Home() {
         </ul>
       </div>
 
-      {/* Add the CoinFlipAnimation preview */}
+      {/* Dice Roll Animation */}
       <div className="mt-20 text-center">
-        <h2 className="text-3xl font-bold text-white mb-6">Bonus Game Preview: Coin Flip</h2>
+        <h2 className="text-3xl font-bold text-white mb-6">
+          Bonus Game Preview: Dice Roll
+        </h2>
         <div className="flex justify-center">
-          <CoinFlipAnimation onFlipComplete={(result) => console.log(`Coin flip result: ${result}`)} />
+          <DiceRollAnimation
+            onRollComplete={(result) =>
+              console.log(`Dice roll result: ${result}`)
+            }
+          />
         </div>
       </div>
     </div>

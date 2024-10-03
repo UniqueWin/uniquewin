@@ -1,6 +1,12 @@
 import { createClient } from "@/utils/supabase/client";
 import { checkForInstantWin } from './dataHelpers';
 
+export enum BonusGameType {
+  COIN_FLIP = 'COIN_FLIP',
+  DICE_ROLL = 'DICE_ROLL',
+  MYSTERY_BOX = 'MYSTERY_BOX'
+}
+
 export async function processAnswer(
   userId: string,
   gameId: string,

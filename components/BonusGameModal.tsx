@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import CoinFlipAnimation from './CoinFlipAnimation';
+import DiceRollAnimation from './DiceRollAnimation';
 
 enum BonusGameType {
   COIN_FLIP = 'COIN_FLIP',
@@ -24,6 +25,11 @@ export function BonusGameModal({ isOpen, onClose, gameType, onGameComplete }: Bo
     const gameResult = flipResult === 'heads' ? 0 : 1;
     setResult(gameResult);
     onGameComplete(gameResult);
+  };
+
+  const handleDiceRollComplete = (rollResult: number) => {
+    setResult(rollResult);
+    onGameComplete(rollResult);
   };
 
   const playGame = () => {
@@ -54,6 +60,8 @@ export function BonusGameModal({ isOpen, onClose, gameType, onGameComplete }: Bo
         <div className="flex flex-col items-center">
           {gameType === BonusGameType.COIN_FLIP ? (
             <CoinFlipAnimation onFlipComplete={handleCoinFlipComplete} />
+          ) : gameType === BonusGameType.DICE_ROLL ? (
+            <DiceRollAnimation onRollComplete={handleDiceRollComplete} />
           ) : result === null ? (
             <Button onClick={playGame}>Play {gameType}</Button>
           ) : (
