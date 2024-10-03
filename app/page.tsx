@@ -287,6 +287,7 @@ export default function Home() {
               absolute -inset-[10px] opacity-100
             "
           ></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,rgba(75,0,130,0.3)_50%,rgba(75,0,130,0.7)_100%)]"></div>
         </div>
         <div className="relative z-10 text-center mt-20 px-4">
           <h1 className="text-[#FFC700] text-5xl font-extrabold mb-6">
