@@ -15,7 +15,7 @@ const PRIZES = ["£1", "100Q", "10Q", "£10", "5Q", "1Q", "£5"];
 
 interface CoinProps {
   isFlipping: boolean;
-  onFlipComplete: (result: string) => void;
+  onFlipComplete: (result: 'heads' | 'tails') => void; // Change here
 }
 
 function Coin({ isFlipping, onFlipComplete }: CoinProps) {
@@ -113,7 +113,8 @@ function Coin({ isFlipping, onFlipComplete }: CoinProps) {
       if (progress >= 1) {
         meshRef.current.rotation.set(Math.PI / 2, 0, 0);
         meshRef.current.position.y = 0;
-        const randomPrize = PRIZES[Math.floor(Math.random() * PRIZES.length)];
+        // Randomly select between 'heads' and 'tails'
+        const randomPrize = Math.random() < 0.5 ? 'heads' : 'tails'; // Change here
         onFlipComplete(randomPrize);
       }
     } else if (!isFlipping && meshRef.current) {
@@ -130,7 +131,7 @@ function Coin({ isFlipping, onFlipComplete }: CoinProps) {
 }
 
 interface ThreeDCoinFlipProps {
-  onFlipComplete: (result: string) => void;
+  onFlipComplete: (result: 'heads' | 'tails') => void; // Change here
 }
 
 function CameraController({
@@ -243,7 +244,7 @@ export default function ThreeDCoinFlip({
   }, [isFlipping]);
 
   const handleFlipComplete = useCallback(
-    (result: string) => {
+    (result: 'heads' | 'tails') => { // Change here
       setIsFlipping(false);
       setFlipResult(result);
       setTimeout(() => {

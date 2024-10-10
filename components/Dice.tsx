@@ -80,14 +80,10 @@ function Dice({ isRolling, onRollComplete }: DiceProps) {
   return (
     <mesh ref={meshRef}>
       <boxGeometry args={[1, 1, 1]} />
-      {/* Ensure different materials for each face */}
-      {diceMaterial.map((material, index) => (
-        <meshStandardMaterial
-          key={index}
-          attachArray="material" // Correctly attaches each material to the mesh
-          map={material.map}
-        />
-      ))}
+      {/* Use a single material for the dice */}
+      <meshStandardMaterial
+        map={diceMaterial[0].map} // Use the first material as an example
+      />
     </mesh>
   );
 }

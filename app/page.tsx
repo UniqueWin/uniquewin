@@ -283,6 +283,7 @@ export default function Home() {
               [background-image:var(--aurora)]
               absolute inset-0
               animate-spin-slow
+              filter blur
             "
           ></div>
         </div>

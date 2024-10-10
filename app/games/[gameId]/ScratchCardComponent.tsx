@@ -6,7 +6,7 @@ import Confetti from "react-confetti";
 import { ScratchCard } from "next-scratchcard";
 import { scratchCard } from "@/utils/gameLogic";
 import { BonusGameModal } from "@/components/BonusGameModal";
-import { BonusGameType } from "./types"; // Ensure this matches the import in History.tsx
+import { BonusGameType, Prize } from "./types"; // Ensure both types are imported from the same file
 
 // Define a new interface for Prize if needed
 interface ScratchCardProps {
@@ -138,7 +138,7 @@ const ScratchCardComponent: React.FC<ScratchCardProps> = ({
         <BonusGameModal
           isOpen={showBonusGame}
           onClose={() => setShowBonusGame(false)}
-          gameType={bonusGameType}
+          gameType={bonusGameType} // Ensure this is correctly typed
           onGameComplete={handleBonusGameComplete}
         />
       )}

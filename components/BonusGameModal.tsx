@@ -4,17 +4,19 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import CoinFlipAnimation from './CoinFlipAnimation';
 import DiceRollAnimation from './DiceRollAnimation';
+import { BonusGameType as GameBonusGameType } from "@/app/games/[gameId]/types"; // Import from types.ts
 
 enum BonusGameType {
   COIN_FLIP = 'COIN_FLIP',
   DICE_ROLL = 'DICE_ROLL',
-  MYSTERY_BOX = 'MYSTERY_BOX'
+  MYSTERY_BOX = 'MYSTERY_BOX',
+  WHEEL_SPIN = 'WHEEL_SPIN'
 }
 
 interface BonusGameModalProps {
   isOpen: boolean;
   onClose: () => void;
-  gameType: BonusGameType;
+  gameType: GameBonusGameType; // Use the type from types.ts
   onGameComplete: (result: number) => void;
 }
 

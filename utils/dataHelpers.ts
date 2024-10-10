@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/client";
 import { ExtendedUser } from "./userHelpers";
+import { BonusGameType } from "@/app/games/[gameId]/types";
 
 const supabase = createClient();
 
