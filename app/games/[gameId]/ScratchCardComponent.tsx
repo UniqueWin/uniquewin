@@ -6,16 +6,18 @@ import Confetti from "react-confetti";
 import { ScratchCard } from "next-scratchcard";
 import { scratchCard } from "@/utils/gameLogic";
 import { BonusGameModal } from "@/components/BonusGameModal";
+import { BonusGameType } from "./types"; // Ensure this matches the import in History.tsx
 
-// Define our own interface for ScratchCard props
+// Define a new interface for Prize if needed
 interface ScratchCardProps {
-  prize: string | number;
+  prize: Prize;
   onReveal: () => void;
   gameId: string;
   prizeId: string;
   userId: string;
   status: "LOCKED" | "UNLOCKED" | "SCRATCHED";
   winnerId: string | null;
+  bonusGameType: BonusGameType | null; // Ensure this is correctly typed
 }
 
 // Extend the ScratchCardProps interface to include the brushColor and onScratch props
@@ -42,6 +44,7 @@ const ScratchCardComponent: React.FC<ScratchCardProps> = ({
   userId,
   status,
   winnerId,
+  bonusGameType,
 }) => {
   const [isRevealed, setIsRevealed] = useState(status === "SCRATCHED");
   const [scratchedPercentage, setScratchedPercentage] = useState(
@@ -49,7 +52,8 @@ const ScratchCardComponent: React.FC<ScratchCardProps> = ({
   );
   const [localStatus, setLocalStatus] = useState(status);
   const [showBonusGame, setShowBonusGame] = useState(false);
-  const [bonusGameType, setBonusGameType] = useState<BonusGameType | null>(null);
+  const [localBonusGameType, setLocalBonusGameType] =
+    useState<BonusGameType | null>(null); // Renamed this line
 
   const handleComplete = async () => {
     if (localStatus === "UNLOCKED" && userId === winnerId) {
@@ -85,7 +89,7 @@ const ScratchCardComponent: React.FC<ScratchCardProps> = ({
 
   const handleScratchComplete = async () => {
     if (prize.bonus_game_type) {
-      setBonusGameType(prize.bonus_game_type);
+      setLocalBonusGameType(prize.bonus_game_type); // Updated this line
       setShowBonusGame(true);
     }
   };
@@ -121,6 +125,7 @@ const ScratchCardComponent: React.FC<ScratchCardProps> = ({
           userId={userId}
           status={localStatus}
           winnerId={winnerId}
+          bonusGameType={localBonusGameType} // Updated this line
         >
           <div className="flex items-center justify-center w-full h-full bg-purple-500 rounded-lg p-4">
             <div className="text-center">

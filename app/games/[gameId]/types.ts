@@ -6,6 +6,7 @@ export interface Prize {
   prize_amount: number;
   status: "LOCKED" | "UNLOCKED" | "SCRATCHED";
   winner_id: string | null;
+  bonus_game_type?: BonusGameType;
 }
 
 export interface WinnerNames {
@@ -17,3 +18,9 @@ export interface NewGameRewardsProps {
   userId: string; // Add userId prop
   gameId: string; // Add gameId prop
 }
+// Ensure BonusGameType includes all necessary types
+export type BonusGameType =
+  | "DICE_ROLL"
+  | "COIN_FLIP"
+  | "WHEEL_SPIN"
+  | "MYSTERY_BOX"; // Updated to include all types

@@ -4,8 +4,8 @@ import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-black bg-opacity-50 text-white py-12 mt-10 rounded-t-xl">
-      <div className="container mx-auto px-4">
+    <footer className="bg-red-800 text-white py-12 mx-2 rounded-t-xl">
+      <div className="container mx-auto px-4 bg-black bg-opacity-10 p-4 rounded-xl">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-4">UniqueWin</h3>

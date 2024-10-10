@@ -3,7 +3,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Game,
-  getAnswerInstantWinPrizes,
   getGameById,
   getUserAnswers,
   getWinnerName,
@@ -12,14 +11,14 @@ import { createClient } from "@/utils/supabase/client";
 import { ExtendedUser } from "@/utils/userHelpers";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react"; // Import useRef
+import { useEffect, useRef, useState } from "react"; // Import useRef
 import Banner from "./Banner";
 import GameRewards from "./GameRewards";
 import Question from "./Question";
 import RealTimeAnswers from "./RealTimeAnswers";
+import RealTimeInstantWinPrizes from "./RealTimeInstantWinPrizes"; // Import the new component
 import TrustPilot from "./Trustpilot";
 import YourAnswers from "./YourAnswers"; // Import the new component
-import RealTimeInstantWinPrizes from "./RealTimeInstantWinPrizes"; // Import the new component
 
 interface UserAnswer {
   id: string;
@@ -239,7 +238,7 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
   if (!user || !game || !gameAnswers) return <div>Loading...</div>;
 
   return (
-    <div className="bg-black bg-opacity-10 rounded-xl my-2 min-h-screen flex flex-col">
+    <div className="bg-red-800 rounded-xl mb-4 mx-2 min-h-screen flex flex-col p-4">
       <RealTimeAnswers
         gameId={params.gameId}
         userId={user?.id}
@@ -301,10 +300,6 @@ export default function GamePage({ params }: { params: { gameId: string } }) {
               <hr className="my-4 border-gray-300" />
             </CardContent>
           </Card>
-
-          {/* {showGameHistory && (
-            <History game={game} instantWinPrizes={instantWinPrizes} />
-          )} */}
 
           <Banner />
 

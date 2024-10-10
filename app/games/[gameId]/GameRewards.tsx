@@ -10,7 +10,7 @@ import { Coins, Gift, HelpCircle, Lock, Sparkles, Unlock } from "lucide-react";
 import { useEffect, useState } from "react";
 import ScratchCardComponent from "./ScratchCardComponent";
 import PrizeCard from "./PrizeCard"; // Import PrizeCard
-import { Prize, WinnerNames, NewGameRewardsProps, PrizeType } from "./types"; // Import types
+import { Prize, WinnerNames, NewGameRewardsProps, PrizeType, BonusGameType } from "./types"; // Ensure this imports the correct Prize type
 
 const prizeIcons = {
   CREDITS: Coins,
@@ -26,19 +26,15 @@ const tooltipContent = {
   HANGMAN: "Play a game of Hangman to win more prizes",
 };
 
-const getPrizeValue = (prize: Prize) => {
-  switch (prize.prize_type) {
-    case "CASH":
-      return `£${prize.prize_amount}`;
-    case "CREDITS":
-      return `${prize.prize_amount} CREDITS`;
-    case "LUCKY_DIP":
-      return "Mystery Prize";
-    case "HANGMAN":
-      return "h _ n g m _ n";
-    default:
-      return "Unknown";
-  }
+const getPrizeValue = (selectedPrize: any): Prize => {
+  return {
+    id: selectedPrize.id, // Add the id property
+    prize_type: selectedPrize.prize_type, // Add the prize_type property
+    prize_amount: selectedPrize.prize_amount, // Add the prize_amount property
+    status: selectedPrize.status, // Add the status property
+    winner_id: selectedPrize.winner_id, // Add the winner_id property
+    bonus_game_type: selectedPrize.bonus_game_type ?? null, // Ensure this matches the Prize type
+  };
 };
 
 export default function NewGameRewards({
@@ -56,7 +52,9 @@ export default function NewGameRewards({
   const [winnerNames, setWinnerNames] = useState<WinnerNames>({}); // Declare winnerNames state
   const [userWonPrizes, setUserWonPrizes] = useState<Prize[]>([]);
   const [otherPrizes, setOtherPrizes] = useState<Prize[]>([]);
-  const [groupedPrizes, setGroupedPrizes] = useState<Record<PrizeType, Prize[]>>({} as Record<PrizeType, Prize[]>);
+  const [groupedPrizes, setGroupedPrizes] = useState<
+    Record<PrizeType, Prize[]>
+  >({} as Record<PrizeType, Prize[]>);
 
   useEffect(() => {
     const fetchWinnerNames = async () => {
@@ -260,13 +258,14 @@ export default function NewGameRewards({
                   </h2>{" "}
                   <div className="my-4 flex justify-center w-full">
                     <ScratchCardComponent
-                      prize={getPrizeValue(selectedPrize)}
+                      prize={getPrizeValue(selectedPrize)} // Ensure this returns a Prize type
                       onReveal={() => console.log("null")} // Handle reveal action
                       gameId={gameId} // Pass gameId
                       prizeId={selectedPrize.id.toString()} // Pass prizeId
                       userId={userId} // Pass userId
                       status={selectedPrize.status} // Pass prize status
                       winnerId={selectedPrize.winner_id} // Pass winnerId
+                      bonusGameType={selectedPrize.bonus_game_type ?? null} // Ensure this is using the correct type
                     />
                   </div>
                   <Badge variant="secondary" className="mb-4">

@@ -1,10 +1,12 @@
 import { createClient } from "@/utils/supabase/client";
-import { checkForInstantWin } from './dataHelpers';
+import { checkForInstantWin } from "./dataHelpers";
+import { BonusGameType } from "@/app/games/[gameId]/types";
 
-export enum BonusGameType {
-  COIN_FLIP = 'COIN_FLIP',
-  DICE_ROLL = 'DICE_ROLL',
-  MYSTERY_BOX = 'MYSTERY_BOX'
+export enum BonusGameEnum {
+  COIN_FLIP = "COIN_FLIP",
+  DICE_ROLL = "DICE_ROLL",
+  MYSTERY_BOX = "MYSTERY_BOX",
+  WHEEL_SPIN = "WHEEL_SPIN",
 }
 
 export async function processAnswer(
@@ -14,22 +16,28 @@ export async function processAnswer(
   validAnswers: string[]
 ) {
   const supabase = createClient();
-  console.log('Starting processAnswer', { userId, gameId, answer, validAnswersCount: validAnswers.length });
+  console.log("Starting processAnswer", {
+    userId,
+    gameId,
+    answer,
+    validAnswersCount: validAnswers.length,
+  });
 
   try {
     // Check if the user has already submitted this answer (case-insensitive)
-    const { data: existingUserAnswer, error: existingUserAnswerError } = await supabase
-      .from("answers")
-      .select("id")
-      .eq("game_id", gameId)
-      .eq("user_id", userId)
-      .ilike("answer_text", answer)
-      .limit(1);
+    const { data: existingUserAnswer, error: existingUserAnswerError } =
+      await supabase
+        .from("answers")
+        .select("id")
+        .eq("game_id", gameId)
+        .eq("user_id", userId)
+        .ilike("answer_text", answer)
+        .limit(1);
 
     if (existingUserAnswerError) throw existingUserAnswerError;
 
     if (existingUserAnswer && existingUserAnswer.length > 0) {
-      console.log('User has already submitted this answer');
+      console.log("User has already submitted this answer");
       return {
         success: false,
         message: "You've already submitted this answer.",
@@ -37,8 +45,8 @@ export async function processAnswer(
     }
 
     // Make the check case-insensitive
-    const isValidAnswer = validAnswers.some(validAnswer => 
-      validAnswer.toLowerCase() === answer.toLowerCase()
+    const isValidAnswer = validAnswers.some(
+      (validAnswer) => validAnswer.toLowerCase() === answer.toLowerCase()
     );
 
     // Fetch user's current credit balance
@@ -114,7 +122,7 @@ export async function processAnswer(
     if (instantWin) {
       await supabase
         .from("answer_instant_wins")
-        .update({ status: 'UNLOCKED', winner_id: userId })
+        .update({ status: "UNLOCKED", winner_id: userId })
         .eq("id", instantWin.id);
     }
 
@@ -138,60 +146,72 @@ export const purchaseLuckyDip = async (
   luckyDipPrice: number
 ): Promise<{ success: boolean; answer: string; isUniqueAnswer: boolean }> => {
   const supabase = createClient();
-  console.log('Starting purchaseLuckyDip', { userId, gameId, luckyDipPrice, availableLuckyDipsCount: availableLuckyDips.length });
+  console.log("Starting purchaseLuckyDip", {
+    userId,
+    gameId,
+    luckyDipPrice,
+    availableLuckyDipsCount: availableLuckyDips.length,
+  });
 
   try {
     // Fetch current credit balance
     const { data: userData, error: fetchError } = await supabase
-      .from('profiles')
-      .select('credit_balance')
-      .eq('id', userId)
+      .from("profiles")
+      .select("credit_balance")
+      .eq("id", userId)
       .single();
 
     if (fetchError) {
-      console.error('Error fetching user data:', fetchError);
+      console.error("Error fetching user data:", fetchError);
       throw fetchError;
     }
 
-    console.log('Current credit balance:', userData.credit_balance);
+    console.log("Current credit balance:", userData.credit_balance);
 
     // Calculate new balance
     const newBalance = (userData.credit_balance || 0) - luckyDipPrice;
 
     if (newBalance < 0) {
-      console.error('Insufficient credits', { currentBalance: userData.credit_balance, luckyDipPrice, newBalance });
+      console.error("Insufficient credits", {
+        currentBalance: userData.credit_balance,
+        luckyDipPrice,
+        newBalance,
+      });
       throw new Error("Insufficient credits");
     }
 
     // Update credit balance
     const { error: updateError } = await supabase
-      .from('profiles')
+      .from("profiles")
       .update({ credit_balance: newBalance })
-      .eq('id', userId);
+      .eq("id", userId);
 
     if (updateError) {
-      console.error('Error updating credit balance:', updateError);
+      console.error("Error updating credit balance:", updateError);
       throw updateError;
     }
 
-    console.log('Credit balance updated successfully', { newBalance });
+    console.log("Credit balance updated successfully", { newBalance });
 
     // Get all existing answers for this game
-    const { data: existingAnswers, error: existingAnswersError } = await supabase
-      .from('answers')
-      .select('answer_text')
-      .eq('game_id', gameId);
+    const { data: existingAnswers, error: existingAnswersError } =
+      await supabase
+        .from("answers")
+        .select("answer_text")
+        .eq("game_id", gameId);
 
     if (existingAnswersError) {
-      console.error('Error fetching existing answers:', existingAnswersError);
+      console.error("Error fetching existing answers:", existingAnswersError);
       throw existingAnswersError;
     }
 
     // Filter out already used answers (case-insensitive)
-    const unusedAnswers = availableLuckyDips.filter(answer => 
-      !existingAnswers.some(existingAnswer => 
-        existingAnswer.answer_text.toLowerCase() === answer.toLowerCase()
-      )
+    const unusedAnswers = availableLuckyDips.filter(
+      (answer) =>
+        !existingAnswers.some(
+          (existingAnswer) =>
+            existingAnswer.answer_text.toLowerCase() === answer.toLowerCase()
+        )
     );
 
     if (unusedAnswers.length === 0) {
@@ -201,31 +221,31 @@ export const purchaseLuckyDip = async (
     // Select a random answer from unused Lucky Dips
     const randomIndex = Math.floor(Math.random() * unusedAnswers.length);
     const selectedAnswer = unusedAnswers[randomIndex];
-    console.log('Selected answer:', selectedAnswer);
+    console.log("Selected answer:", selectedAnswer);
 
     // Insert the new answer (it's guaranteed to be unique)
-    console.log('Inserting new answer');
+    console.log("Inserting new answer");
     const { data: insertedAnswer, error: insertError } = await supabase
-      .from('answers')
+      .from("answers")
       .insert({
         user_id: userId,
         game_id: gameId,
         answer_text: selectedAnswer,
-        status: 'UNIQUE',
+        status: "UNIQUE",
         is_lucky_dip: true,
-        submitted_at: new Date().toISOString()
+        submitted_at: new Date().toISOString(),
       })
       .select();
 
     if (insertError) {
-      console.error('Error inserting new answer:', insertError);
+      console.error("Error inserting new answer:", insertError);
       throw insertError;
     }
-    console.log('New answer inserted successfully:', insertedAnswer);
+    console.log("New answer inserted successfully:", insertedAnswer);
 
     return { success: true, answer: selectedAnswer, isUniqueAnswer: true };
   } catch (error) {
-    console.error('Error in purchaseLuckyDip:', error);
+    console.error("Error in purchaseLuckyDip:", error);
     throw error;
   }
 };
@@ -235,9 +255,9 @@ export const scratchCard = async (gameId: string, prizeId: string) => {
 
   try {
     const { data: updatedPrize, error: updateError } = await supabase
-      .from('answer_instant_wins')
-      .update({ status: 'SCRATCHED' })
-      .eq('id', prizeId)
+      .from("answer_instant_wins")
+      .update({ status: "SCRATCHED" })
+      .eq("id", prizeId)
       .select()
       .single();
 
@@ -248,7 +268,7 @@ export const scratchCard = async (gameId: string, prizeId: string) => {
       prizeAmount: updatedPrize.prize_amount,
     };
   } catch (error) {
-    console.error('Error in scratchCard:', error);
+    console.error("Error in scratchCard:", error);
     throw error;
   }
 };
@@ -274,30 +294,37 @@ export async function processEndedGames() {
       .eq("status", "UNIQUE");
 
     if (answersError) {
-      console.error(`Error fetching answers for game ${game.id}:`, answersError);
+      console.error(
+        `Error fetching answers for game ${game.id}:`,
+        answersError
+      );
       continue;
     }
 
     // Group unique answers by user
-    const userAnswers = uniqueAnswers.reduce((acc: { [key: string]: any[] }, answer) => {
-      if (!acc[answer.user_id]) {
-        acc[answer.user_id] = [];
-      }
-      acc[answer.user_id].push(answer);
-      return acc;
-    }, {});
+    const userAnswers = uniqueAnswers.reduce(
+      (acc: { [key: string]: any[] }, answer) => {
+        if (!acc[answer.user_id]) {
+          acc[answer.user_id] = [];
+        }
+        acc[answer.user_id].push(answer);
+        return acc;
+      },
+      {}
+    );
 
     const totalUniqueAnswers = uniqueAnswers.length;
-    const prizePerAnswer = totalUniqueAnswers > 0 ? game.current_prize / totalUniqueAnswers : 0;
+    const prizePerAnswer =
+      totalUniqueAnswers > 0 ? game.current_prize / totalUniqueAnswers : 0;
 
     for (const [userId, answers] of Object.entries(userAnswers)) {
       const userPrize = prizePerAnswer * answers.length;
 
       // Update user balance
       const { data: userData, error: fetchError } = await supabase
-        .from('profiles')
-        .select('account_balance')
-        .eq('id', userId)
+        .from("profiles")
+        .select("account_balance")
+        .eq("id", userId)
         .single();
 
       if (fetchError) {
@@ -308,28 +335,32 @@ export async function processEndedGames() {
       const newBalance = (userData.account_balance || 0) + userPrize;
 
       const { error: updateError } = await supabase
-        .from('profiles')
+        .from("profiles")
         .update({ account_balance: newBalance })
-        .eq('id', userId);
+        .eq("id", userId);
 
       if (updateError) {
-        console.error(`Error updating balance for user ${userId}:`, updateError);
+        console.error(
+          `Error updating balance for user ${userId}:`,
+          updateError
+        );
         continue;
       }
 
       // Create winner entries
       for (const answer of answers) {
-        const { error: winnerError } = await supabase
-          .from("winners")
-          .insert({
-            game_id: game.id,
-            user_id: userId,
-            answer_id: answer.id,
-            prize_amount: prizePerAnswer
-          });
+        const { error: winnerError } = await supabase.from("winners").insert({
+          game_id: game.id,
+          user_id: userId,
+          answer_id: answer.id,
+          prize_amount: prizePerAnswer,
+        });
 
         if (winnerError) {
-          console.error(`Error inserting winner for game ${game.id}:`, winnerError);
+          console.error(
+            `Error inserting winner for game ${game.id}:`,
+            winnerError
+          );
         }
       }
     }
@@ -346,42 +377,49 @@ export async function processEndedGames() {
   }
 }
 
-export const handleBonusGameResult = async (userId: string, gameResult: number, bonusGameType: BonusGameType) => {
+export const handleBonusGameResult = async (
+  userId: string,
+  gameResult: number,
+  bonusGameType: BonusGameType
+) => {
   const supabase = createClient();
   let prizeMultiplier = 1;
 
   switch (bonusGameType) {
-    case BonusGameType.COIN_FLIP:
+    case BonusGameEnum.COIN_FLIP:
       prizeMultiplier = gameResult === 1 ? 2 : 1; // Double prize for tails
       break;
-    case BonusGameType.DICE_ROLL:
+    case BonusGameEnum.DICE_ROLL:
       prizeMultiplier = gameResult; // Multiply prize by dice roll
       break;
-    case BonusGameType.MYSTERY_BOX:
+    case BonusGameEnum.MYSTERY_BOX:
       prizeMultiplier = [1, 2, 3][gameResult]; // Different multipliers for each box
+      break;
+    case BonusGameEnum.WHEEL_SPIN:
+      prizeMultiplier = gameResult; // Multiply prize by wheel spin
       break;
   }
 
   // Update user's prize or credits based on the multiplier
   const { data, error } = await supabase
-    .from('profiles')
-    .select('credit_balance')
-    .eq('id', userId)
+    .from("profiles")
+    .select("credit_balance")
+    .eq("id", userId)
     .single();
 
   if (error) {
-    console.error('Error fetching user credits:', error);
+    console.error("Error fetching user credits:", error);
     return;
   }
 
   const newBalance = data.credit_balance * prizeMultiplier;
 
   const { error: updateError } = await supabase
-    .from('profiles')
+    .from("profiles")
     .update({ credit_balance: newBalance })
-    .eq('id', userId);
+    .eq("id", userId);
 
   if (updateError) {
-    console.error('Error updating user credits:', updateError);
+    console.error("Error updating user credits:", updateError);
   }
 };

@@ -281,16 +281,16 @@ export default function Home() {
             className="
               [--aurora:repeating-conic-gradient(from_0deg_at_50%_50%,#4B0082_0deg_10deg,rgba(255,255,255,0.1)_10deg_20deg)]
               [background-image:var(--aurora)]
-              [background-size:200%_200%]
-              [background-position:center_center]
-              absolute inset-0 opacity-100
+              absolute inset-0
               animate-spin-slow
             "
           ></div>
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,rgba(75,0,130,0.3)_50%,rgba(75,0,130,0.7)_100%)]"></div>
-        <div className="relative z-10 h-full flex flex-col items-center justify-start pt-20 px-4 overflow-y-auto">
-          <h1 className="text-[#FFC700] text-5xl font-extrabold mb-6">
+        <div className="relative z-10 h-full flex flex-col items-center justify-center pt-20 px-4 overflow-y-auto">
+          {/*    background: linear-gradient(to bottom, #cfc09f 27%, #ffecb3 40%, #3a2c0f 78%) */}
+          {/* <h1 className="text-9xl text-center font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-[#FFD700] to-[#FFA500]"> */}
+          <h1 className="text-9xl text-center font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-[#cfc09f] to-[#ffecb3]">
             Find a Unique Answer and WIN!
           </h1>
           {currentGame ? (
@@ -362,8 +362,8 @@ export default function Home() {
               />
               <h3 className="font-bold text-xl mb-2">Find a Unique Answer</h3>
               <p>
-                Unleash your creativity and stand a chance to win exclusive prizes
-                by providing a one-of-a-kind answer.
+                Unleash your creativity and stand a chance to win exclusive
+                prizes by providing a one-of-a-kind answer.
               </p>
             </div>
 
@@ -378,8 +378,8 @@ export default function Home() {
               />
               <h3 className="font-bold text-xl mb-2">Instant Prizes</h3>
               <p>
-                Get rewarded instantly with exciting prizes just by participating
-                in our engaging contests.
+                Get rewarded instantly with exciting prizes just by
+                participating in our engaging contests.
               </p>
             </div>
 

@@ -37,6 +37,8 @@ export interface InstantWinPrize {
   probability: number;
   prize_type: string;
   prize_details: any;
+  status?: string; // Add this line if status is needed
+  bonus_game_type?: BonusGameType; // Ensure this is included if needed
 }
 
 export interface GameInstantWinPrize {
