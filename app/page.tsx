@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { Clover } from "lucide-react";
+import CustomSwitch from "@/components/CustomSwitch"; // Import the custom switch
 
 // Dynamically import the DiceRollAnimation component
 const DiceRollAnimation = dynamic(
@@ -289,9 +291,7 @@ export default function Home() {
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,rgba(75,0,130,0.3)_50%,rgba(75,0,130,0.7)_100%)]"></div>
         <div className="relative z-10 h-full flex flex-col items-center justify-center pt-20 px-4 overflow-y-auto">
-          {/*    background: linear-gradient(to bottom, #cfc09f 27%, #ffecb3 40%, #3a2c0f 78%) */}
-          {/* <h1 className="text-9xl text-center font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-[#FFD700] to-[#FFA500]"> */}
-          <h1 className="text-9xl text-center font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-[#cfc09f] to-[#ffecb3]">
+          <h1 className="text-9xl text-center font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-[#cfc09f] to-[#ffecb3] w-2/3">
             Find a Unique Answer and WIN!
           </h1>
           {currentGame ? (
@@ -326,13 +326,10 @@ export default function Home() {
               >
                 Answer!
               </Button>
-              <div className="flex items-center justify-center space-x-2">
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                </label>
-                <span className="text-white">Lucky Dip</span>
-              </div>
+              <CustomSwitch
+                label="Lucky Dip"
+                onChange={(checked) => console.log("Switch is now:", checked)}
+              />
             </div>
           </div>
         </div>
