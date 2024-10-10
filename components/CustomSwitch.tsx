@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CloverSwitch } from "./ui/closerswitch";
+import { CloverSwitch } from "./ui/cloverswitch";
 import { Label } from "./ui/label";
 
 interface CustomSwitchProps {

@@ -42,10 +42,10 @@ const CloverSwitch = React.forwardRef<
     {/* Custom Thumb */}
     <SwitchPrimitives.Thumb
       className={cn(
-        "pointer-events-none block h-8 w-8 rounded-full bg-yellow-500 shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-8 data-[state=unchecked]:-translate-x-1 flex items-center justify-center"
+        "pointer-events-none block h-7 w-7 rounded-full bg-yellow-500 shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-8 data-[state=unchecked]:-translate-x-1 flex items-center justify-center"
       )}
     >
-      <IconClover className="h-7 w-7 text-green-500" />
+      <IconClover className="h-6 w-6 text-green-500" />
     </SwitchPrimitives.Thumb>
   </SwitchPrimitives.Root>
 ));

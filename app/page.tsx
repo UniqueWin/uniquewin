@@ -12,6 +12,8 @@ import { motion } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { Clover } from "lucide-react";
 import CustomSwitch from "@/components/CustomSwitch"; // Import the custom switch
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 // Dynamically import the DiceRollAnimation component
 const DiceRollAnimation = dynamic(
@@ -276,7 +278,17 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen w-full bg-[#4B0082] flex flex-col">
+    <div className="relative min-h-screen w-full bg-[#4B0082] flex flex-col">
+      <div className="absolute top-10 right-20 z-50 select-none">
+        <div
+          className={cn(
+            "inline-flex items-center rounded-full bg-zinc-900 bg-opacity-50 px-2 py-1 text-xs font-medium text-white"
+          )}
+        >
+          <span className="mr-1 h-3 w-3 rounded-full bg-emerald-400 border-white border " />
+          LIVE
+        </div>
+      </div>
       <div className="h-[87vh] relative overflow-hidden">
         <div className="absolute inset-[-100%]">
           <div
@@ -305,12 +317,63 @@ export default function Home() {
               />
             </div>
           ) : (
-            <p className="text-white mb-4">
-              No active games at the moment. Check back soon!
-            </p>
+            <div className="text-white mb-4 bg-black bg-opacity-20 p-4 rounded-[30px] border-2 border-white border-opacity-40">
+              <div className="flex gap-2">
+                {Array.from({ length: 30 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="w-3 h-3 bg-yellow-300 rounded-full blur-[1.5px] animate-pulse duration-1000"
+                  ></div>
+                ))}
+              </div>
+              <div className="py-4 flex flex-col gap-2 items-center">
+                <h2 className="text-3xl font-bold mb-4">
+                  Name the boss name beginning with 'T':
+                </h2>
+                <CustomSwitch
+                  label="Lucky Dip"
+                  onChange={(checked) => console.log("Switch is now:", checked)}
+                />
+                <div className="flex gap-2 w-full justify-center items-center">
+                  {/* <Input
+                    type="text"
+                    placeholder="Type your answer here..."
+                    className="bg-white border-2 border-white border-opacity-40 rounded-lg p-6 text-xl font-bold text-white w-full"
+                  /> */}
+                  <PlaceholdersAndVanishInput
+                    placeholders={placeholders.map(
+                      (placeholder) => placeholder.question
+                    )}
+                    onChange={handleChange}
+                    onSubmit={onSubmit}
+                    // className="w-full bg-whfite border-2 border-white border-opacity-40 rounded-lg p-6 text-xl font-bold text-black"
+                    className="w-96 rounded-lg px-0"
+                  />
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    className="text-white font-semibold text-xl h-12 bg-gradient-to-t from-[#347158] to-[#58e364] from-30% to-100% w-28"
+                  >
+                    Answer!
+                  </Button>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                {Array.from({ length: 30 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="w-3 h-3 bg-yellow-300 rounded-full blur-[1.5px] animate-pulse duration-1000"
+                  ></div>
+                ))}
+              </div>
+            </div>
           )}
+          <p className="text-white">Cost £1 to play £5 lucky dip</p>
+          {/* <p className="text-white mb-4">
+              No active games at the moment. Check back soon!
+            </p> */}
 
-          <div className="flex justify-center mb-4">
+          {/* <div className="flex justify-center mb-4">
             <PlaceholdersAndVanishInput
               placeholders={placeholders.map(
                 (placeholder) => placeholder.question
@@ -331,7 +394,7 @@ export default function Home() {
                 onChange={(checked) => console.log("Switch is now:", checked)}
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
