@@ -303,8 +303,9 @@ export default function Home() {
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,rgba(75,0,130,0.3)_50%,rgba(75,0,130,0.7)_100%)]"></div>
         <div className="relative z-10 h-full flex flex-col items-center justify-center pt-20 px-4 overflow-y-auto">
-          <h1 className="text-9xl text-center font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-[#cfc09f] to-[#ffecb3] w-2/3">
-            Find a Unique Answer and WIN!
+          <h1 className="text-9xl text-center font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-[#c8b58c] to-[#f5d983] w-2/3 leading-[0.75] stroke-black stroke-1">
+            Find a Unique <span className="text-[160px]">Answer</span> and{" "}
+            <span className="text-[160px]">WIN!</span>
           </h1>
           {currentGame ? (
             <div className="flex justify-center mb-4">
@@ -327,7 +328,7 @@ export default function Home() {
                 ))}
               </div>
               <div className="py-4 flex flex-col gap-2 items-center">
-                <h2 className="text-3xl font-bold mb-4">
+                <h2 className="text-3xl font-bold">
                   Name the boss name beginning with 'T':
                 </h2>
                 <CustomSwitch
