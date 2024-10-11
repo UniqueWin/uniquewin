@@ -319,14 +319,14 @@ export default function Home() {
             </div>
           ) : (
             <div className="text-white mb-4 bg-black bg-opacity-20 p-4 rounded-[30px] border-2 border-white border-opacity-40">
-              <div className="flex gap-2">
+              {/* <div className="flex gap-2">
                 {Array.from({ length: 30 }).map((_, index) => (
                   <div
                     key={index}
                     className="w-3 h-3 bg-yellow-300 rounded-full blur-[1.5px] animate-pulse duration-1000"
                   ></div>
                 ))}
-              </div>
+              </div> */}
               <div className="py-4 flex flex-col gap-2 items-center">
                 <h2 className="text-3xl font-bold">
                   Name the boss name beginning with 'T':
@@ -359,14 +359,14 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
-              <div className="flex gap-2">
+              {/* <div className="flex gap-2">
                 {Array.from({ length: 30 }).map((_, index) => (
                   <div
                     key={index}
                     className="w-3 h-3 bg-yellow-300 rounded-full blur-[1.5px] animate-pulse duration-1000"
                   ></div>
                 ))}
-              </div>
+              </div> */}
             </div>
           )}
           <p className="text-white">Cost £1 to play £5 lucky dip</p>
