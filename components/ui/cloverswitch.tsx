@@ -39,7 +39,7 @@ const CloverSwitch = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SwitchPrimitives.Root
     className={cn(
-      "peer inline-flex h-4 w-16 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-green-400 data-[state=unchecked]:bg-purple-400 data-[state=unchecked]:bg-opacity-40 data-[state=checked]:bg-opacity-40",
+      "peer inline-flex h-4 w-16 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-green-400 data-[state=unchecked]:bg-purple-400 data-[state=unchecked]:bg-opacity-40 data-[state=checked]:bg-opacity-40 group",
       className
     )}
     {...props}
@@ -48,11 +48,11 @@ const CloverSwitch = React.forwardRef<
     {/* Custom Thumb */}
     <SwitchPrimitives.Thumb
       className={cn(
-        "pointer-events-none block h-7 w-7 rounded-full bg-yellow-500 shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-9 data-[state=unchecked]:-translate-x-1 flex items-center justify-center duration-300"
+        "pointer-events-none block h-7 w-7 rounded-full bg-yellow-500 shadow-lg ring-0 data-[state=checked]:translate-x-9 data-[state=unchecked]:-translate-x-1 flex items-center justify-center duration-300 group-hover:scale-110 transition-all"
       )}
     >
       <IconClover
-        className={`h-6 w-6 text-green-500 duration-300 transition-transform ${
+        className={`h-6 w-6 text-green-500 duration-300 ${
           props.checked ? "rotate-90" : "rotate-0"
         } `}
       />
