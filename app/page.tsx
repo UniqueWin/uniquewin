@@ -318,7 +318,7 @@ export default function Home() {
               />
             </div>
           ) : (
-            <div className="text-white mb-4 bg-black bg-opacity-20 p-4 rounded-[30px] border-2 border-white border-opacity-40">
+            <div className="text-white mb-4 bg-black bg-opacity-20 p-4 px-10 rounded-[30px] border2 border-white border-opacity-40">
               {/* <div className="flex gap-2">
                 {Array.from({ length: 30 }).map((_, index) => (
                   <div
