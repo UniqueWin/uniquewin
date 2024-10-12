@@ -12,6 +12,7 @@ const DiceRoll = () => {
   const canvasRef = useRef(null);
   const rollBtnRef = useRef(null);
   const [score, setScore] = useState("");
+  const [isRollComplete, setIsRollComplete] = useState(false);
 
   useEffect(() => {
     document.documentElement.className = "js";
@@ -27,6 +28,15 @@ const DiceRoll = () => {
       notchDepth: 0.1,
     };
     const diceArray = [];
+    let animationState = {
+      isAnimating: false,
+      startPosition: new THREE.Vector3(),
+      targetPosition: new THREE.Vector3(),
+      startRotation: new THREE.Euler(),
+      targetRotation: new THREE.Euler(),
+      animationProgress: 0,
+      animationDuration: 1.5,
+    };
 
     initPhysics();
     initScene();
@@ -52,20 +62,27 @@ const DiceRoll = () => {
         0.1,
         300
       );
-      camera.position.set(0, 0, 4).multiplyScalar(7); // Adjusted Y position to 2 for a better view
+      camera.position.set(0, 0, 4).multiplyScalar(7);
+      
+      // Store the initial camera position and rotation
+      animationState.startPosition.copy(camera.position);
+      animationState.startRotation.copy(camera.rotation);
 
       updateSceneSize();
 
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      // Increase ambient light intensity
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Increased from 0.5 to 0.8
       scene.add(ambientLight);
-      const topLight = new THREE.PointLight(0xffffff, 0.5);
-      topLight.position.set(10, 15, 0);
-      topLight.castShadow = true;
-      topLight.shadow.mapSize.width = 2048;
-      topLight.shadow.mapSize.height = 2048;
-      topLight.shadow.camera.near = 5;
-      topLight.shadow.camera.far = 400;
-      scene.add(topLight);
+
+      // Adjust directional light
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8); // Changed from PointLight to DirectionalLight
+      directionalLight.position.set(5, 10, 7); // Adjusted position
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 2048;
+      directionalLight.shadow.mapSize.height = 2048;
+      directionalLight.shadow.camera.near = 5;
+      directionalLight.shadow.camera.far = 400;
+      scene.add(directionalLight);
 
       createFloor();
       diceMesh = createDiceMesh();
@@ -112,7 +129,9 @@ const DiceRoll = () => {
 
     function createDiceMesh() {
       const boxMaterialOuter = new THREE.MeshStandardMaterial({
-        color: 0xeeeeee,
+        color: 0xffffff,
+        roughness: 0.1, // Reduced roughness for a smoother look
+        metalness: 0.1, // Slight metalness for better light interaction
       });
       const boxMaterialInner = new THREE.MeshStandardMaterial({
         color: 0x000000,
@@ -326,14 +345,17 @@ const DiceRoll = () => {
         prevScore === "" ? score : prevScore + "+" + score
       );
       
-      // Call the function to pan the camera after the roll
-      panCameraAboveDice();
+      // Trigger camera animation after the last dice has settled
+      if (diceArray.every(dice => !dice.body.allowSleep)) {
+        animateCameraToTopView();
+      }
     }
 
-    function panCameraAboveDice() {
-      // Set the camera position directly above the dice
-      camera.position.set(0, 5, 0); // Adjust Y value as needed for height
-      camera.lookAt(0, 0, 0); // Look directly down at the center of the dice
+    function animateCameraToTopView() {
+      animationState.isAnimating = true;
+      animationState.targetPosition.set(0, 10, 0);
+      animationState.targetRotation.set(-Math.PI / 2, 0, 0);
+      animationState.animationProgress = 0;
     }
 
     function render() {
@@ -342,6 +364,36 @@ const DiceRoll = () => {
       for (const dice of diceArray) {
         dice.mesh.position.copy(dice.body.position);
         dice.mesh.quaternion.copy(dice.body.quaternion);
+      }
+
+      if (animationState.isAnimating) {
+        animationState.animationProgress += 1 / 60 / animationState.animationDuration;
+        if (animationState.animationProgress >= 1) {
+          animationState.animationProgress = 1;
+          animationState.isAnimating = false;
+          setIsRollComplete(true);
+        }
+
+        camera.position.lerpVectors(
+          animationState.startPosition,
+          animationState.targetPosition,
+          animationState.animationProgress
+        );
+        camera.rotation.x = THREE.MathUtils.lerp(
+          animationState.startRotation.x,
+          animationState.targetRotation.x,
+          animationState.animationProgress
+        );
+        camera.rotation.y = THREE.MathUtils.lerp(
+          animationState.startRotation.y,
+          animationState.targetRotation.y,
+          animationState.animationProgress
+        );
+        camera.rotation.z = THREE.MathUtils.lerp(
+          animationState.startRotation.z,
+          animationState.targetRotation.z,
+          animationState.animationProgress
+        );
       }
 
       renderer.render(scene, camera);
@@ -357,7 +409,13 @@ const DiceRoll = () => {
     }
 
     function throwDice() {
-      setScore(""); // Reset score
+      setScore("");
+      setIsRollComplete(false);
+
+      // Reset camera position and rotation
+      camera.position.copy(animationState.startPosition);
+      camera.rotation.copy(animationState.startRotation);
+      animationState.isAnimating = false;
 
       diceArray.forEach((d, dIdx) => {
         d.body.velocity.setZero();
