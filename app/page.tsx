@@ -482,7 +482,7 @@ export default function Home() {
         </div>
 
         {/* Past Games Section */}
-        <div className="text-center px-4 text-white bg-[#4B0082] py-20">
+        <div className="text-center px-4 text-white bg-[#4B0082] py-20 mx-10 rounded-3xl">
           <h2 className="text-3xl font-bold mb-4">Past Games</h2>
           <ul className="space-y-2">
             {pastGames.map((game) => (
