@@ -28,6 +28,8 @@ const supabase = createClient();
 export default function Home() {
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
   const [pastGames, setPastGames] = useState<Game[]>([]);
+  const [flashingIndex, setFlashingIndex] = useState(0); // New state for flashing index
+  const [reverseFlashingIndex, setReverseFlashingIndex] = useState(29); // New state for reverse flashing index
   const placeholders = [
     {
       question: "Name a boys name beginning with 'T':",
@@ -190,6 +192,15 @@ export default function Home() {
     fetchGames();
   }, [supabase]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFlashingIndex((prevIndex) => (prevIndex + 1) % 30); // Update index in a loop
+      setReverseFlashingIndex((prevIndex) => (prevIndex - 1 + 30) % 30); // Update reverse index in a loop
+    }, 500); // Adjust the timing as needed
+
+    return () => clearInterval(interval);
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.value);
   };
@@ -319,14 +330,18 @@ export default function Home() {
             </div>
           ) : (
             <div className="text-white mb-4 bg-black bg-opacity-20 p-4 px-10 rounded-[30px] border2 border-white border-opacity-40">
-              {/* <div className="flex gap-2">
+              <div className="flex gap-2">
                 {Array.from({ length: 30 }).map((_, index) => (
                   <div
                     key={index}
-                    className="w-3 h-3 bg-yellow-300 rounded-full blur-[1.5px] animate-pulse duration-1000"
+                    className={`w-3 h-3 rounded-full blur-[1.5px] duration-1000 ${
+                      index === flashingIndex
+                        ? "bg-yellow-300 animate-pulse"
+                        : "bg-yellow-200 bg-opacity-50"
+                    }`}
                   ></div>
                 ))}
-              </div> */}
+              </div>
               <div className="py-4 flex flex-col gap-2 items-center">
                 <h2 className="text-3xl font-bold">
                   Name the boss name beginning with 'T':
@@ -359,14 +374,18 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
-              {/* <div className="flex gap-2">
+              <div className="flex gap-2">
                 {Array.from({ length: 30 }).map((_, index) => (
                   <div
                     key={index}
-                    className="w-3 h-3 bg-yellow-300 rounded-full blur-[1.5px] animate-pulse duration-1000"
+                    className={`w-3 h-3 rounded-full blur-[1.5px] duration-1000 ${
+                      index === reverseFlashingIndex
+                        ? "bg-yellow-300 animate-pulse"
+                        : "bg-yellow-200 bg-opacity-50"
+                    }`}
                   ></div>
                 ))}
-              </div> */}
+              </div>
             </div>
           )}
           <p className="text-white">Cost £1 to play £5 lucky dip</p>
