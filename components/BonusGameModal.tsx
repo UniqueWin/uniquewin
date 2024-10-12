@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import CoinFlipAnimation from './CoinFlipAnimation';
+import CoinFlipAnimation from "./CoinFlipAnimation";
 // import DiceRollAnimation from '../DiceRollAnimation';
 import { BonusGameType as GameBonusGameType } from "@/app/games/[gameId]/types"; // Import from types.ts
 
 enum BonusGameType {
-  COIN_FLIP = 'COIN_FLIP',
-  DICE_ROLL = 'DICE_ROLL',
-  MYSTERY_BOX = 'MYSTERY_BOX',
-  WHEEL_SPIN = 'WHEEL_SPIN'
+  COIN_FLIP = "COIN_FLIP",
+  DICE_ROLL = "DICE_ROLL",
+  MYSTERY_BOX = "MYSTERY_BOX",
+  WHEEL_SPIN = "WHEEL_SPIN",
 }
 
 interface BonusGameModalProps {
@@ -20,11 +25,16 @@ interface BonusGameModalProps {
   onGameComplete: (result: number) => void;
 }
 
-export function BonusGameModal({ isOpen, onClose, gameType, onGameComplete }: BonusGameModalProps) {
+export function BonusGameModal({
+  isOpen,
+  onClose,
+  gameType,
+  onGameComplete,
+}: BonusGameModalProps) {
   const [result, setResult] = useState<number | null>(null);
 
-  const handleCoinFlipComplete = (flipResult: 'heads' | 'tails') => {
-    const gameResult = flipResult === 'heads' ? 0 : 1;
+  const handleCoinFlipComplete = (flipResult: "heads" | "tails") => {
+    const gameResult = flipResult === "heads" ? 0 : 1;
     setResult(gameResult);
     onGameComplete(gameResult);
   };
@@ -62,9 +72,9 @@ export function BonusGameModal({ isOpen, onClose, gameType, onGameComplete }: Bo
         <div className="flex flex-col items-center">
           {gameType === BonusGameType.COIN_FLIP ? (
             <CoinFlipAnimation onFlipComplete={handleCoinFlipComplete} />
-          // ) : gameType === BonusGameType.DICE_ROLL ? (
+          ) : // ) : gameType === BonusGameType.DICE_ROLL ? (
           //   <DiceRollAnimation onRollComplete={handleDiceRollComplete} />
-          ) : result === null ? (
+          result === null ? (
             <Button onClick={playGame}>Play {gameType}</Button>
           ) : (
             <motion.div
@@ -72,9 +82,7 @@ export function BonusGameModal({ isOpen, onClose, gameType, onGameComplete }: Bo
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
             >
-              <p className="text-2xl font-bold">
-                Result: {result}
-              </p>
+              <p className="text-2xl font-bold">Result: {result}</p>
             </motion.div>
           )}
         </div>
