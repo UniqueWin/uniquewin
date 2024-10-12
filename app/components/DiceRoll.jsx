@@ -1,16 +1,22 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as CANNON from "cannon-es"; // Local import
 import * as THREE from "three"; // Local import
-import { BufferGeometryUtils } from "three/examples/jsm/utils/BufferGeometryUtils.js"; // Corrected import path
+import {
+  mergeGeometries,
+  mergeVertices,
+} from "three/examples/jsm/utils/BufferGeometryUtils.js"; // Correct import path
 
 const DiceRoll = () => {
+  const canvasRef = useRef(null);
+  const rollBtnRef = useRef(null);
+  const [score, setScore] = useState("");
+
   useEffect(() => {
     document.documentElement.className = "js";
-    const canvasEl = document.querySelector("#canvas");
-    const scoreResult = document.querySelector("#score-result");
-    const rollBtn = document.querySelector("#roll-btn");
+    const canvasEl = canvasRef.current;
+    const rollBtn = rollBtnRef.current;
 
     let renderer, scene, camera, diceMesh, physicsWorld;
     const params = {
@@ -46,7 +52,7 @@ const DiceRoll = () => {
         0.1,
         300
       );
-      camera.position.set(0, 0.5, 4).multiplyScalar(7);
+      camera.position.set(0, 0, 4).multiplyScalar(7); // Adjusted Y position to 2 for a better view
 
       updateSceneSize();
 
@@ -126,6 +132,7 @@ const DiceRoll = () => {
 
     function createDice() {
       const mesh = diceMesh.clone();
+      mesh.scale.set(2, 2, 2); // Scale the dice mesh to make it larger
       scene.add(mesh);
 
       const body = new CANNON.Body({
@@ -235,10 +242,9 @@ const DiceRoll = () => {
         positionAttr.setXYZ(i, position.x, position.y, position.z);
       }
 
-
       boxGeometry.deleteAttribute("normal");
       boxGeometry.deleteAttribute("uv");
-      boxGeometry = BufferGeometryUtils.mergeVertices(boxGeometry);
+      boxGeometry = mergeVertices(boxGeometry);
 
       boxGeometry.computeVertexNormals();
 
@@ -251,7 +257,8 @@ const DiceRoll = () => {
         1 - 2 * params.edgeRadius
       );
       const offset = 0.48;
-      return BufferGeometryUtils.mergeBufferGeometries(
+      return mergeGeometries(
+        // Updated function name
         [
           baseGeometry.clone().translate(0, 0, offset),
           baseGeometry.clone().translate(0, 0, -offset),
@@ -315,11 +322,18 @@ const DiceRoll = () => {
     }
 
     function showRollResults(score) {
-      if (scoreResult.innerHTML === "") {
-        scoreResult.innerHTML += score;
-      } else {
-        scoreResult.innerHTML += "+" + score;
-      }
+      setScore((prevScore) =>
+        prevScore === "" ? score : prevScore + "+" + score
+      );
+      
+      // Call the function to pan the camera after the roll
+      panCameraAboveDice();
+    }
+
+    function panCameraAboveDice() {
+      // Set the camera position directly above the dice
+      camera.position.set(0, 5, 0); // Adjust Y value as needed for height
+      camera.lookAt(0, 0, 0); // Look directly down at the center of the dice
     }
 
     function render() {
@@ -335,13 +349,15 @@ const DiceRoll = () => {
     }
 
     function updateSceneSize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
+      const width = canvasEl.clientWidth; // Get the width of the canvas
+      const height = 400; // Set a fixed height for the canvas
+      camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setSize(width, height);
     }
 
     function throwDice() {
-      scoreResult.innerHTML = "";
+      setScore(""); // Reset score
 
       diceArray.forEach((d, dIdx) => {
         d.body.velocity.setZero();
@@ -403,18 +419,23 @@ const DiceRoll = () => {
           </a>
         </div>
         <div className="content">
-          <canvas id="canvas"></canvas>
+          <canvas
+            ref={canvasRef}
+            id="canvas"
+            style={{ width: "auto", height: "500px", margin: "0 auto" }}
+          ></canvas>
           <div className="ui-controls">
             <div className="score">
-              Score: <span id="score-result"></span>
+              Score: <span id="score-result">{score}</span>
             </div>
-            <button id="roll-btn">Throw the dice</button>
+            <button ref={rollBtnRef} id="roll-btn">
+              Throw the dice
+            </button>
           </div>
         </div>
       </main>
     </>
   );
 };
-
 
 export default DiceRoll;
