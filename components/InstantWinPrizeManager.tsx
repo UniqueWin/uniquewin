@@ -33,7 +33,7 @@ interface InstantWinPrize {
   winner_id: string | null;
   prize_type: "CASH" | "CREDITS" | "LUCKY_DIP" | "HANGMAN";
   prize_amount: number | null;
-  bonus_game_type: BonusGameType | null;
+  // bonus_game_type: BonusGameType | null;
 }
 
 enum BonusGameType {
@@ -50,7 +50,7 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
     status: "LOCKED",
     prize_type: "CASH",
     prize_amount: 0,
-    bonus_game_type: null,
+    // bonus_game_type: null,
   });
   const [quantity, setQuantity] = useState(1);
   const [validAnswers, setValidAnswers] = useState<string[]>([]);
@@ -108,7 +108,7 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
       status: "LOCKED",
       prize_type: newPrize.prize_type,
       prize_amount: newPrize.prize_amount,
-      bonus_game_type: bonusGameType,
+      // bonus_game_type: bonusGameType,
     });
 
     const { error } = await supabase.from("answer_instant_wins").insert(prizesToAdd);
@@ -125,7 +125,7 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
       status: "LOCKED",
       prize_type: "CASH",
       prize_amount: 0,
-      bonus_game_type: null,
+      // bonus_game_type: null,
     });
     setQuantity(1);
   };
@@ -155,7 +155,7 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
         answer: newPrize.answer,
         prize_type: newPrize.prize_type,
         prize_amount: newPrize.prize_amount,
-        bonus_game_type: bonusGameType,
+        // bonus_game_type: bonusGameType,
       })
       .eq("id", editingId);
 
@@ -171,7 +171,7 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
       status: "LOCKED",
       prize_type: "CASH",
       prize_amount: 0,
-      bonus_game_type: null,
+      // bonus_game_type: null,
     });
     setEditingId(null);
   };
@@ -259,7 +259,7 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
               className="text-black bg-white"
             />
           </div>
-          <div>
+          {/* <div>
             <Label htmlFor="bonus-game">Bonus Game</Label>
             <Select
               value={bonusGameType || ''}
@@ -274,7 +274,7 @@ export default function InstantWinPrizeManager({ gameId }: { gameId: string }) {
                 <SelectItem value={BonusGameType.MYSTERY_BOX}>Mystery Box</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
           <div>
             <Label htmlFor="quantity">Quantity</Label>
             <Input
