@@ -14,14 +14,8 @@ import { Clover } from "lucide-react";
 import CustomSwitch from "@/components/CustomSwitch"; // Import the custom switch
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-
-// Dynamically import the DiceRollAnimation component
-const DiceRollAnimation = dynamic(
-  () => import("@/components/DiceRollAnimation"),
-  {
-    ssr: false,
-  }
-);
+// import DiceRollAnimation from "./components/DiceRollAnimation"; // Import the animation component
+import DiceRoll from "./components/DiceRoll";
 
 const supabase = createClient();
 
@@ -30,6 +24,7 @@ export default function Home() {
   const [pastGames, setPastGames] = useState<Game[]>([]);
   const [flashingIndex, setFlashingIndex] = useState(0); // New state for flashing index
   const [reverseFlashingIndex, setReverseFlashingIndex] = useState(29); // New state for reverse flashing index
+  const [rollResult, setRollResult] = useState<number | null>(null);
   const placeholders = [
     {
       question: "Name a boys name beginning with 'T':",
@@ -288,6 +283,10 @@ export default function Home() {
     return () => clearInterval(intervalId);
   }, []);
 
+  const handleRollComplete = (result: number) => {
+    setRollResult(result); // Store the result of the roll
+  };
+
   return (
     <div className="relative min-h-screen w-full bg-[#4B0082] flex flex-col">
       <div className="absolute top-10 right-20 z-50 select-none">
@@ -501,13 +500,11 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-white mb-6">
             Bonus Game Preview: Dice Roll
           </h2>
-          <div className="flex justify-center">
-            <DiceRollAnimation
-              onRollComplete={(result) =>
-                console.log(`Dice roll result: ${result}`)
-              }
-            />
-          </div>
+          <DiceRoll />
+          {/* <DiceRollAnimation onRollComplete={handleRollComplete} /> */}
+          {rollResult !== null && (
+            <p className="text-white">You rolled a {rollResult}!</p>
+          )}
         </div>
       </div>
     </div>

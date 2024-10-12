@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import CoinFlipAnimation from './CoinFlipAnimation';
-import DiceRollAnimation from './DiceRollAnimation';
+import DiceRollAnimation from '../DiceRollAnimation';
 import { BonusGameType as GameBonusGameType } from "@/app/games/[gameId]/types"; // Import from types.ts
 
 enum BonusGameType {
