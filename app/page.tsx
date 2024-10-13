@@ -10,12 +10,13 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
-import { Clover } from "lucide-react";
+import { ChevronRight, Clover, Link } from "lucide-react";
 import CustomSwitch from "@/components/CustomSwitch"; // Import the custom switch
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 // import DiceRollAnimation from "./components/DiceRollAnimation"; // Import the animation component
 import DiceRoll from "./components/DiceRoll";
+import { BentoGridComponent } from "@/components/BentoGrid";
 
 const supabase = createClient();
 
@@ -313,9 +314,17 @@ export default function Home() {
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,rgba(75,0,130,0.3)_50%,rgba(75,0,130,0.7)_100%)]"></div>
         <div className="relative z-10 h-full flex flex-col items-center justify-start md:justify-center pt-20 px-4 overflow-y-auto">
-          <h1 className="text-7xl md:text-9xl text-center font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-[#c8b58c] to-[#f5d983] w-full md:w-2/3 leading-[0.75] stroke-black stroke-1">
-            Find a Unique <span className="text-7xl md:text-[160px]">Answer</span> and{" "}
-            <span className="text-7xl md:text-[160px]">WIN!</span>
+          <h1 className="text-7xl sm:text-5xl md:text-9xl text-center font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-[#c8b58c] to-[#f5d983] w-full md:w-2/3 leading-[0.8] stroke-black stroke-1">
+            <div className="leading-[0.8]">
+              Find a Unique{" "}
+              <span className="text-7xl sm:text-6xl md:text-[160px] leading-[0.8]">
+                Answer
+              </span>{" "}
+              and{" "}
+              <span className="text-7xl sm:text-6xl md:text-[160px] leading-[0.8]">
+                WIN!
+              </span>
+            </div>
           </h1>
           {currentGame ? (
             <div className="flex justify-center mb-4">
@@ -421,72 +430,124 @@ export default function Home() {
       <div className="flex-grow bg-white">
         {/* 3 Ways to Win Section */}
         <div className="text-center px-4 text-black py-20">
-          <small className="text-xs">Discover</small>
-          <h2 className="text-3xl font-bold mb-4 text-pink-800 py-5">
-            3 Ways to Win Big Prizes
+          <small className="text-xs text-purple-800 font-semibold">
+            Discover
+          </small>
+          <h2 className="text-3xl font-bold mb-4 text-purple-800 py-5">
+            3 Ways to Win{" "}
+            <span className="p-1 relative">
+              <div className="rotate-[-5deg] absolute inset-0 w-full h-full bg-yellow-400"></div>
+              <span className="relative z-10 text-white">Big Prizes</span>
+            </span>
           </h2>
-          <p className="mb-10 max-w-lgo mx-auto">
+          <p className="mb-10 max-w-lg mx-auto">
             Explore our exciting opportunities to win unique prizes, instant
             rewards, and participate in live raffles.
           </p>
 
           <div className="flex flex-col md:flex-row justify-center items-center text-center gap-8">
             {/* Card 1 */}
-            <div className="w-72 p-6 rounded-lg bg-white text-black">
+            <div className="w-72 rounded-xl bg-white text-black shadow-lg">
               <Image
                 src="/UniqueAnswer.webp"
                 alt="Unique Answer"
                 width={500}
                 height={500}
-                className="mx-auto mb-4 rounded-xl"
+                className="mx-auto mb-4 rounded-t-xl"
               />
-              <h3 className="font-bold text-xl mb-2">Find a Unique Answer</h3>
-              <p>
-                Unleash your creativity and stand a chance to win exclusive
-                prizes by providing a one-of-a-kind answer.
-              </p>
+              <div className="p-4">
+                <h3 className="font-bold text-xl mb-2">Find a Unique Answer</h3>
+                <p>
+                  Unleash your creativity and stand a chance to win exclusive
+                  prizes by providing a one-of-a-kind answer.
+                </p>
+              </div>
             </div>
 
             {/* Card 2 */}
-            <div className="w-72 p-6 rounded-lg bg-white text-black">
+            <div className="w-72 rounded-xl bg-white text-black shadow-lg">
               <Image
                 src="/InstantPrizes.webp"
                 alt="Instant Prizes"
                 width={500}
                 height={500}
-                className="mb-4 rounded-xl"
+                className="mb-4 rounded-t-xl"
               />
-              <h3 className="font-bold text-xl mb-2">Instant Prizes</h3>
-              <p>
-                Get rewarded instantly with exciting prizes just by
-                participating in our engaging contests.
-              </p>
+              <div className="p-4">
+                <h3 className="font-bold text-xl mb-2">Instant Prizes</h3>
+                <p>
+                  Get rewarded instantly with exciting prizes just by
+                  participating in our engaging contests.
+                </p>
+              </div>
             </div>
 
             {/* Card 3 */}
-            <div className="w-72 p-6 rounded-lg bg-white text-black">
+            <div className="w-72 rounded-xl bg-white text-black shadow-lg">
               <Image
                 src="/LiveRaffle.webp"
                 alt="Live Raffle"
                 width={500}
                 height={500}
-                className="mb-4 rounded-xl"
+                className="mb-4 rounded-t-xl"
               />
-              <h3 className="font-bold text-xl mb-2">Live Raffle</h3>
-              <p>
-                Experience the thrill of our live raffles and stand a chance to
-                win big prizes in real-time and live on Facebook.
-              </p>
+              <div className="p-4">
+                <h3 className="font-bold text-xl mb-2">Live Raffle</h3>
+                <p>
+                  Experience the thrill of our live raffles and stand a chance
+                  to win big prizes in real-time and live on Facebook.
+                </p>
+              </div>
             </div>
           </div>
         </div>
+
+        <section className=" container py-20 flex h-[400px] items-start">
+          <div className="w-full">
+            <h3 className="w-full h-full text-3xl font-bold text-purple-800 leading-10">
+              About Our Games, <br /> Learn
+              <span className="p-1 m-1 relative">
+                <div className="rotate-[-3deg] absolute inset-0 w-full h-full bg-yellow-400"></div>
+                <span className="relative z-10 text-white">How To Play</span>
+              </span>
+            </h3>
+          </div>
+
+          <div className="flex flex-col justify-center  w-full">
+            <p className="max-w-xl text-black">
+              Our games are designed to be fun and engaging, with a focus on
+              creativity and originality. Whether you're a seasoned player or
+              new to the game, there's something for everyone.
+            </p>
+            <div className="flex gap-2 my-2 w-full">
+              <a href="/games">
+                <Button className="text-white bg-gradient-to-t from-[#347158] to-[#58e364] from-30% to-100% hover:from-[#214838] hover:to-[#41a84a] rounded-xl">
+                  Get started
+                </Button>
+              </a>
+              <Button
+                variant="ghost"
+                className="text-purple-800 hover:bg-transparent hover:underline hover:text-purple-900"
+              >
+                <a href="/faq" className="flex items-center">
+                  FAQ <ChevronRight className="ml-2" />
+                </a>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        <BentoGridComponent />
 
         {/* Past Games Section */}
         <div className="text-center px-4 text-white bg-[#4B0082] py-20 mx-10 rounded-3xl">
           <h2 className="text-3xl font-bold mb-4">Past Games</h2>
           <ul className="space-y-2">
             {pastGames.map((game) => (
-              <li key={game.id} className="bg-[#C0163D] p-4 rounded-lg max-w-xl mx-auto">
+              <li
+                key={game.id}
+                className="bg-[#C0163D] p-4 rounded-lg max-w-xl mx-auto"
+              >
                 <h3 className="font-bold">{game.question}</h3>
                 <p>Jackpot: £{game.current_prize ?? game.jackpot}</p>
                 <p>Ended: {new Date(game.end_time).toLocaleString()}</p>
