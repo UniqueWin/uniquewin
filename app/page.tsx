@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
-import { ChevronRight, Clover, Link } from "lucide-react";
+import { ChevronRight, Clover, Link, Star } from "lucide-react";
 import CustomSwitch from "@/components/CustomSwitch"; // Import the custom switch
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -539,7 +539,7 @@ export default function Home() {
 
         <BentoGridComponent />
 
-        <div className="flex gap-10 p-4 text-black container w-full justify-between items-center my-20">
+        <section className="flex gap-10 p-4 text-black container w-full justify-between items-center my-20">
           <div className="w-full h-full flex flex-col gap-4 max-w-xl justify-center items-center">
             <Image
               src="/UniqueAnswer.webp"
@@ -556,7 +556,7 @@ export default function Home() {
               reprehenderit.
             </p>
           </div>
-          <div className="w-full h-fit flex flex-col gap-4 max-w-xl justify-bewteen items-between">
+          <div className="w-full h-full flex flex-col gap-4 max-w-xl justify-center items-center">
             <div>
               <h3 className="text-3xl font-bold">Instant Prizes</h3>
             </div>
@@ -570,8 +570,77 @@ export default function Home() {
               />
             </div>
           </div>
-        </div>
+        </section>
 
+        {/* //banner */}
+        <section className="bg-red-100 p-6 my-10">
+          <div className="container flex justify-center items-center gap-12">
+            <h3 className="text-2xl font-bold w-1/3 text-purple-800">
+              If there is no unique answer found the prize is rolled over to the{" "}
+              <span className="bg-red-400 px-1 text-white">next game.</span>
+            </h3>
+            <div className="flex gap-4">
+              <div className="w-16 h-16 relative">
+                <Image
+                  src="/two-red-dice-clipart-lg.png"
+                  alt="Dice"
+                  layout="fill"
+                  objectFit="contain"
+                />
+              </div>
+              <div className="w-24 h-24 relative -ml-4">
+                <Image
+                  src="/two-red-dice-clipart-lg.png"
+                  alt="Dice"
+                  layout="fill"
+                  objectFit="contain"
+                  className="-mr-6 rotate-45"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* reviews horizontal scroll section trustpilot with title and subtitle */}
+        <section className="bg-white p-10 my-10 text-black">
+          <div className="container flex flex-col gap-4 mb-6">
+            <h3 className="text-3xl font-bold">Reviews</h3>
+            <p className="text-lg">
+              Read what our players have to say about us.
+            </p>
+          </div>
+          <div className="relative w-full overflow-hidden">
+            <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory">
+              {Array.from({ length: 7 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="w-1/4 flex-shrink-0 snap-start shadow-[0_0_5px_rgba(0,_0,_0,_0.1)] rounded-lg"
+                >
+                  <div className="bg-[#00b67a bg-white text-black p-4 rounded-lg h-full flex flex-col gap-2">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className="w-4 h-4 fill-white bg-green-500 p-1 outline-none stroke-white"
+                          />
+                        ))}
+                      </div>
+                      <div className="text-xs">7 days ago</div>
+                    </div>
+                    <div className=" font-bold">Best on the market</div>
+                    <p className="text-sm  flex-grow">
+                      "I love this product because it is the best on the
+                      market."
+                    </p>
+                    <hr className="w-20 my-1" />
+                    <span className="font-bold text-sm">Trustpilot</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
         {/* Past Games Section */}
         <div className="text-center px-4 text-white bg-[#4B0082] py-20 mx-10 rounded-3xl">
           <h2 className="text-3xl font-bold mb-4">Past Games</h2>
