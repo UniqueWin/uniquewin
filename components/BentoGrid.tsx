@@ -10,7 +10,7 @@ import NumberTicker from "@/components/ui/number-ticker";
 
 export function BentoGridComponent() {
   return (
-    <BentoGrid className="max-w-7xl mx-auto my-10 grid-cols-3 grid-rows-2 gap-4 h-[400px]">
+    <BentoGrid className="max-w-7xl mx-auto my-10 grid-cols-3 grid-rows-2 gap-8 h-[400px]">
       {items.map((item, i) => (
         <BentoGridItem
           key={i}
@@ -26,7 +26,7 @@ export function BentoGridComponent() {
 }
 
 const PrizeItem = () => (
-  <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-lg bg-pink-500 bg-gradient-to-b from-pink-500 to-pink-600">
+  <div className="flex flex-col items-center justify-center h-full text-white p-4 bg-pink-500 bg-gradient-to-b from-pink-500 to-pink-600 rounded-2xl">
     <IconTrophy className="h-24 w-24 mb-2 text-yellow-400" />
     <h2 className="text-3xl font-bold">
       £<NumberTicker value={10000} className="text-white" delay={0} />
@@ -36,10 +36,7 @@ const PrizeItem = () => (
 );
 
 const WinnerItem = () => (
-  <div
-    id="winneritem"
-    className="flex items-center justify-between text-white rounded-lg relative bg-teal-300 bg-gradient-to-b from-teal-300 to-teal-500 h-full"
-  >
+  <div className="flex items-center justify-between text-white rounded-2xl relative bg-teal-300 bg-gradient-to-b from-teal-300 to-teal-500 h-full w-full">
     <Image
       src="/path/to/avatar.png"
       alt="Winner"
@@ -62,7 +59,7 @@ const WinnerItem = () => (
 );
 
 const WinnersCountItem = () => (
-  <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-lg bg-orange-400 bg-gradient-to-b from-orange-400 to-orange-600 h-2/3 w-full">
+  <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-2xl bg-orange-400 bg-gradient-to-b from-orange-400 to-orange-600 h-2/3 w-full">
     <h2 className="text-4xl font-bold">
       <NumberTicker value={875} className="text-white" delay={0} />
     </h2>
@@ -71,7 +68,7 @@ const WinnersCountItem = () => (
 );
 
 const PlayersCountItem = () => (
-  <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-lg bg-purple-500 bg-gradient-to-b from-purple-500 to-purple-700">
+  <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-2xl bg-purple-500 bg-gradient-to-b from-purple-500 to-purple-700 h-2/3 w-full">
     <h2 className="text-4xl font-bold">
       <NumberTicker value={1200} className="text-white" delay={0} />
     </h2>
@@ -80,7 +77,7 @@ const PlayersCountItem = () => (
 );
 
 const HowToPlayItem = () => (
-  <div className="flex items-center justify-between p-4 rounded-lg relative h-full w-full bg-gradient-to-b from-[#f5c299] to-[#f59999]">
+  <div className="flex items-center justify-between p-4 rounded-2xl relative h-full w-full bg-gradient-to-b from-[#f5c299] to-[#f59999]">
     <div className="flex items-center">
       <Image
         src="/path/to/avatar1.png"
@@ -116,6 +113,13 @@ const WinnersAndHowToPlayItem = () => (
   </div>
 );
 
+const WinnerAndPlayersCountItem = () => (
+  <div className="flex flex-col items-center justify-center h-full w-full gap-4">
+    <WinnerItem />
+    <PlayersCountItem />
+  </div>
+);
+
 const items = [
   {
     title: "Prize Pool",
@@ -125,10 +129,10 @@ const items = [
     icon: null,
   },
   {
-    title: "Next Winner",
+    title: "Winners & Players Count",
     description: null,
-    header: <WinnerItem />,
-    className: "col-span-1 row-span-1",
+    header: <WinnerAndPlayersCountItem />,
+    className: "col-span-1 row-span-2 gap-2",
     icon: null,
   },
   {
@@ -136,13 +140,6 @@ const items = [
     description: null,
     header: <WinnersAndHowToPlayItem />,
     className: "col-span-1 row-span-2 gap-2",
-    icon: null,
-  },
-  {
-    title: "Players Count",
-    description: null,
-    header: <PlayersCountItem />,
-    className: "col-span-1 row-span-1",
     icon: null,
   },
 ];
