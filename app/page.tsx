@@ -610,11 +610,42 @@ export default function Home() {
             </p>
           </div>
           <div className="relative w-full overflow-hidden">
-            <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory">
+            <div className="flex gap-4 overflow-x-auto pb-4 px-4 snap-x snap-mandatory scroll-pl-4 scrollbar scrollbar-hide">
+              <div className="w-64 flex-shrink-0 snap-start shadow-[0_0_5px_rgba(0,_0,_0,_0.1)] rounded-lg">
+                <div className="bg-[#00b67a bg-white text-black p-4 rounded-lg h-full flex flex-col">
+                  <div className="flex flex-col justify-center items-center mb-2">
+                    <div className=" font-bold">Excellent</div>
+                    <div className="flex items-center gap-1 p-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className="w-8 h-8 fill-white bg-green-500 p-1 outline-none stroke-white"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-sm flex-grow">
+                    Ranked on <span className="font-bold">438 reviews</span>
+                  </p>
+                  <div className="mt-2 flex items-center justify-center gap-1">
+                    {/* <Image
+                      src="/trustpilot-logo.png"
+                      alt="Trustpilot"
+                      width={80}
+                      height={20}
+                      className="mr-2"
+                    /> */}
+                    <Star className="w-6 h-6 fill-green-500 outline-none stroke-green-500" />
+                    <span className="text-xs ">Trustpilot</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Other review items */}
               {Array.from({ length: 7 }).map((_, index) => (
                 <div
                   key={index}
-                  className="w-1/4 flex-shrink-0 snap-start shadow-[0_0_5px_rgba(0,_0,_0,_0.1)] rounded-lg"
+                  className="w-64 flex-shrink-0 snap-start shadow-[0_0_5px_rgba(0,_0,_0,_0.1)] rounded-lg"
                 >
                   <div className="bg-[#00b67a bg-white text-black p-4 rounded-lg h-full flex flex-col gap-2">
                     <div className="flex justify-between items-center mb-2">
@@ -641,8 +672,56 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* small center banner "Join 1,200 players and Win a BIG prize, smaller text underneath "Registration is free, no credit card required and a button to the right saying JOIN NOW! */}
+        <section className="p-10 mt-10 flex justify-center items-center h-[400px] relative">
+          <div className="absolute top-0 left-0 w-full h-px] z-0 text-gray-50">
+            <svg
+              width="100%"
+              height="100%"
+              id="svg"
+              viewBox="0 0 1440 390"
+              xmlns="http://www.w3.org/2000/svg"
+              className="transition duration-300 ease-in-out delay-150 z-0"
+            >
+              <path
+                d="M 0,400 L 0,0 C 227,99 454,198 694,198 C 934,198 1187,99 1440,0 L 1440,400 L 0,400 Z"
+                stroke="none"
+                strokeWidth="0"
+                fill="currentColor"
+                fillOpacity="1"
+                className="transition-all duration-300 ease-in-out delay-150 path-0 z-0"
+              ></path>
+            </svg>
+          </div>
+          <div className="bg-purple-800 text-white my-10 w-2/3 rounded-3xl flex items-center justify-start overflow-hidden bg-gradient-to-b from-purple-700 to-purple-900 h-[150px] z-10">
+            <div className="w-1/5 h-full">
+              <Image
+                src="/InstantPrizes.webp"
+                alt="Instant Prizes"
+                width={150}
+                height={150}
+                className="rounded-3xl"
+              />
+            </div>
+            <div className="container flex flex-col gap-2 items-start justify-center w-3/5">
+              <h3 className="text-2xl font-bold">
+                Join 1,200 players and Win a BIG prize
+              </h3>
+              <p className="text-sm">
+                Registration is free, no credit card required
+              </p>
+            </div>
+            <div className="flex justify-en w-1/5">
+              <Button className="bg-yellow-400 text-black font-semibold text-lg">
+                JOIN NOW!
+              </Button>
+            </div>
+          </div>
+        </section>
+
         {/* Past Games Section */}
-        <div className="text-center px-4 text-white bg-[#4B0082] py-20 mx-10 rounded-3xl">
+        {/* <div className="text-center px-4 text-white bg-[#4B0082] py-20 mx-10 rounded-3xl">
           <h2 className="text-3xl font-bold mb-4">Past Games</h2>
           <ul className="space-y-2">
             {pastGames.map((game) => (
@@ -656,7 +735,7 @@ export default function Home() {
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
 
         {/* Dice Roll Animation */}
         {/* <div className="text-center bg-[#4B0082] py-20">
