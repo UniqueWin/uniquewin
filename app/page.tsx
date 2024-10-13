@@ -10,12 +10,13 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
-import { Clover } from "lucide-react";
+import { ChevronRight, Clover, Link, Star } from "lucide-react";
 import CustomSwitch from "@/components/CustomSwitch"; // Import the custom switch
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 // import DiceRollAnimation from "./components/DiceRollAnimation"; // Import the animation component
 import DiceRoll from "./components/DiceRoll";
+import { BentoGridComponent } from "@/components/BentoGrid";
 
 const supabase = createClient();
 
@@ -313,9 +314,17 @@ export default function Home() {
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,rgba(75,0,130,0.3)_50%,rgba(75,0,130,0.7)_100%)]"></div>
         <div className="relative z-10 h-full flex flex-col items-center justify-start md:justify-center pt-20 px-4 overflow-y-auto">
-          <h1 className="text-7xl md:text-9xl text-center font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-[#c8b58c] to-[#f5d983] w-full md:w-2/3 leading-[0.75] stroke-black stroke-1">
-            Find a Unique <span className="text-7xl md:text-[160px]">Answer</span> and{" "}
-            <span className="text-7xl md:text-[160px]">WIN!</span>
+          <h1 className="text-7xl sm:text-5xl md:text-9xl text-center font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-[#c8b58c] to-[#f5d983] w-full md:w-2/3 leading-[0.8] stroke-black stroke-1">
+            <div className="leading-[0.8]">
+              Find a Unique{" "}
+              <span className="text-7xl sm:text-6xl md:text-[160px] leading-[0.8]">
+                Answer
+              </span>{" "}
+              and{" "}
+              <span className="text-7xl sm:text-6xl md:text-[160px] leading-[0.8]">
+                WIN!
+              </span>
+            </div>
           </h1>
           {currentGame ? (
             <div className="flex justify-center mb-4">
@@ -421,79 +430,312 @@ export default function Home() {
       <div className="flex-grow bg-white">
         {/* 3 Ways to Win Section */}
         <div className="text-center px-4 text-black py-20">
-          <small className="text-xs">Discover</small>
-          <h2 className="text-3xl font-bold mb-4 text-pink-800 py-5">
-            3 Ways to Win Big Prizes
+          <small className="text-xs text-purple-800 font-semibold">
+            Discover
+          </small>
+          <h2 className="text-3xl font-bold mb-4 text-purple-800 py-5">
+            3 Ways to Win{" "}
+            <span className="p-1 relative">
+              <div className="rotate-[-5deg] absolute inset-0 w-full h-full bg-yellow-400"></div>
+              <span className="relative z-10 text-white">Big Prizes</span>
+            </span>
           </h2>
-          <p className="mb-10 max-w-lgo mx-auto">
+          <p className="mb-10 max-w-lg mx-auto">
             Explore our exciting opportunities to win unique prizes, instant
             rewards, and participate in live raffles.
           </p>
 
           <div className="flex flex-col md:flex-row justify-center items-center text-center gap-8">
             {/* Card 1 */}
-            <div className="w-72 p-6 rounded-lg bg-white text-black">
+            <div className="w-72 rounded-xl bg-white text-black shadow-lg">
               <Image
                 src="/UniqueAnswer.webp"
                 alt="Unique Answer"
                 width={500}
                 height={500}
-                className="mx-auto mb-4 rounded-xl"
+                className="mx-auto mb-4 rounded-t-xl"
               />
-              <h3 className="font-bold text-xl mb-2">Find a Unique Answer</h3>
-              <p>
-                Unleash your creativity and stand a chance to win exclusive
-                prizes by providing a one-of-a-kind answer.
-              </p>
+              <div className="p-4">
+                <h3 className="font-bold text-xl mb-2">Find a Unique Answer</h3>
+                <p>
+                  Unleash your creativity and stand a chance to win exclusive
+                  prizes by providing a one-of-a-kind answer.
+                </p>
+              </div>
             </div>
 
             {/* Card 2 */}
-            <div className="w-72 p-6 rounded-lg bg-white text-black">
+            <div className="w-72 rounded-xl bg-white text-black shadow-lg">
               <Image
                 src="/InstantPrizes.webp"
                 alt="Instant Prizes"
                 width={500}
                 height={500}
-                className="mb-4 rounded-xl"
+                className="mb-4 rounded-t-xl"
               />
-              <h3 className="font-bold text-xl mb-2">Instant Prizes</h3>
-              <p>
-                Get rewarded instantly with exciting prizes just by
-                participating in our engaging contests.
-              </p>
+              <div className="p-4">
+                <h3 className="font-bold text-xl mb-2">Instant Prizes</h3>
+                <p>
+                  Get rewarded instantly with exciting prizes just by
+                  participating in our engaging contests.
+                </p>
+              </div>
             </div>
 
             {/* Card 3 */}
-            <div className="w-72 p-6 rounded-lg bg-white text-black">
+            <div className="w-72 rounded-xl bg-white text-black shadow-lg">
               <Image
                 src="/LiveRaffle.webp"
                 alt="Live Raffle"
                 width={500}
                 height={500}
-                className="mb-4 rounded-xl"
+                className="mb-4 rounded-t-xl"
               />
-              <h3 className="font-bold text-xl mb-2">Live Raffle</h3>
-              <p>
-                Experience the thrill of our live raffles and stand a chance to
-                win big prizes in real-time and live on Facebook.
-              </p>
+              <div className="p-4">
+                <h3 className="font-bold text-xl mb-2">Live Raffle</h3>
+                <p>
+                  Experience the thrill of our live raffles and stand a chance
+                  to win big prizes in real-time and live on Facebook.
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
+        <section className=" container py-20 flex h-[400px] items-start">
+          <div className="w-full">
+            <h3 className="w-full h-full text-3xl font-bold text-purple-800 leading-10">
+              About Our Games, <br /> Learn
+              <span className="p-1 m-1 relative">
+                <div className="rotate-[-3deg] absolute inset-0 w-full h-full bg-yellow-400"></div>
+                <span className="relative z-10 text-white">How To Play</span>
+              </span>
+            </h3>
+          </div>
+
+          <div className="flex flex-col justify-center  w-full">
+            <p className="max-w-xl text-black">
+              Our games are designed to be fun and engaging, with a focus on
+              creativity and originality. Whether you're a seasoned player or
+              new to the game, there's something for everyone.
+            </p>
+            <div className="flex gap-2 my-2 w-full">
+              <a href="/games">
+                <Button className="text-white bg-gradient-to-t from-[#347158] to-[#58e364] from-30% to-100% hover:from-[#214838] hover:to-[#41a84a] rounded-xl">
+                  Get started
+                </Button>
+              </a>
+              <Button
+                variant="ghost"
+                className="text-purple-800 hover:bg-transparent hover:underline hover:text-purple-900"
+              >
+                <a href="/faq" className="flex items-center">
+                  FAQ <ChevronRight className="ml-2" />
+                </a>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        <BentoGridComponent />
+
+        <section className="flex gap-10 p-4 text-black container w-full justify-between items-center my-20">
+          <div className="w-full h-full flex flex-col gap-4 max-w-xl justify-center items-center">
+            <Image
+              src="/UniqueAnswer.webp"
+              alt="Unique Answer"
+              width={500}
+              height={500}
+              className="rounded-xl"
+            />
+            <p className="text-lg font-semibold text-left px-10">
+              Find a Unique Answer and WIN! Lorem ipsum, dolor sit amet
+              consectetur adipisicing elit. Ea consequatur aut in assumenda
+              quidem. Harum, sequi! Minus sit necessitatibus, alias possimus
+              nihil fuga sapiente eaque saepe, repellat molestiae ex
+              reprehenderit.
+            </p>
+          </div>
+          <div className="w-full h-full flex flex-col gap-4 max-w-xl justify-center items-center">
+            <div>
+              <h3 className="text-3xl font-bold">Instant Prizes</h3>
+            </div>
+            <div>
+              <Image
+                src="/InstantPrizes.webp"
+                alt="Unique Answer"
+                width={500}
+                height={500}
+                className="rounded-xl"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* //banner */}
+        <section className="bg-red-100 p-6 my-10">
+          <div className="container flex justify-center items-center gap-12">
+            <h3 className="text-2xl font-bold w-1/3 text-purple-800">
+              If there is no unique answer found the prize is rolled over to the{" "}
+              <span className="bg-red-400 px-1 text-white">next game.</span>
+            </h3>
+            <div className="flex gap-4">
+              <div className="w-16 h-16 relative">
+                <Image
+                  src="/two-red-dice-clipart-lg.png"
+                  alt="Dice"
+                  layout="fill"
+                  objectFit="contain"
+                />
+              </div>
+              <div className="w-24 h-24 relative -ml-4">
+                <Image
+                  src="/two-red-dice-clipart-lg.png"
+                  alt="Dice"
+                  layout="fill"
+                  objectFit="contain"
+                  className="-mr-6 rotate-45"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* reviews horizontal scroll section trustpilot with title and subtitle */}
+        <section className="bg-white p-10 my-10 text-black">
+          <div className="container flex flex-col gap-4 mb-6">
+            <h3 className="text-3xl font-bold">Reviews</h3>
+            <p className="text-lg">
+              Read what our players have to say about us.
+            </p>
+          </div>
+          <div className="relative w-full overflow-hidden">
+            <div className="flex gap-4 overflow-x-auto pb-4 px-4 snap-x snap-mandatory scroll-pl-4 scrollbar scrollbar-hide">
+              <div className="w-64 flex-shrink-0 snap-start shadow-[0_0_5px_rgba(0,_0,_0,_0.1)] rounded-lg">
+                <div className="bg-[#00b67a bg-white text-black p-4 rounded-lg h-full flex flex-col">
+                  <div className="flex flex-col justify-center items-center mb-2">
+                    <div className=" font-bold">Excellent</div>
+                    <div className="flex items-center gap-1 p-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className="w-8 h-8 fill-white bg-green-500 p-1 outline-none stroke-white"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-sm flex-grow">
+                    Ranked on <span className="font-bold">438 reviews</span>
+                  </p>
+                  <div className="mt-2 flex items-center justify-center gap-1">
+                    {/* <Image
+                      src="/trustpilot-logo.png"
+                      alt="Trustpilot"
+                      width={80}
+                      height={20}
+                      className="mr-2"
+                    /> */}
+                    <Star className="w-6 h-6 fill-green-500 outline-none stroke-green-500" />
+                    <span className="text-xs ">Trustpilot</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Other review items */}
+              {Array.from({ length: 7 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="w-64 flex-shrink-0 snap-start shadow-[0_0_5px_rgba(0,_0,_0,_0.1)] rounded-lg"
+                >
+                  <div className="bg-[#00b67a bg-white text-black p-4 rounded-lg h-full flex flex-col gap-2">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className="w-4 h-4 fill-white bg-green-500 p-1 outline-none stroke-white"
+                          />
+                        ))}
+                      </div>
+                      <div className="text-xs">7 days ago</div>
+                    </div>
+                    <div className=" font-bold">Best on the market</div>
+                    <p className="text-sm  flex-grow">
+                      "I love this product because it is the best on the
+                      market."
+                    </p>
+                    <hr className="w-20 my-1" />
+                    <span className="font-bold text-sm">Trustpilot</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* small center banner "Join 1,200 players and Win a BIG prize, smaller text underneath "Registration is free, no credit card required and a button to the right saying JOIN NOW! */}
+        <section className="p-10 mt-10 flex justify-center items-center h-[400px] relative">
+          <div className="absolute top-0 left-0 w-full h-px] z-0 text-gray-50">
+            <svg
+              width="100%"
+              height="100%"
+              id="svg"
+              viewBox="0 0 1440 390"
+              xmlns="http://www.w3.org/2000/svg"
+              className="transition duration-300 ease-in-out delay-150 z-0"
+            >
+              <path
+                d="M 0,400 L 0,0 C 227,99 454,198 694,198 C 934,198 1187,99 1440,0 L 1440,400 L 0,400 Z"
+                stroke="none"
+                strokeWidth="0"
+                fill="currentColor"
+                fillOpacity="1"
+                className="transition-all duration-300 ease-in-out delay-150 path-0 z-0"
+              ></path>
+            </svg>
+          </div>
+          <div className="bg-purple-800 text-white my-10 w-2/3 rounded-3xl flex items-center justify-start overflow-hidden bg-gradient-to-b from-purple-700 to-purple-900 h-[150px] z-10">
+            <div className="w-1/5 h-full">
+              <Image
+                src="/InstantPrizes.webp"
+                alt="Instant Prizes"
+                width={150}
+                height={150}
+                className="rounded-3xl"
+              />
+            </div>
+            <div className="container flex flex-col gap-2 items-start justify-center w-3/5">
+              <h3 className="text-2xl font-bold">
+                Join 1,200 players and Win a BIG prize
+              </h3>
+              <p className="text-sm">
+                Registration is free, no credit card required
+              </p>
+            </div>
+            <div className="flex justify-en w-1/5">
+              <Button className="bg-yellow-400 text-black font-semibold text-lg">
+                JOIN NOW!
+              </Button>
+            </div>
+          </div>
+        </section>
+
         {/* Past Games Section */}
-        <div className="text-center px-4 text-white bg-[#4B0082] py-20 mx-10 rounded-3xl">
+        {/* <div className="text-center px-4 text-white bg-[#4B0082] py-20 mx-10 rounded-3xl">
           <h2 className="text-3xl font-bold mb-4">Past Games</h2>
           <ul className="space-y-2">
             {pastGames.map((game) => (
-              <li key={game.id} className="bg-[#C0163D] p-4 rounded-lg max-w-xl mx-auto">
+              <li
+                key={game.id}
+                className="bg-[#C0163D] p-4 rounded-lg max-w-xl mx-auto"
+              >
                 <h3 className="font-bold">{game.question}</h3>
                 <p>Jackpot: £{game.current_prize ?? game.jackpot}</p>
                 <p>Ended: {new Date(game.end_time).toLocaleString()}</p>
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
 
         {/* Dice Roll Animation */}
         {/* <div className="text-center bg-[#4B0082] py-20">
