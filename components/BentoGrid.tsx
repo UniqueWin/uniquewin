@@ -44,7 +44,7 @@ const WinnerItem = () => (
       height={50}
       className="rounded-full"
     />
-    <div className="absolute bottom-0 left-0 -auto w-full bg-white bg-opacity-20 backdrop-blur-[2px] p-2 rounded text-purple-800">
+    <div className="absolute bottom-0 left-0 -auto w-full bg-white bg-opacity-20 backdrop-blur-[2px p-2 rounded text-purple-800">
       <div className="flex justify-between">
         <div className="flex flex-col text-left px-4 font-semibold">
           <p className="text- ">Wanna be a</p>
@@ -94,7 +94,7 @@ const HowToPlayItem = () => (
         className="rounded-full"
       />
     </div>
-    <div className="absolute bottom-0 left-0 w-full bg-white bg-opacity-20 backdrop-blur-[2px] p-2 rounded text-purple-800 flex justify-between items-center px-4">
+    <div className="absolute bottom-0 left-0 w-full bg-white bg-opacity-20 backdrop-blur-[1px p-2 rounded-b-xl text-purple-800 flex justify-between items-center px-4">
       <p className="font-bold">How to play?</p>
       <Button
         size="sm"

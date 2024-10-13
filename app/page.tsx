@@ -539,6 +539,39 @@ export default function Home() {
 
         <BentoGridComponent />
 
+        <div className="flex gap-10 p-4 text-black container w-full justify-between items-center">
+          <div className="w-full h-full flex flex-col gap-4 max-w-xl justify-center items-start">
+            <Image
+              src="/UniqueAnswer.webp"
+              alt="Unique Answer"
+              width={500}
+              height={500}
+              className="rounded-xl"
+            />
+            <p className="text-lg font-semibold">
+              Find a Unique Answer and WIN! Lorem ipsum, dolor sit amet
+              consectetur adipisicing elit. Ea consequatur aut in assumenda
+              quidem. Harum, sequi! Minus sit necessitatibus, alias possimus
+              nihil fuga sapiente eaque saepe, repellat molestiae ex
+              reprehenderit.
+            </p>
+          </div>
+          <div className="w-full h-fit flex flex-col gap-4 max-w-xl justify-bewteen items-between">
+            <div>
+              <h3 className="text-3xl font-bold">Instant Prizes</h3>
+            </div>
+            <div>
+              <Image
+                src="/InstantPrizes.webp"
+                alt="Unique Answer"
+                width={500}
+                height={500}
+                className="rounded-xl"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Past Games Section */}
         <div className="text-center px-4 text-white bg-[#4B0082] py-20 mx-10 rounded-3xl">
           <h2 className="text-3xl font-bold mb-4">Past Games</h2>
