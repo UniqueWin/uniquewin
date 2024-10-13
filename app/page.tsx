@@ -539,8 +539,8 @@ export default function Home() {
 
         <BentoGridComponent />
 
-        <div className="flex gap-10 p-4 text-black container w-full justify-between items-center">
-          <div className="w-full h-full flex flex-col gap-4 max-w-xl justify-center items-start">
+        <div className="flex gap-10 p-4 text-black container w-full justify-between items-center my-20">
+          <div className="w-full h-full flex flex-col gap-4 max-w-xl justify-center items-center">
             <Image
               src="/UniqueAnswer.webp"
               alt="Unique Answer"
@@ -548,7 +548,7 @@ export default function Home() {
               height={500}
               className="rounded-xl"
             />
-            <p className="text-lg font-semibold">
+            <p className="text-lg font-semibold text-left px-10">
               Find a Unique Answer and WIN! Lorem ipsum, dolor sit amet
               consectetur adipisicing elit. Ea consequatur aut in assumenda
               quidem. Harum, sequi! Minus sit necessitatibus, alias possimus
