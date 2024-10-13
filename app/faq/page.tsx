@@ -23,7 +23,7 @@ const itemVariants = {
 export default function FAQPage() {
   return (
     <motion.div
-      className="container mx-auto px-4 py-8"
+      className="container mx-auto px-4 py-8 bg-red-800 my-8 rounded-3xl"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

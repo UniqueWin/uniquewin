@@ -14,20 +14,17 @@ import { Clover } from "lucide-react";
 import CustomSwitch from "@/components/CustomSwitch"; // Import the custom switch
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-
-// Dynamically import the DiceRollAnimation component
-const DiceRollAnimation = dynamic(
-  () => import("@/components/DiceRollAnimation"),
-  {
-    ssr: false,
-  }
-);
+// import DiceRollAnimation from "./components/DiceRollAnimation"; // Import the animation component
+import DiceRoll from "./components/DiceRoll";
 
 const supabase = createClient();
 
 export default function Home() {
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
   const [pastGames, setPastGames] = useState<Game[]>([]);
+  const [flashingIndex, setFlashingIndex] = useState(0); // New state for flashing index
+  const [reverseFlashingIndex, setReverseFlashingIndex] = useState(29); // New state for reverse flashing index
+  const [rollResult, setRollResult] = useState<number | null>(null);
   const placeholders = [
     {
       question: "Name a boys name beginning with 'T':",
@@ -190,6 +187,15 @@ export default function Home() {
     fetchGames();
   }, [supabase]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFlashingIndex((prevIndex) => (prevIndex + 1) % 30); // Update index in a loop
+      setReverseFlashingIndex((prevIndex) => (prevIndex - 1 + 30) % 30); // Update reverse index in a loop
+    }, 500); // Adjust the timing as needed
+
+    return () => clearInterval(interval);
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.value);
   };
@@ -277,6 +283,10 @@ export default function Home() {
     return () => clearInterval(intervalId);
   }, []);
 
+  const handleRollComplete = (result: number) => {
+    setRollResult(result); // Store the result of the roll
+  };
+
   return (
     <div className="relative min-h-screen w-full bg-[#4B0082] flex flex-col">
       <div className="absolute top-10 right-20 z-50 select-none">
@@ -302,10 +312,10 @@ export default function Home() {
           ></div>
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,rgba(75,0,130,0.3)_50%,rgba(75,0,130,0.7)_100%)]"></div>
-        <div className="relative z-10 h-full flex flex-col items-center justify-center pt-20 px-4 overflow-y-auto">
-          <h1 className="text-9xl text-center font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-[#c8b58c] to-[#f5d983] w-2/3 leading-[0.75] stroke-black stroke-1">
-            Find a Unique <span className="text-[160px]">Answer</span> and{" "}
-            <span className="text-[160px]">WIN!</span>
+        <div className="relative z-10 h-full flex flex-col items-center justify-start md:justify-center pt-20 px-4 overflow-y-auto">
+          <h1 className="text-7xl md:text-9xl text-center font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-[#c8b58c] to-[#f5d983] w-full md:w-2/3 leading-[0.75] stroke-black stroke-1">
+            Find a Unique <span className="text-7xl md:text-[160px]">Answer</span> and{" "}
+            <span className="text-7xl md:text-[160px]">WIN!</span>
           </h1>
           {currentGame ? (
             <div className="flex justify-center mb-4">
@@ -318,12 +328,16 @@ export default function Home() {
               />
             </div>
           ) : (
-            <div className="text-white mb-4 bg-black bg-opacity-20 p-4 rounded-[30px] border-2 border-white border-opacity-40">
+            <div className="text-white mb-4 bg-black bg-opacity-20 p-4 px-10 rounded-[30px] border2 border-white border-opacity-40 w-full md:max-w-2xl">
               <div className="flex gap-2">
                 {Array.from({ length: 30 }).map((_, index) => (
                   <div
                     key={index}
-                    className="w-3 h-3 bg-yellow-300 rounded-full blur-[1.5px] animate-pulse duration-1000"
+                    className={`w-3 h-3 rounded-full blur-[1.5px] duration-1000 ${
+                      index === flashingIndex
+                        ? "bg-yellow-300 animate-pulse"
+                        : "bg-yellow-200 bg-opacity-50"
+                    }`}
                   ></div>
                 ))}
               </div>
@@ -363,7 +377,11 @@ export default function Home() {
                 {Array.from({ length: 30 }).map((_, index) => (
                   <div
                     key={index}
-                    className="w-3 h-3 bg-yellow-300 rounded-full blur-[1.5px] animate-pulse duration-1000"
+                    className={`w-3 h-3 rounded-full blur-[1.5px] duration-1000 ${
+                      index === reverseFlashingIndex
+                        ? "bg-yellow-300 animate-pulse"
+                        : "bg-yellow-200 bg-opacity-50"
+                    }`}
                   ></div>
                 ))}
               </div>
@@ -412,15 +430,15 @@ export default function Home() {
             rewards, and participate in live raffles.
           </p>
 
-          <div className="flex justify-center space-x-8">
+          <div className="flex flex-col md:flex-row justify-center items-center text-center gap-8">
             {/* Card 1 */}
             <div className="w-72 p-6 rounded-lg bg-white text-black">
               <Image
-                src="/unique-answer-icon.png"
+                src="/UniqueAnswer.webp"
                 alt="Unique Answer"
-                width={64}
-                height={64}
-                className="mx-auto mb-4"
+                width={500}
+                height={500}
+                className="mx-auto mb-4 rounded-xl"
               />
               <h3 className="font-bold text-xl mb-2">Find a Unique Answer</h3>
               <p>
@@ -432,11 +450,11 @@ export default function Home() {
             {/* Card 2 */}
             <div className="w-72 p-6 rounded-lg bg-white text-black">
               <Image
-                src="/instant-prizes-icon.png"
+                src="/InstantPrizes.webp"
                 alt="Instant Prizes"
-                width={64}
-                height={64}
-                className="mx-auto mb-4"
+                width={500}
+                height={500}
+                className="mb-4 rounded-xl"
               />
               <h3 className="font-bold text-xl mb-2">Instant Prizes</h3>
               <p>
@@ -448,27 +466,27 @@ export default function Home() {
             {/* Card 3 */}
             <div className="w-72 p-6 rounded-lg bg-white text-black">
               <Image
-                src="/live-raffle-icon.png"
+                src="/LiveRaffle.webp"
                 alt="Live Raffle"
-                width={64}
-                height={64}
-                className="mx-auto mb-4"
+                width={500}
+                height={500}
+                className="mb-4 rounded-xl"
               />
               <h3 className="font-bold text-xl mb-2">Live Raffle</h3>
               <p>
                 Experience the thrill of our live raffles and stand a chance to
-                win big prizes in real-time.
+                win big prizes in real-time and live on Facebook.
               </p>
             </div>
           </div>
         </div>
 
         {/* Past Games Section */}
-        <div className="text-center px-4 text-white bg-[#4B0082] py-20">
+        <div className="text-center px-4 text-white bg-[#4B0082] py-20 mx-10 rounded-3xl">
           <h2 className="text-3xl font-bold mb-4">Past Games</h2>
           <ul className="space-y-2">
             {pastGames.map((game) => (
-              <li key={game.id} className="bg-[#C0163D] p-4 rounded-lg">
+              <li key={game.id} className="bg-[#C0163D] p-4 rounded-lg max-w-xl mx-auto">
                 <h3 className="font-bold">{game.question}</h3>
                 <p>Jackpot: £{game.current_prize ?? game.jackpot}</p>
                 <p>Ended: {new Date(game.end_time).toLocaleString()}</p>
@@ -478,18 +496,15 @@ export default function Home() {
         </div>
 
         {/* Dice Roll Animation */}
-        <div className="text-center bg-[#4B0082] py-20">
+        {/* <div className="text-center bg-[#4B0082] py-20">
           <h2 className="text-3xl font-bold text-white mb-6">
             Bonus Game Preview: Dice Roll
           </h2>
-          <div className="flex justify-center">
-            <DiceRollAnimation
-              onRollComplete={(result) =>
-                console.log(`Dice roll result: ${result}`)
-              }
-            />
-          </div>
-        </div>
+          <DiceRoll />
+          {rollResult !== null && (
+            <p className="text-white">You rolled a {rollResult}!</p>
+          )}
+        </div> */}
       </div>
     </div>
   );

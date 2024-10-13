@@ -4,7 +4,7 @@ import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-red-800 text-white py-12 mx-2 rounded-t-xl">
+    <footer className="bg-red-800 text-white py-12 mx-4 rounded-t-3xl mt-20">
       <div className="container mx-auto px-4 bg-black bg-opacity-10 p-4 rounded-xl">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
@@ -48,7 +48,7 @@ const Footer = () => {
         <div className="mt-8 pt-8 border-t border-gray-700 text-center text-sm">
           <p>&copy; {new Date().getFullYear()} UniqueWin. All rights reserved.</p>
           <p className="mt-2">
-            UniqueWin is operated by UniqueWin Ltd. Licensed and regulated by the UK Gambling Commission.
+            UniqueWin is operated by UniqueWin Ltd. UniqueWin is not licensed or regulated by the UK Gambling Commission.
           </p>
         </div>
       </div>
