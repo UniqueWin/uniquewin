@@ -14,30 +14,52 @@ import {
 
 export default function AnswerValidationPage() {
   const [pendingAnswers, setPendingAnswers] = useState<any[]>([]);
-  const [showOnlyActiveGames, setShowOnlyActiveGames] = useState(false);
+  const [showAllGames, setShowAllGames] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
     fetchPendingAnswers();
-  }, [showOnlyActiveGames]);
+  }, [showAllGames]);
 
   const fetchPendingAnswers = async () => {
-    let query = supabase
-      .from("answers")
-      .select("*, games(id, question, status)")
-      .eq("status", "pending")
-      .order("updated_at", { ascending: false });
+    try {
+      // Fetch answers with game information
+      let answersQuery = supabase
+        .from("answers")
+        .select(`
+          *,
+          games(id, question, status)
+        `)
+        .eq("status", "PENDING")
+        .order("updated_at", { ascending: false });
 
-    if (showOnlyActiveGames) {
-      query = query.eq("games.status", "active");
-    }
+      if (!showAllGames) {
+        answersQuery = answersQuery.eq("games.status", "active");
+      }
 
-    const { data, error } = await query;
+      const { data: answersData, error: answersError } = await answersQuery;
 
-    if (error) {
+      if (answersError) throw answersError;
+
+      // Fetch usernames separately
+      const userIds = answersData.map(answer => answer.user_id);
+      const { data: profilesData, error: profilesError } = await supabase
+        .from("profiles")
+        .select("id, username")
+        .in("id", userIds);
+
+      if (profilesError) throw profilesError;
+
+      // Combine the data
+      const combinedData = answersData.map(answer => ({
+        ...answer,
+        profiles: profilesData.find(profile => profile.id === answer.user_id)
+      }));
+
+      console.log("Combined data:", combinedData);
+      setPendingAnswers(combinedData);
+    } catch (error) {
       console.error("Error fetching pending answers:", error);
-    } else {
-      setPendingAnswers(data || []);
     }
   };
 
@@ -54,16 +76,18 @@ export default function AnswerValidationPage() {
     }
   };
 
+  console.log({ pendingAnswers });
+
   return (
     <div className="p-6 bg-gray-100 text-gray-900 w-full max-w-screen-lg mx-auto">
       <h1 className="text-3xl font-bold mb-6">Answer Validation</h1>
       <div className="mb-4">
         <Button
-          onClick={() => setShowOnlyActiveGames(!showOnlyActiveGames)}
+          onClick={() => setShowAllGames(!showAllGames)}
           variant="outline"
           className="mb-4 text-white"
         >
-          {showOnlyActiveGames ? "Show All Games" : "Show Only Active Games"}
+          {showAllGames ? "Show Only Active Games" : "Show All Games"}
         </Button>
       </div>
       <Table>
@@ -81,12 +105,12 @@ export default function AnswerValidationPage() {
           {pendingAnswers.length ? (
             pendingAnswers.map((answer) => (
               <TableRow key={answer.id}>
-                <TableCell>{answer.games.question}</TableCell>
-                <TableCell>{answer.games.status}</TableCell>
-                <TableCell>{answer.answer_text}</TableCell>
-                <TableCell>{answer.user_id}</TableCell>
+                <TableCell>{answer?.games?.question}</TableCell>
+                <TableCell>{answer?.games?.status}</TableCell>
+                <TableCell>{answer?.answer_text}</TableCell>
+                <TableCell>{answer?.profiles?.username}</TableCell>
                 <TableCell>
-                  {new Date(answer.updated_at).toLocaleString()}
+                  {new Date(answer?.updated_at).toLocaleString()}
                 </TableCell>
                 <TableCell>
                   <Button

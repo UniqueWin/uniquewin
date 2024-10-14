@@ -183,7 +183,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="bg-black bg-opacity-10 rounded-xl my-2 min-h-screen flex flex-col w-2/3 text-black">
+    <div className="rounded-xl my-2 min-h-screen flex flex-col w-2/3 mx-auto mt-10 text-black bg-red-800">
       <motion.div
         className="container mx-auto px-4 py-8 max-w-5xl"
         initial={{ opacity: 0 }}
