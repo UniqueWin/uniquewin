@@ -544,14 +544,24 @@ export default function Home() {
 
         <section className="flex gap-10 p-4 text-black container w-full justify-between items-center my-20">
           <div className="w-full h-full flex flex-col gap-4 max-w-xl justify-center items-center">
-            <Image
-              src="/UniqueAnswer.webp"
-              alt="Unique Answer"
-              width={500}
-              height={500}
-              className="rounded-xl"
-            />
-            <p className="text-lg font-semibold text-left px-10">
+            <div className="relative">
+              <Image
+                src="/luck.png"
+                alt="Unique Answer"
+                width={500}
+                height={500}
+                className="rounded-xl"
+              />
+              <div className="absolute bottom-0 left-0 w-full h-20 flex items-center justify-center font-bold text-white text-4xl px-10 mb-8">
+                <span className="w-[93%] leading-tight">
+                  Discover Your Luck with Our Exciting{" "}
+                  <span className="bg-white px-1 rotate-[-3deg] text-blue-800">
+                    Lucky Dip
+                  </span>
+                </span>
+              </div>
+            </div>
+            <p className="text-left px-10">
               Find a Unique Answer and WIN! Lorem ipsum, dolor sit amet
               consectetur adipisicing elit. Ea consequatur aut in assumenda
               quidem. Harum, sequi! Minus sit necessitatibus, alias possimus
@@ -563,14 +573,22 @@ export default function Home() {
             <div>
               <h3 className="text-3xl font-bold">Instant Prizes</h3>
             </div>
-            <div>
+            <div className="relative">
               <Image
-                src="/InstantPrizes.webp"
+                src="/wheel.png"
                 alt="Unique Answer"
                 width={500}
                 height={500}
                 className="rounded-xl"
               />
+              <div className="absolute bottom-0 left-0 w-full h-20 flex items-center justify-center font-bold text-white text-4xl px-10 mb-8">
+                <span className="w-[93%] leading-tight">
+                  Don't Miss the 8pm Result Show on{" "}
+                  <span className="bg-white px-1 rotate-[-3deg] text-blue-800">
+                    Facebook
+                  </span>
+                </span>
+              </div>
             </div>
           </div>
         </section>
