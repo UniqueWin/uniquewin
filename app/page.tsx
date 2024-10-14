@@ -290,7 +290,20 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen w-full bg-[#4B0082] flex flex-col">
-      <div className="absolute top-10 right-20 z-50 select-none">
+      {/* hero bg */}
+      <div className="absolute top-0 left-0 w-full h-[60vh] sm:h-[70vh] md:h-[75vh] lg:h-[87vh] bg-black bg-opacity-10 z-1 overflow-hidden select-none">
+        <div className="relative w-full h-full">
+          <Image
+            src="/title gfx.png"
+            alt="hero-bg"
+            layout="fill"
+            objectFit="contain"
+            objectPosition="center top"
+            className="z-10 p-4 md:p-10 select-none"
+          />
+        </div>
+      </div>
+      <div className="absolute top-4 right-4 md:top-10 md:right-20 z-20 select-none">
         <div
           className={cn(
             "inline-flex items-center rounded-full bg-zinc-900 bg-opacity-50 px-2 py-1 text-xs font-medium text-white"
@@ -306,7 +319,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="h-[87vh] relative overflow-hidden">
+      <div className="h-[60vh] sm:h-[60vh] md:h-[65vh] lg:h-[87vh] relative overflow-hidden">
         <div className="absolute inset-[-100%]">
           <div
             className="
@@ -315,40 +328,18 @@ export default function Home() {
               absolute inset-0
               animate-spin-slow
               filter blur
+              
             "
           ></div>
         </div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,rgba(75,0,130,0.3)_50%,rgba(75,0,130,0.7)_100%)]"></div>
-        <div className="relative z-10 h-full flex flex-col items-center justify-start md:justify-center pt-20 px-4 overflow-y-auto">
-          <h1 className="text-7xl sm:text-5xl md:text-9xl text-center font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-[#c8b58c] to-[#f5d983] w-full md:w-2/3 leading-[0.8] stroke-black stroke-1">
-            <div className="leading-[0.8]">
-              Find a Unique{" "}
-              <span className="text-7xl sm:text-6xl md:text-[160px] leading-[0.8]">
-                Answer
-              </span>{" "}
-              and{" "}
-              <span className="text-7xl sm:text-6xl md:text-[160px] leading-[0.8]">
-                WIN!
-              </span>
-            </div>
-          </h1>
-          {/* {!currentGame ? ( */}
-          <div className="flex justify-center mb-4">
-            <TextRevealCard
-              text={currentGame?.question ?? "Name a UK city"}
-              revealText={`Jackpot: £${
-                currentGame?.current_prize ?? currentGame?.jackpot ?? 0
-              }`}
-              className="-rotate-3"
-            />
-          </div>
-          {/* ) : ( */}
-          <div className="text-white mb-4 bg-black bg-opacity-20 p-4 px-10 rounded-[30px] border2 border-white border-opacity-40 w-full md:max-w-2xl">
-            <div className="flex gap-2">
+        <div className="h-100 absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,rgba(75,0,130,0.3)_50%,rgba(75,0,130,0.7)_100%)]"></div>
+        <div className="relative z-10 h-full flex flex-col items-center justify-start md:justify-start mt-44 sm:mt-64 md:mt-80 lg:mt-[500px] xl:mt-[500px] 2xl:mt-[500px] px-4 overflow-y-auto">
+          <div className="text-white mb-4 bg-black bg-opacity-20 p-4 px-4 md:px-10 rounded-[30px] border2 border-white border-opacity-40 w-full sm:max-w-md md:max-w-2xl z-20">
+            <div className="flex gap-1 md:gap-2 mx-auto w-full justify-center items-center">
               {Array.from({ length: 30 }).map((_, index) => (
                 <div
                   key={index}
-                  className={`w-3 h-3 rounded-full blur-[1.5px] duration-1000 ${
+                  className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full blur-[1.5px] duration-1000 ${
                     index === flashingIndex
                       ? "bg-yellow-300 animate-pulse"
                       : "bg-yellow-200 bg-opacity-50"
@@ -357,42 +348,36 @@ export default function Home() {
               ))}
             </div>
             <div className="py-4 flex flex-col gap-2 items-center">
-              <h2 className="text-3xl font-bold">
+              <h2 className="text-xl md:text-3xl font-bold text-center">
                 Name the boss name beginning with 'T':
               </h2>
               <CustomSwitch
                 label="Lucky Dip"
                 onChange={(checked) => console.log("Switch is now:", checked)}
               />
-              <div className="flex gap-2 w-full justify-center items-center">
-                {/* <Input
-                    type="text"
-                    placeholder="Type your answer here..."
-                    className="bg-white border-2 border-white border-opacity-40 rounded-lg p-6 text-xl font-bold text-white w-full"
-                  /> */}
+              <div className="flex flex-col sm:flex-row gap-2 w-full justify-center items-center">
                 <PlaceholdersAndVanishInput
                   placeholders={placeholders.map(
                     (placeholder) => placeholder.question
                   )}
                   onChange={handleChange}
                   onSubmit={onSubmit}
-                  // className="w-full bg-whfite border-2 border-white border-opacity-40 rounded-lg p-6 text-xl font-bold text-black"
-                  className="w-96 rounded-lg px-0"
+                  className="w-full sm:w-96 rounded-lg px-0"
                 />
                 <Button
                   variant="secondary"
                   size="lg"
-                  className="text-white font-semibold text-xl h-12 bg-gradient-to-t from-[#347158] to-[#58e364] from-30% to-100% w-28"
+                  className="text-white font-semibold text-xl h-12 bg-gradient-to-t from-[#347158] to-[#58e364] from-30% to-100% w-full sm:w-28 mt-2 sm:mt-0"
                 >
                   Answer!
                 </Button>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-1 md:gap-2 mx-auto w-full justify-center items-center">
               {Array.from({ length: 30 }).map((_, index) => (
                 <div
                   key={index}
-                  className={`w-3 h-3 rounded-full blur-[1.5px] duration-1000 ${
+                  className={`w-2 h-2 md:w-3 md:h-3 rounded-full blur-[1.5px] duration-1000 ${
                     index === reverseFlashingIndex
                       ? "bg-yellow-300 animate-pulse"
                       : "bg-yellow-200 bg-opacity-50"
@@ -401,34 +386,8 @@ export default function Home() {
               ))}
             </div>
           </div>
-          {/* )} */}
-          <p className="text-white">Cost £1 to play £5 lucky dip</p>
-          {/* <p className="text-white mb-4">
-              No active games at the moment. Check back soon!
-            </p> */}
 
-          {/* <div className="flex justify-center mb-4">
-            <PlaceholdersAndVanishInput
-              placeholders={placeholders.map(
-                (placeholder) => placeholder.question
-              )}
-              onChange={handleChange}
-              onSubmit={onSubmit}
-            />
-            <div className="flex flex-col gap-2">
-              <Button
-                variant="secondary"
-                size="lg"
-                className="bg-yellow-400 text-black font-semibold text-lg"
-              >
-                Answer!
-              </Button>
-              <CustomSwitch
-                label="Lucky Dip"
-                onChange={(checked) => console.log("Switch is now:", checked)}
-              />
-            </div>
-          </div> */}
+          <p className="text-white text-sm md:text-base mt-2">Cost £1 to play £5 lucky dip</p>
         </div>
       </div>
 
