@@ -623,9 +623,17 @@ export default function Home() {
               </span>
             </h3>
             <div className="flex gap-4">
+              <div className="w-8 h-8 relative">
+                <Image
+                  src="/dice 2.png"
+                  alt="Dice"
+                  layout="fill"
+                  objectFit="contain"
+                />
+              </div>
               <div className="w-16 h-16 relative">
                 <Image
-                  src="/two-red-dice-clipart-lg.png"
+                  src="/dice 3.png"
                   alt="Dice"
                   layout="fill"
                   objectFit="contain"
@@ -633,11 +641,11 @@ export default function Home() {
               </div>
               <div className="w-24 h-24 relative -ml-4">
                 <Image
-                  src="/two-red-dice-clipart-lg.png"
+                  src="/dice 1.png"
                   alt="Dice"
                   layout="fill"
                   objectFit="contain"
-                  className="-mr-6 rotate-45"
+                  className="ml-8"
                 />
               </div>
             </div>
