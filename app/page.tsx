@@ -443,7 +443,9 @@ export default function Home() {
                 className="mb-4 rounded-t-xl h-48 object-cover"
               />
               <div className="p-4 flex flex-col gap-2 py-6">
-                <h3 className="font-bold text-2xl mb-2 text-purple-800">Find a Unique Answer</h3>
+                <h3 className="font-bold text-2xl mb-2 text-purple-800">
+                  Find a Unique Answer
+                </h3>
                 <p className="text-sm">
                   Unleash your creativity and stand a chance to win exclusive
                   prizes by providing a one-of-a-kind answer.
@@ -461,7 +463,9 @@ export default function Home() {
                 className="mb-4 rounded-t-xl h-48 object-cover"
               />
               <div className="p-4 flex flex-col gap-2 py-6">
-                <h3 className="font-bold text-2xl mb-2 text-purple-800">Instant Prizes</h3>
+                <h3 className="font-bold text-2xl mb-2 text-purple-800">
+                  Instant Prizes
+                </h3>
                 <div className="text-sm">
                   Get rewarded instantly with exciting prizes just by
                   participating in our engaging contests.
@@ -479,7 +483,9 @@ export default function Home() {
                 className="mb-4 rounded-t-xl h-48 object-cover"
               />
               <div className="p-4 flex flex-col gap-2 py-6">
-                <h3 className="font-bold text-2xl mb-2 text-purple-800">Live Raffle</h3>
+                <h3 className="font-bold text-2xl mb-2 text-purple-800">
+                  Live Raffle
+                </h3>
                 <p className="text-sm">
                   Experience the thrill of our live raffles and stand a chance
                   to win big prizes in real-time and live on Facebook.
@@ -491,7 +497,10 @@ export default function Home() {
 
         <section className=" container py-20 flex h-[400px] items-start justify-center max-w-7xl">
           <div className="w-full">
-            <h3 className="w-full h-full text-3xl font-bold text-purple-800 leading-10">
+            <h4 className="text-lg font-bold text-purple-800">
+              About Our Games
+            </h4>
+            <h3 className="w-full h-full text-3xl font-bold text-black leading-10">
               About Our Games, <br /> Learn
               <span className="p-1 m-1 relative">
                 <div className="rotate-[-3deg] absolute inset-0 w-full h-full bg-[#f79e07]"></div>
@@ -501,14 +510,21 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col justify-center  w-full">
-            <p className="max-w-xl text-black">
-              Our games are designed to be fun and engaging, with a focus on
-              creativity and originality. Whether you're a seasoned player or
-              new to the game, there's something for everyone.
+            <p className="max-w-lg text-black text-sm leading-relaxed">
+              Unleash your creativity and stand a chance to win exclusive prizes
+              by providing a one-of-a-kind answer. Unleash your creativity and
+              stand a chance to win exclusive prizes by providing a
+              one-of-a-kind answer. Unleash your creativity and stand a chance
+              to win exclusive prizes by providing a one-of-a-kind answer.
+              Unleash your creativity and stand a chance to win exclusive
+              prizes.
             </p>
             <div className="flex gap-2 my-2 w-full">
               <a href="/games">
-                <Button className="text-white bg-gradient-to-t from-[#347158] to-[#58e364] from-30% to-100% hover:from-[#214838] hover:to-[#41a84a] rounded-xl">
+                <Button
+                  size="sm"
+                  className="text-white bg-gradient-to-t from-[#347158] to-[#58e364] from-30% to-100% hover:from-[#214838] hover:to-[#41a84a] rounded-xl px-4"
+                >
                   Get started
                 </Button>
               </a>
@@ -517,7 +533,7 @@ export default function Home() {
                 className="text-purple-800 hover:bg-transparent hover:underline hover:text-purple-900"
               >
                 <a href="/faq" className="flex items-center">
-                  FAQ <ChevronRight className="ml-2" />
+                  FAQs <ChevronRight className="ml-2" />
                 </a>
               </Button>
             </div>

@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { IconTrophy, IconGift, IconUsers, IconHelp } from "@tabler/icons-react";
-import { motion } from "framer-motion";
+import { motion } from "friamer-motion";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import NumberTicker from "@/components/ui/number-ticker";
@@ -26,7 +26,10 @@ export function BentoGridComponent() {
 }
 
 const PrizeItem = () => (
-  <div className="flex flex-col items-center justify-center h-full text-white p-4 bg-pink-500 bg-gradient-to-b from-pink-500 to-pink-600 rounded-2xl">
+  //#e13bb1 center
+  //#c4016b outer
+  
+  <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-2xl bg-gradient-radial from-[#e13bb1] to-[#c4016b]">
     <IconTrophy className="h-24 w-24 mb-2 text-yellow-400" />
     <h2 className="text-3xl font-bold">
       £<NumberTicker value={10000} className="text-white" delay={0} />
@@ -36,7 +39,10 @@ const PrizeItem = () => (
 );
 
 const WinnerItem = () => (
-  <div className="flex items-center justify-between text-white rounded-2xl relative bg-teal-300 bg-gradient-to-b from-teal-300 to-teal-500 h-full w-full">
+    //radial gradient
+    //76beab center
+    //73bba4 outer
+  <div className="flex items-center justify-between text-white rounded-2xl relative h-full w-full bg-gradient-radial from-[#76beab] to-[#73bba4]">
     <Image
       src="/path/to/avatar.png"
       alt="Winner"
@@ -59,7 +65,10 @@ const WinnerItem = () => (
 );
 
 const WinnersCountItem = () => (
-  <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-2xl bg-orange-400 bg-gradient-to-b from-orange-400 to-orange-600 h-2/3 w-full">
+    //radial gradient
+    //fbb304 center
+    //fb8c00 outer
+  <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-2xl h-2/3 w-full bg-gradient-radial from-[#fbb304] via-[#fbb304] to-[#fb8c00]">
     <h2 className="text-4xl font-bold">
       <NumberTicker value={875} className="text-white" delay={0} />
     </h2>
@@ -68,16 +77,20 @@ const WinnersCountItem = () => (
 );
 
 const PlayersCountItem = () => (
-  <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-2xl bg-purple-500 bg-gradient-to-b from-purple-500 to-purple-700 h-2/3 w-full">
-    <h2 className="text-4xl font-bold">
-      <NumberTicker value={1200} className="text-white" delay={0} />
+    //radial gradient
+  <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-2xl h-2/3 w-full bg-gradient-radial from-purple-600 to-purple-800">
+    <h2 className="text-7xl font-bold">
+      <NumberTicker value={1200} className="text-white font-calibri" delay={0} />
     </h2>
     <p className="text-sm">players</p>
   </div>
 );
 
 const HowToPlayItem = () => (
-  <div className="flex items-center justify-between p-4 rounded-2xl relative h-full w-full bg-gradient-to-b from-[#f5c299] to-[#f59999]">
+    //radial gradient
+    //#d0c8c1 center
+    //#cfc9be outer
+  <div className="flex items-center justify-between p-4 rounded-2xl relative h-full w-full bg-gradient-radial from-[#d0c8c1] to-[#bbb6ac]">
     <div className="flex items-center">
       <Image
         src="/path/to/avatar1.png"
