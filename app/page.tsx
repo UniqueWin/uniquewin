@@ -422,8 +422,8 @@ export default function Home() {
           </small>
           <h2 className="text-3xl font-bold mb-4 text-purple-800 py-5">
             3 Ways to Win{" "}
-            <span className="p-1 relative">
-              <div className="rotate-[-5deg] absolute inset-0 w-full h-full bg-[#f79e07]"></div>
+            <span className="p-[0.5px]0.5px] relative">
+              <div className="rotate-[-2deg] absolute inset-0 w-full h-full bg-[#f79e07]"></div>
               <span className="relative z-10 text-white">Big Prizes</span>
             </span>
           </h2>
@@ -502,8 +502,8 @@ export default function Home() {
             </h4>
             <h3 className="w-full h-full text-3xl font-bold text-black leading-10">
               About Our Games, <br /> Learn
-              <span className="p-1 m-1 relative">
-                <div className="rotate-[-3deg] absolute inset-0 w-full h-full bg-[#f79e07]"></div>
+              <span className="p-[0.5px] m-1 relative">
+                <div className="rotate-[-2deg] absolute inset-0 w-full h-full bg-[#f79e07]"></div>
                 <span className="relative z-10 text-white">How To Play</span>
               </span>
             </h3>
@@ -553,9 +553,10 @@ export default function Home() {
                 className="rounded-xl"
               />
               <div className="absolute bottom-0 left-0 w-full h-20 flex items-center justify-center font-bold text-white text-4xl px-10 mb-8">
-                <span className="w-[93%] leading-tight">
+                <span className="w-[93%] leading-tight p-[0.5px] relative">
+                  <div></div>
                   Discover Your Luck with Our Exciting{" "}
-                  <span className="bg-white px-1 rotate-[-3deg] text-blue-800">
+                  <span className="bg-white px-1 rotate-[-2deg] text-blue-800">
                     Lucky Dip
                   </span>
                 </span>
@@ -593,12 +594,33 @@ export default function Home() {
           </div>
         </section>
 
+        {/*   <div className="relative w-full h-full rounded-3xl overflow-hidden">
+    <Image
+      src="/players.png"
+      alt="Winner"
+      layout="fill"
+      objectFit="cover"
+      quality={100}
+      priority
+      className="scale-[1.35] object-cover"
+    /> */}
+
         {/* //banner */}
-        <section className="bg-red-100 p-6 my-10">
-          <div className="container flex justify-center items-center gap-12">
-            <h3 className="text-2xl font-bold w-1/3 text-purple-800">
+        <section className="bg-[#fbead1] my-10 relative h-[200px]">
+          <div className="absolute top-0 left-0 w-full h-full z-0">
+            <Image
+              src="/bannerbg.png"
+              alt="banner"
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
+          <div className="container flex justify-center items-center gap-12 h-[200px] z-10 relative">
+            <h3 className="text-4xl font-bold w-1/2 text-black">
               If there is no unique answer found the prize is rolled over to the{" "}
-              <span className="bg-red-400 px-1 text-white">next game.</span>
+              <span className="bg-[#f15f53] px-[0.5] text-white">
+                next game.
+              </span>
             </h3>
             <div className="flex gap-4">
               <div className="w-16 h-16 relative">
