@@ -10,13 +10,15 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
-import { ChevronRight, Clover, Link, Star } from "lucide-react";
+import { ChevronRight, Clover, Star, Circle } from "lucide-react";
 import CustomSwitch from "@/components/CustomSwitch"; // Import the custom switch
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 // import DiceRollAnimation from "./components/DiceRollAnimation"; // Import the animation component
 import DiceRoll from "./components/DiceRoll";
 import { BentoGridComponent } from "@/components/BentoGrid";
+import AnimatedGradientText from "@/components/ui/animated-gradient-text";
+import Link from "next/link";
 
 const supabase = createClient();
 
@@ -303,8 +305,26 @@ export default function Home() {
           />
         </div>
       </div>
-      <div className="absolute top-4 right-4 md:top-10 md:right-20 z-20 select-none">
-        <div
+      <div className="absolute top-4 right-4 z-20 select-none">
+        <div className="z-10 flex items-center justify-center">
+          <Link href="/games">
+            <AnimatedGradientText>
+              <Circle
+                className="mr-1 h-4 w-4"
+                fill={currentGame?.status === "active" ? "#00ff00" : "#ff0000"}
+              />
+              <span
+                className={cn(
+                  `inline animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent`
+                )}
+              >
+                {currentGame?.status === "active" ? "LIVE" : " "}
+              </span>
+              <ChevronRight className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
+            </AnimatedGradientText>
+          </Link>
+        </div>
+        {/* <div
           className={cn(
             "inline-flex items-center rounded-full bg-zinc-900 bg-opacity-50 px-2 py-1 text-xs font-medium text-white"
           )}
@@ -316,7 +336,7 @@ export default function Home() {
             )}
           />
           {currentGame?.status === "active" ? "LIVE" : " "}
-        </div>
+        </div> */}
       </div>
 
       <div className="h-[60vh] sm:h-[60vh] md:h-[65vh] lg:h-[87vh] relative overflow-hidden">
@@ -387,7 +407,9 @@ export default function Home() {
             </div>
           </div>
 
-          <p className="text-white text-sm md:text-base mt-2">Cost £1 to play £5 lucky dip</p>
+          <p className="text-white text-sm md:text-base mt-2">
+            Cost £1 to play £5 lucky dip
+          </p>
         </div>
       </div>
 
