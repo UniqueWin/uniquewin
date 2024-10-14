@@ -63,7 +63,7 @@ const DiceRoll = () => {
         300
       );
       camera.position.set(0, 0, 4).multiplyScalar(7);
-      
+
       // Store the initial camera position and rotation
       animationState.startPosition.copy(camera.position);
       animationState.startRotation.copy(camera.rotation);
@@ -344,9 +344,9 @@ const DiceRoll = () => {
       setScore((prevScore) =>
         prevScore === "" ? score : prevScore + "+" + score
       );
-      
+
       // Trigger camera animation after the last dice has settled
-      if (diceArray.every(dice => !dice.body.allowSleep)) {
+      if (diceArray.every((dice) => !dice.body.allowSleep)) {
         animateCameraToTopView();
       }
     }
@@ -367,7 +367,8 @@ const DiceRoll = () => {
       }
 
       if (animationState.isAnimating) {
-        animationState.animationProgress += 1 / 60 / animationState.animationDuration;
+        animationState.animationProgress +=
+          1 / 60 / animationState.animationDuration;
         if (animationState.animationProgress >= 1) {
           animationState.animationProgress = 1;
           animationState.isAnimating = false;
@@ -452,30 +453,6 @@ const DiceRoll = () => {
   return (
     <>
       <main>
-        <div className="frame">
-          <div className="frame__title">
-            <h1 className="frame__title-main">Three.js Dice Roller</h1>
-            <a
-              aria-label="Back to the article"
-              className="frame__title-back"
-              href="https://tympanus.net/codrops/?p=69521"
-            >
-              <span className="oh__inner">Back to the article</span>
-              <svg width="18px" height="18px" viewBox="0 0 24 24">
-                <path
-                  vectorEffect="non-scaling-stroke"
-                  d="M18.25 15.5a.75.75 0 00.75-.75v-9a.75.75 0 00-.75-.75h-9a.75.75 0 000 1.5h7.19L6.22 16.72a.75.75 0 101.06 1.06L17.5 7.56v7.19c0 .414.336.75.75.75z"
-                ></path>
-              </svg>
-            </a>
-          </div>
-          <a
-            className="frame__prev"
-            href="https://tympanus.net/Development/TwistedText/"
-          >
-            Previous demo
-          </a>
-        </div>
         <div className="content">
           <canvas
             ref={canvasRef}
