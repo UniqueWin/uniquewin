@@ -36,16 +36,6 @@ const Footer = () => {
                 Winners
               </Link>
             </li>
-            <li>
-              <Link href="/support" className="hover:text-gray-300">
-                Support
-              </Link>
-            </li>
-            <li>
-              <Link href="/register" className="hover:text-gray-300">
-                Register
-              </Link>
-            </li>
           </ul>
           {/* social icons */}
           <div className="flex space-x-4">
