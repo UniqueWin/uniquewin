@@ -8,6 +8,7 @@ import Link from "next/link";
 import { LoginModal } from "@/components/LoginModal";
 import { useUser } from "@/utils/UserContext";
 import AddCreditsModal from "@/components/AddCreditsModal";
+import Image from "next/image";
 
 const Navbar = () => {
   const { user, refreshUser } = useUser();
@@ -57,7 +58,16 @@ const Navbar = () => {
       {/* Top Banner */}
       <div className="bg-pink-950 w-full max-w-screen overflow-x-hidden p-2 flex justify-between items-center text-white text-sm">
         <div className="flex items-center space-x-4">
-          <Trophy className="text-yellow-400" />
+          <div className="">
+            <Link href="/">
+              <Image
+                src="/logo-web-horizontal.png"
+                alt="Logo"
+                width={100}
+                height={100}
+              />
+            </Link>
+          </div>
           <div>Live jackpot £1,500</div>
           <Link href="/games">
             <Button
@@ -101,9 +111,6 @@ const Navbar = () => {
       {/* Header */}
       <div className="bg-white p-4 flex justify-between items-center w-full max-w-screen overflow-x-hidden">
         <div className="flex justify-start items-center gap-4 text-black">
-          <div className="text-lg font-bold">
-            <Link href="/">Logo</Link>
-          </div>
           <nav>
             <ul className="flex space-x-4">
               <li>
