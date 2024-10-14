@@ -14,7 +14,7 @@ import {
 
 export default function AnswerValidationPage() {
   const [answers, setAnswers] = useState<any[]>([]);
-  const [showPendingOnly, setShowPendingOnly] = useState(true);
+  const [showPendingOnly, setShowPendingOnly] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
