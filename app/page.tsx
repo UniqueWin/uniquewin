@@ -423,7 +423,7 @@ export default function Home() {
           <h2 className="text-3xl font-bold mb-4 text-purple-800 py-5">
             3 Ways to Win{" "}
             <span className="p-1 relative">
-              <div className="rotate-[-5deg] absolute inset-0 w-full h-full bg-yellow-400"></div>
+              <div className="rotate-[-5deg] absolute inset-0 w-full h-full bg-[#f79e07]"></div>
               <span className="relative z-10 text-white">Big Prizes</span>
             </span>
           </h2>
@@ -432,19 +432,19 @@ export default function Home() {
             rewards, and participate in live raffles.
           </p>
 
-          <div className="flex flex-col md:flex-row justify-center items-center text-center gap-8">
+          <div className="flex flex-col md:flex-row justify-center items-center text-center gap-8 max-w-7xl mx-auto">
             {/* Card 1 */}
-            <div className="w-72 rounded-xl bg-white text-black shadow-lg">
+            <div className="w-full rounded-xl bg-white text-black shadow-lg">
               <Image
-                src="/UniqueAnswer.webp"
+                src="/gifts3.png"
                 alt="Unique Answer"
                 width={500}
                 height={500}
-                className="mx-auto mb-4 rounded-t-xl"
+                className="mb-4 rounded-t-xl h-48 object-cover"
               />
-              <div className="p-4">
-                <h3 className="font-bold text-xl mb-2">Find a Unique Answer</h3>
-                <p>
+              <div className="p-4 flex flex-col gap-2 py-6">
+                <h3 className="font-bold text-2xl mb-2 text-purple-800">Find a Unique Answer</h3>
+                <p className="text-sm">
                   Unleash your creativity and stand a chance to win exclusive
                   prizes by providing a one-of-a-kind answer.
                 </p>
@@ -452,35 +452,35 @@ export default function Home() {
             </div>
 
             {/* Card 2 */}
-            <div className="w-72 rounded-xl bg-white text-black shadow-lg">
+            <div className="w-full rounded-xl bg-white text-black shadow-lg">
               <Image
-                src="/InstantPrizes.webp"
+                src="/chest.png"
                 alt="Instant Prizes"
                 width={500}
                 height={500}
-                className="mb-4 rounded-t-xl"
+                className="mb-4 rounded-t-xl h-48 object-cover"
               />
-              <div className="p-4">
-                <h3 className="font-bold text-xl mb-2">Instant Prizes</h3>
-                <p>
+              <div className="p-4 flex flex-col gap-2 py-6">
+                <h3 className="font-bold text-2xl mb-2 text-purple-800">Instant Prizes</h3>
+                <div className="text-sm">
                   Get rewarded instantly with exciting prizes just by
                   participating in our engaging contests.
-                </p>
+                </div>
               </div>
             </div>
 
             {/* Card 3 */}
-            <div className="w-72 rounded-xl bg-white text-black shadow-lg">
+            <div className="w-full rounded-xl bg-white text-black shadow-lg">
               <Image
-                src="/LiveRaffle.webp"
+                src="/pound.png"
                 alt="Live Raffle"
                 width={500}
                 height={500}
-                className="mb-4 rounded-t-xl"
+                className="mb-4 rounded-t-xl h-48 object-cover"
               />
-              <div className="p-4">
-                <h3 className="font-bold text-xl mb-2">Live Raffle</h3>
-                <p>
+              <div className="p-4 flex flex-col gap-2 py-6">
+                <h3 className="font-bold text-2xl mb-2 text-purple-800">Live Raffle</h3>
+                <p className="text-sm">
                   Experience the thrill of our live raffles and stand a chance
                   to win big prizes in real-time and live on Facebook.
                 </p>
@@ -489,12 +489,12 @@ export default function Home() {
           </div>
         </div>
 
-        <section className=" container py-20 flex h-[400px] items-start">
+        <section className=" container py-20 flex h-[400px] items-start justify-center max-w-7xl">
           <div className="w-full">
             <h3 className="w-full h-full text-3xl font-bold text-purple-800 leading-10">
               About Our Games, <br /> Learn
               <span className="p-1 m-1 relative">
-                <div className="rotate-[-3deg] absolute inset-0 w-full h-full bg-yellow-400"></div>
+                <div className="rotate-[-3deg] absolute inset-0 w-full h-full bg-[#f79e07]"></div>
                 <span className="relative z-10 text-white">How To Play</span>
               </span>
             </h3>
