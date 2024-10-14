@@ -296,10 +296,16 @@ export default function Home() {
             "inline-flex items-center rounded-full bg-zinc-900 bg-opacity-50 px-2 py-1 text-xs font-medium text-white"
           )}
         >
-          <span className="mr-1 h-3 w-3 rounded-full bg-emerald-400 border-white border " />
-          LIVE
+          <span
+            className={cn(
+              "mr-1 h-3 w-3 rounded-full border-white border ",
+              currentGame?.status === "active" ? "bg-emerald-400" : "bg-red-400"
+            )}
+          />
+          {currentGame?.status === "active" ? "LIVE" : " "}
         </div>
       </div>
+
       <div className="h-[87vh] relative overflow-hidden">
         <div className="absolute inset-[-100%]">
           <div
@@ -326,76 +332,76 @@ export default function Home() {
               </span>
             </div>
           </h1>
-          {currentGame ? (
-            <div className="flex justify-center mb-4">
-              <TextRevealCard
-                text={currentGame.question}
-                revealText={`Jackpot: £${
-                  currentGame.current_prize ?? currentGame.jackpot
-                }`}
-                className="-rotate-3"
-              />
+          {/* {!currentGame ? ( */}
+          <div className="flex justify-center mb-4">
+            <TextRevealCard
+              text={currentGame?.question ?? "Name a UK city"}
+              revealText={`Jackpot: £${
+                currentGame?.current_prize ?? currentGame?.jackpot ?? 0
+              }`}
+              className="-rotate-3"
+            />
+          </div>
+          {/* ) : ( */}
+          <div className="text-white mb-4 bg-black bg-opacity-20 p-4 px-10 rounded-[30px] border2 border-white border-opacity-40 w-full md:max-w-2xl">
+            <div className="flex gap-2">
+              {Array.from({ length: 30 }).map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-3 h-3 rounded-full blur-[1.5px] duration-1000 ${
+                    index === flashingIndex
+                      ? "bg-yellow-300 animate-pulse"
+                      : "bg-yellow-200 bg-opacity-50"
+                  }`}
+                ></div>
+              ))}
             </div>
-          ) : (
-            <div className="text-white mb-4 bg-black bg-opacity-20 p-4 px-10 rounded-[30px] border2 border-white border-opacity-40 w-full md:max-w-2xl">
-              <div className="flex gap-2">
-                {Array.from({ length: 30 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className={`w-3 h-3 rounded-full blur-[1.5px] duration-1000 ${
-                      index === flashingIndex
-                        ? "bg-yellow-300 animate-pulse"
-                        : "bg-yellow-200 bg-opacity-50"
-                    }`}
-                  ></div>
-                ))}
-              </div>
-              <div className="py-4 flex flex-col gap-2 items-center">
-                <h2 className="text-3xl font-bold">
-                  Name the boss name beginning with 'T':
-                </h2>
-                <CustomSwitch
-                  label="Lucky Dip"
-                  onChange={(checked) => console.log("Switch is now:", checked)}
-                />
-                <div className="flex gap-2 w-full justify-center items-center">
-                  {/* <Input
+            <div className="py-4 flex flex-col gap-2 items-center">
+              <h2 className="text-3xl font-bold">
+                Name the boss name beginning with 'T':
+              </h2>
+              <CustomSwitch
+                label="Lucky Dip"
+                onChange={(checked) => console.log("Switch is now:", checked)}
+              />
+              <div className="flex gap-2 w-full justify-center items-center">
+                {/* <Input
                     type="text"
                     placeholder="Type your answer here..."
                     className="bg-white border-2 border-white border-opacity-40 rounded-lg p-6 text-xl font-bold text-white w-full"
                   /> */}
-                  <PlaceholdersAndVanishInput
-                    placeholders={placeholders.map(
-                      (placeholder) => placeholder.question
-                    )}
-                    onChange={handleChange}
-                    onSubmit={onSubmit}
-                    // className="w-full bg-whfite border-2 border-white border-opacity-40 rounded-lg p-6 text-xl font-bold text-black"
-                    className="w-96 rounded-lg px-0"
-                  />
-                  <Button
-                    variant="secondary"
-                    size="lg"
-                    className="text-white font-semibold text-xl h-12 bg-gradient-to-t from-[#347158] to-[#58e364] from-30% to-100% w-28"
-                  >
-                    Answer!
-                  </Button>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                {Array.from({ length: 30 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className={`w-3 h-3 rounded-full blur-[1.5px] duration-1000 ${
-                      index === reverseFlashingIndex
-                        ? "bg-yellow-300 animate-pulse"
-                        : "bg-yellow-200 bg-opacity-50"
-                    }`}
-                  ></div>
-                ))}
+                <PlaceholdersAndVanishInput
+                  placeholders={placeholders.map(
+                    (placeholder) => placeholder.question
+                  )}
+                  onChange={handleChange}
+                  onSubmit={onSubmit}
+                  // className="w-full bg-whfite border-2 border-white border-opacity-40 rounded-lg p-6 text-xl font-bold text-black"
+                  className="w-96 rounded-lg px-0"
+                />
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="text-white font-semibold text-xl h-12 bg-gradient-to-t from-[#347158] to-[#58e364] from-30% to-100% w-28"
+                >
+                  Answer!
+                </Button>
               </div>
             </div>
-          )}
+            <div className="flex gap-2">
+              {Array.from({ length: 30 }).map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-3 h-3 rounded-full blur-[1.5px] duration-1000 ${
+                    index === reverseFlashingIndex
+                      ? "bg-yellow-300 animate-pulse"
+                      : "bg-yellow-200 bg-opacity-50"
+                  }`}
+                ></div>
+              ))}
+            </div>
+          </div>
+          {/* )} */}
           <p className="text-white">Cost £1 to play £5 lucky dip</p>
           {/* <p className="text-white mb-4">
               No active games at the moment. Check back soon!
