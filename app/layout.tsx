@@ -1,11 +1,24 @@
 import { GameProvider } from "@/contexts/GameContext";
-import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import NavBar from "@/components/Navbar";
-import Footer from "@/components/Footer"; // Footer is imported here
+import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { UserProvider } from "@/utils/UserContext";
-import { AuroraBackground } from "@/components/ui/aurora-background";
+import localFont from "next/font/local";
+
+const calibri = localFont({
+  src: [
+    {
+      path: "../public/fonts/calibri.ttf",
+      weight: "400",
+    },
+    {
+      path: "../public/fonts/calibrib.ttf",
+      weight: "700",
+    },
+  ],
+  variable: "--font-calibri",
+});
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -28,13 +41,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={GeistSans.className}>
-      <body className="">
+    <html lang="en" className={`${calibri.variable}`}>
+      <body className="font-calibri">
         <UserProvider>
           <GameProvider>
             <NavBar />
             {/* <AuroraBackground showRadialGradient={true} className=""> */}
-              <main className="">{children}</main>
+            <main className="">{children}</main>
             {/* </AuroraBackground> */}
             <Footer />
           </GameProvider>

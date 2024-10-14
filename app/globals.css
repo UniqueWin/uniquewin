@@ -60,11 +60,28 @@
 }
 
 @layer base {
+  @font-face {
+    font-family: "Calibri";
+    src: url("/fonts/calibri.tiff") format("tiff"),
+      url("/fonts/calibri.tiff") format("tiff");
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: "Calibri";
+    src: url("/fonts/calibrib.tiff") format("tiff"),
+      url("/fonts/calibrib.tiff") format("tiff");
+    font-weight: bold;
+    font-style: normal;
+  }
+
   * {
     @apply border-border;
   }
   body {
     @apply text-foreground;
+    font-family: "Calibri", sans-serif;
   }
 
   .highlight {
@@ -98,8 +115,12 @@
 }
 
 @keyframes flip {
-  0% { transform: rotateY(0); }
-  100% { transform: rotateY(720deg); }
+  0% {
+    transform: rotateY(0);
+  }
+  100% {
+    transform: rotateY(720deg);
+  }
 }
 
 .animate-flip {
