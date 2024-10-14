@@ -422,8 +422,8 @@ export default function Home() {
           </small>
           <h2 className="text-3xl font-bold mb-4 text-purple-800 py-5">
             3 Ways to Win{" "}
-            <span className="p-1 relative">
-              <div className="rotate-[-5deg] absolute inset-0 w-full h-full bg-[#f79e07]"></div>
+            <span className="p-[0.5px]0.5px] relative">
+              <div className="rotate-[-2deg] absolute inset-0 w-full h-full bg-[#f79e07]"></div>
               <span className="relative z-10 text-white">Big Prizes</span>
             </span>
           </h2>
@@ -502,8 +502,8 @@ export default function Home() {
             </h4>
             <h3 className="w-full h-full text-3xl font-bold text-black leading-10">
               About Our Games, <br /> Learn
-              <span className="p-1 m-1 relative">
-                <div className="rotate-[-3deg] absolute inset-0 w-full h-full bg-[#f79e07]"></div>
+              <span className="p-[0.5px] m-1 relative">
+                <div className="rotate-[-2deg] absolute inset-0 w-full h-full bg-[#f79e07]"></div>
                 <span className="relative z-10 text-white">How To Play</span>
               </span>
             </h3>
@@ -544,14 +544,25 @@ export default function Home() {
 
         <section className="flex gap-10 p-4 text-black container w-full justify-between items-center my-20">
           <div className="w-full h-full flex flex-col gap-4 max-w-xl justify-center items-center">
-            <Image
-              src="/UniqueAnswer.webp"
-              alt="Unique Answer"
-              width={500}
-              height={500}
-              className="rounded-xl"
-            />
-            <p className="text-lg font-semibold text-left px-10">
+            <div className="relative">
+              <Image
+                src="/luck.png"
+                alt="Unique Answer"
+                width={500}
+                height={500}
+                className="rounded-xl"
+              />
+              <div className="absolute bottom-0 left-0 w-full h-20 flex items-center justify-center font-bold text-white text-4xl px-10 mb-8">
+                <span className="w-[93%] leading-tight p-[0.5px] relative">
+                  <div></div>
+                  Discover Your Luck with Our Exciting{" "}
+                  <span className="bg-white px-1 rotate-[-2deg] text-blue-800">
+                    Lucky Dip
+                  </span>
+                </span>
+              </div>
+            </div>
+            <p className="text-left px-10">
               Find a Unique Answer and WIN! Lorem ipsum, dolor sit amet
               consectetur adipisicing elit. Ea consequatur aut in assumenda
               quidem. Harum, sequi! Minus sit necessitatibus, alias possimus
@@ -563,29 +574,66 @@ export default function Home() {
             <div>
               <h3 className="text-3xl font-bold">Instant Prizes</h3>
             </div>
-            <div>
+            <div className="relative">
               <Image
-                src="/InstantPrizes.webp"
+                src="/wheel.png"
                 alt="Unique Answer"
                 width={500}
                 height={500}
                 className="rounded-xl"
               />
+              <div className="absolute bottom-0 left-0 w-full h-20 flex items-center justify-center font-bold text-white text-4xl px-10 mb-8">
+                <span className="w-[93%] leading-tight">
+                  Don't Miss the 8pm Result Show on{" "}
+                  <span className="bg-white px-1 rotate-[-3deg] text-blue-800">
+                    Facebook
+                  </span>
+                </span>
+              </div>
             </div>
           </div>
         </section>
 
+        {/*   <div className="relative w-full h-full rounded-3xl overflow-hidden">
+    <Image
+      src="/players.png"
+      alt="Winner"
+      layout="fill"
+      objectFit="cover"
+      quality={100}
+      priority
+      className="scale-[1.35] object-cover"
+    /> */}
+
         {/* //banner */}
-        <section className="bg-red-100 p-6 my-10">
-          <div className="container flex justify-center items-center gap-12">
-            <h3 className="text-2xl font-bold w-1/3 text-purple-800">
+        <section className="bg-[#fbead1] my-10 relative h-[200px]">
+          <div className="absolute top-0 left-0 w-full h-full z-0">
+            <Image
+              src="/bannerbg.png"
+              alt="banner"
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
+          <div className="container flex justify-center items-center gap-12 h-[200px] z-10 relative">
+            <h3 className="text-4xl font-bold w-1/2 text-black">
               If there is no unique answer found the prize is rolled over to the{" "}
-              <span className="bg-red-400 px-1 text-white">next game.</span>
+              <span className="bg-[#f15f53] px-[0.5] text-white">
+                next game.
+              </span>
             </h3>
             <div className="flex gap-4">
+              <div className="w-8 h-8 relative">
+                <Image
+                  src="/dice 2.png"
+                  alt="Dice"
+                  layout="fill"
+                  objectFit="contain"
+                />
+              </div>
               <div className="w-16 h-16 relative">
                 <Image
-                  src="/two-red-dice-clipart-lg.png"
+                  src="/dice 3.png"
                   alt="Dice"
                   layout="fill"
                   objectFit="contain"
@@ -593,11 +641,11 @@ export default function Home() {
               </div>
               <div className="w-24 h-24 relative -ml-4">
                 <Image
-                  src="/two-red-dice-clipart-lg.png"
+                  src="/dice 1.png"
                   alt="Dice"
                   layout="fill"
                   objectFit="contain"
-                  className="-mr-6 rotate-45"
+                  className="ml-8"
                 />
               </div>
             </div>
