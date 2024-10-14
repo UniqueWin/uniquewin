@@ -9,6 +9,7 @@ import {
   IconBrandX,
 } from "@tabler/icons-react";
 import { Facebook, FacebookIcon, Instagram } from "lucide-react";
+import Image from "next/image";
 
 const Footer = () => {
   return (
@@ -18,7 +19,16 @@ const Footer = () => {
       <div className="container mx-auto p-4 rounded-xl">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           {/* logo */}
-          <h2 className="text-xl font-bold mb-4">UniqueWin</h2>
+          <h2 className="text-xl font-bold mb-4">
+            <Link href="/">
+              <Image
+                src="/logo-web-horizontal.png"
+                alt="Logo"
+                width={100}
+                height={100}
+              />
+            </Link>
+          </h2>
           {/* horizontal links */}
           <ul className="flex gap-4 font-semibold">
             <li>
