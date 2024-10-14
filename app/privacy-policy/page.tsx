@@ -81,7 +81,7 @@ function page({}: Props) {
         <h2 className="text-2xl font-semibold mb-3">8. Contact Us</h2>
         <p>
           If you have any questions about this Privacy Policy, please contact us
-          at [contact email].
+          at hello@uniquewin.com.
         </p>
       </section>
 
