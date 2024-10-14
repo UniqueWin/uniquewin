@@ -31,10 +31,10 @@ const PrizeItem = () => (
   
   <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-2xl bg-gradient-radial from-[#e13bb1] to-[#c4016b]">
     <IconTrophy className="h-24 w-24 mb-2 text-yellow-400" />
-    <h2 className="text-3xl font-bold">
+    <h2 className="text-7xl font-bold">
       £<NumberTicker value={10000} className="text-white" delay={0} />
     </h2>
-    <p className="text-sm">given in prizes</p>
+    <p className="text-2xl">given in prizes</p>
   </div>
 );
 
@@ -50,6 +50,7 @@ const WinnerItem = () => (
       height={50}
       className="rounded-full"
     />
+    
     <div className="absolute bottom-0 left-0 -auto w-full bg-white bg-opacity-20 backdrop-blur-[2px p-2 rounded text-purple-800">
       <div className="flex justify-between">
         <div className="flex flex-col text-left px-4 font-semibold">
@@ -69,10 +70,10 @@ const WinnersCountItem = () => (
     //fbb304 center
     //fb8c00 outer
   <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-2xl h-2/3 w-full bg-gradient-radial from-[#fbb304] via-[#fbb304] to-[#fb8c00]">
-    <h2 className="text-4xl font-bold">
+    <h2 className="text-7xl font-bold">
       <NumberTicker value={875} className="text-white" delay={0} />
     </h2>
-    <p className="text-sm">Winners</p>
+    <p className="text-2xl">Winners</p>
   </div>
 );
 
@@ -80,9 +81,9 @@ const PlayersCountItem = () => (
     //radial gradient
   <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-2xl h-2/3 w-full bg-gradient-radial from-purple-600 to-purple-800">
     <h2 className="text-7xl font-bold">
-      <NumberTicker value={1200} className="text-white font-calibri" delay={0} />
+      <NumberTicker value={1200} className="text-white" delay={0} />
     </h2>
-    <p className="text-sm">players</p>
+    <p className="text-2xl">players</p>
   </div>
 );
 
