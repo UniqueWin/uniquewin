@@ -71,12 +71,12 @@ const Footer = () => {
           {/* links */}
           <ul className="flex gap-4 w-full justify-center items-center mt-4">
             <li>
-              <Link href="/terms" className="hover:text-gray-300">
+              <Link href="/terms-of-service" className="hover:text-gray-300">
                 Terms of Service
               </Link>
             </li>
             <li>
-              <Link href="/privacy" className="hover:text-gray-300">
+              <Link href="/privacy-policy" className="hover:text-gray-300">
                 Privacy Policy
               </Link>
             </li>
