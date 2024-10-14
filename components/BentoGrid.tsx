@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { IconTrophy, IconGift, IconUsers, IconHelp } from "@tabler/icons-react";
-import { motion } from "friamer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import NumberTicker from "@/components/ui/number-ticker";
