@@ -28,12 +28,12 @@ export default function FlipboardTimer({ game }: { game: Game }) {
   const endTime = new Date(game.end_time);
   const currentTime = new Date();
   const timeUntilEnd = endTime.getTime() - currentTime.getTime();
-  const hours = Math.floor(timeUntilEnd / (1000 * 60 * 60));
+  const hours = Math.floor(timeUntilEnd / (1000 * 60 * 60)) - 1; // Subtract 1 hour
   const minutes = Math.floor((timeUntilEnd % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((timeUntilEnd % (1000 * 60)) / 1000);
 
   const [time, setTime] = useState(
-    `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+    `${String(Math.max(0, hours)).padStart(2, "0")}:${String(minutes).padStart(
       2,
       "0"
     )}:${String(seconds).padStart(2, "0")}`
