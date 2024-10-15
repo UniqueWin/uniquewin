@@ -145,7 +145,7 @@ const Navbar = () => {
           {/* Bottom Row */}
           <div className="bg-white flex justify-between items-center p-2 h-[50px]">
             {/* Navigation Links */}
-            <div className="flex gap-2 w-full">
+            <div className="flex gap-2">
               {links.map((link) => (
                 <a href={link.href}>
                   <span
@@ -160,37 +160,60 @@ const Navbar = () => {
             </div>
 
             {/* User Info and Credits */}
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center border-r-2 px-2 border-purple-100">
+                <div className="bg-purple-200 rounded-full flex items-center justify-center w-8 h-8 text-purple-800">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 text-purple-900"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                </div>
+
+                <div className="text-xs w-full ml-2 text-black">
+                  Welcome back, <br />
+                  {user?.email}!
+                </div>
+              </div>
+              <div className="flex flex-col justify-center items-center border-r-2 px-2 border-purple-100">
+                <span className="text-sm">
+                  Cash:
+                  <span className="font-bold text-pink-500">
+                    £{user?.account_balance}
+                  </span>
+                </span>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="text-white font-semibold text-sm h-6 bg-gradient-to-b from-purple-400 to-purple-700 hover:from-purple-500 hover:to-purple-800"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                <select className="bg-purple-700 text-white">
-                  <option>Welcome back, username!</option>
-                </select>
+                  Convert
+                </Button>
               </div>
-              <div>
-                <span className="text-sm">Cash: </span>
-                <span className="font-bold text-yellow-300">£100.20</span>
+              <div className="flex flex-col justify-center items-center px-2">
+                <span className="text-sm">
+                  Credits:{" "}
+                  <span className="text-pink-500 font-semibold">
+                    {user?.credit_balance}
+                  </span>
+                </span>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="text-white font-semibold text-sm h-6 bg-gradient-to-t from-[#347158] to-[#58e364] hover:from-green-400 hover:to-green-500"
+                >
+                  Buy Credits
+                </Button>
               </div>
-              <div>
-                <span className="text-sm">Credits left: </span>
-                <span className="font-bold">10</span>
-              </div>
-              <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-                Buy credits
-              </button>
             </div>
           </div>
         </div>

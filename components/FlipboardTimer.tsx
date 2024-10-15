@@ -57,7 +57,7 @@ export default function FlipboardTimer() {
   return (
     <div className="w-full max-w-md mx-auto text-white">
       <div className="flex items-center justify-center mbf-4">
-        <Timer className="w-6 h-6 mr-2" />
+        {/* <Timer className="w-6 h-6 mr-2" /> */}
         <h2 className="text-xl font-bold">GAME ENDS IN</h2>
       </div>
       <div className="flex justify-center items-center text-3xl font-bold">
