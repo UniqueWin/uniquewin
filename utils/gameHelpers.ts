@@ -1,13 +1,5 @@
 import { createClient } from '@/utils/supabase/client';
-
-export interface Game {
-  id: string;
-  question: string;
-  gameStatus: string;
-  current_prize: number;
-  // Add other properties as needed
-}
-
+import { Game } from '@/utils/dataHelpers';
 export async function getCurrentGame(): Promise<Game | null> {
   const supabase = createClient();
   

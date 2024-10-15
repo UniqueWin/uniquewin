@@ -3,6 +3,7 @@ import "./flipboard.css";
 
 import React, { useState, useEffect } from "react";
 import { Timer } from "lucide-react";
+import { Game } from "@/utils/dataHelpers";
 
 const FlipDigit = ({ digit }: { digit: string }) => {
   const [flip, setFlip] = useState(false);
@@ -21,8 +22,22 @@ const FlipDigit = ({ digit }: { digit: string }) => {
   );
 };
 
-export default function FlipboardTimer() {
-  const [time, setTime] = useState("23:55:13");
+export default function FlipboardTimer({ game }: { game: Game }) {
+  // const [time, setTime] = useState("23:55:13");
+  //get time until game end
+  const endTime = new Date(game.end_time);
+  const currentTime = new Date();
+  const timeUntilEnd = endTime.getTime() - currentTime.getTime();
+  const hours = Math.floor(timeUntilEnd / (1000 * 60 * 60));
+  const minutes = Math.floor((timeUntilEnd % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((timeUntilEnd % (1000 * 60)) / 1000);
+
+  const [time, setTime] = useState(
+    `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+      2,
+      "0"
+    )}:${String(seconds).padStart(2, "0")}`
+  );
 
   useEffect(() => {
     const timer = setInterval(() => {
