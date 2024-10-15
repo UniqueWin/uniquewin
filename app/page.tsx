@@ -660,7 +660,7 @@ export default function Home() {
               Read what our players have to say about us.
             </p>
           </div>
-          <div className="relative w-full overflow-hidden">
+          <div className="relative w-full overflow-hidden container">
             <div className="flex gap-4 overflow-x-auto pb-4 px-4 snap-x snap-mandatory scroll-pl-4 scrollbar scrollbar-hide">
               <div className="w-64 flex-shrink-0 snap-start shadow-[0_0_5px_rgba(0,_0,_0,_0.1)] rounded-lg">
                 <div className="bg-[#00b67a bg-white text-black p-4 rounded-lg h-full flex flex-col">
@@ -745,13 +745,13 @@ export default function Home() {
               ></path>
             </svg>
           </div>
-          <div className="bg-purple-800 text-white my-10 w-2/3 rounded-3xl flex items-center justify-start overflow-hidden bg-gradient-to-b from-purple-700 to-purple-900 h-[150px] z-10">
-            <div className="w-1/5 h-full">
+          <div className="bg-purple-800 text-white my-10 w-full max-w-4xl rounded-3xl flex items-center justify-start overflow-hidden bg-gradient-to-b from-purple-700 to-purple-900 h-[200px] z-10 relative">
+            <div className="">
               <Image
-                src="/InstantPrizes.webp"
+                src="/trophy.png"
                 alt="Instant Prizes"
-                width={150}
-                height={150}
+                width={250}
+                height={250}
                 className="rounded-3xl"
               />
             </div>
@@ -764,40 +764,12 @@ export default function Home() {
               </p>
             </div>
             <div className="flex justify-en w-1/5">
-              <Button className="bg-yellow-400 text-black font-semibold text-lg">
+              <Button className="text-white bg-gradient-to-t from-[#f69808] to-[#fdc202] from-30% to-100% hover:from-[#f69708d9] hover:to-[#fec509] rounded-lg px-4 text-xl font-semibold">
                 JOIN NOW!
               </Button>
             </div>
           </div>
         </section>
-
-        {/* Past Games Section */}
-        {/* <div className="text-center px-4 text-white bg-[#4B0082] py-20 mx-10 rounded-3xl">
-          <h2 className="text-3xl font-bold mb-4">Past Games</h2>
-          <ul className="space-y-2">
-            {pastGames.map((game) => (
-              <li
-                key={game.id}
-                className="bg-[#C0163D] p-4 rounded-lg max-w-xl mx-auto"
-              >
-                <h3 className="font-bold">{game.question}</h3>
-                <p>Jackpot: £{game.current_prize ?? game.jackpot}</p>
-                <p>Ended: {new Date(game.end_time).toLocaleString()}</p>
-              </li>
-            ))}
-          </ul>
-        </div> */}
-
-        {/* Dice Roll Animation */}
-        {/* <div className="text-center bg-[#4B0082] py-20">
-          <h2 className="text-3xl font-bold text-white mb-6">
-            Bonus Game Preview: Dice Roll
-          </h2>
-          <DiceRoll />
-          {rollResult !== null && (
-            <p className="text-white">You rolled a {rollResult}!</p>
-          )}
-        </div> */}
       </div>
     </div>
   );
