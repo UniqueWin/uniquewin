@@ -49,7 +49,7 @@ const WinnerItem = () => (
 
     <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-20 backdrop-blur-[2px] p-2">
       <div className="flex justify-between items-center">
-        <div className="flex flex-col text-left px-4 font-semibold text-purple-800">
+        <div className="flex flex-col text-left px-4 font-semibold text-purple-800 text-xl">
           <p>Wanna be a</p>
           <p>next winner?</p>
         </div>
@@ -75,7 +75,7 @@ const HowToItem = () => (
 
     <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-20 backdrop-blur-[2px] p-2">
       <div className="flex justify-between items-center text-left px-4">
-        <div className="flex justify-center items-center font-bold text-purple-800">
+        <div className="flex justify-center items-center font-bold text-purple-800 text-xl">
           How to play?
         </div>
         <Button
