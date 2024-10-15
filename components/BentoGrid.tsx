@@ -53,8 +53,8 @@ const WinnerItem = () => (
           <p>Wanna be a</p>
           <p>next winner?</p>
         </div>
-        <Button className="bg-orange-400 bg-gradient-to-b from-orange-400 to-orange-500 text-white hover:bg-orange-500 hover:from-orange-400 hover:to-orange-700">
-          Play Now
+        <Button className="text-white bg-gradient-to-t from-[#f69808] to-[#fdc202] from-30% to-100% hover:from-[#f69708d9] hover:to-[#fec509] rounded-lg px-4 text-xl font-semibold">
+          Register
         </Button>
       </div>
     </div>
@@ -74,11 +74,13 @@ const HowToItem = () => (
     />
 
     <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-20 backdrop-blur-[2px] p-2">
-      <div className="flex justify-between items-center">
-        <p className="font-bold">How to play?</p>
+      <div className="flex justify-between items-center text-left px-4">
+        <div className="flex justify-center items-center font-bold text-purple-800">
+          How to play?
+        </div>
         <Button
           size="sm"
-          className="bg-orange-400 bg-gradient-to-b from-orange-400 to-orange-500 text-white hover:bg-orange-500 hover:from-orange-400 hover:to-orange-700"
+          className="text-white bg-gradient-to-t from-[#f69808] to-[#fdc202] from-30% to-100% hover:from-[#f69708d9] hover:to-[#fec509] rounded-lg px-4 text-xl font-semibold"
         >
           Read FAQ
         </Button>
