@@ -770,34 +770,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        {/* Past Games Section */}
-        {/* <div className="text-center px-4 text-white bg-[#4B0082] py-20 mx-10 rounded-3xl">
-          <h2 className="text-3xl font-bold mb-4">Past Games</h2>
-          <ul className="space-y-2">
-            {pastGames.map((game) => (
-              <li
-                key={game.id}
-                className="bg-[#C0163D] p-4 rounded-lg max-w-xl mx-auto"
-              >
-                <h3 className="font-bold">{game.question}</h3>
-                <p>Jackpot: £{game.current_prize ?? game.jackpot}</p>
-                <p>Ended: {new Date(game.end_time).toLocaleString()}</p>
-              </li>
-            ))}
-          </ul>
-        </div> */}
-
-        {/* Dice Roll Animation */}
-        {/* <div className="text-center bg-[#4B0082] py-20">
-          <h2 className="text-3xl font-bold text-white mb-6">
-            Bonus Game Preview: Dice Roll
-          </h2>
-          <DiceRoll />
-          {rollResult !== null && (
-            <p className="text-white">You rolled a {rollResult}!</p>
-          )}
-        </div> */}
       </div>
     </div>
   );
