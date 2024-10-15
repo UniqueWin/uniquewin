@@ -1,7 +1,8 @@
 "use client";
 
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { Game, getCurrentGame } from "@/utils/gameHelpers";
+import { Game } from "@/utils/dataHelpers";
+import { getCurrentGame } from "@/utils/gameHelpers";
 
 interface GameContextType {
   currentGame: Game | null;
@@ -10,7 +11,9 @@ interface GameContextType {
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
-export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
 
   useEffect(() => {
@@ -19,7 +22,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const game = await getCurrentGame();
         setCurrentGame(game);
       } catch (error) {
-        console.error('Error fetching current game:', error);
+        console.error("Error fetching current game:", error);
       }
     };
 
@@ -40,7 +43,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useGame = () => {
   const context = useContext(GameContext);
   if (context === undefined) {
-    throw new Error('useGame must be used within a GameProvider');
+    throw new Error("useGame must be used within a GameProvider");
   }
   return context;
 };

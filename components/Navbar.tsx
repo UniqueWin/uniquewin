@@ -1,22 +1,20 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowRightIcon, Bell, PoundSterlingIcon, Trophy } from "lucide-react";
-import { createClient } from "@/utils/supabase/client";
-import Link from "next/link";
 import { LoginModal } from "@/components/LoginModal";
-import { useUser } from "@/utils/UserContext";
-import AddCreditsModal from "@/components/AddCreditsModal";
-import Image from "next/image";
-import { getCurrentGame } from "@/utils/gameHelpers";
-import { Game } from "@/utils/dataHelpers";
-import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import NumberTicker from "@/components/ui/number-ticker";
-import FlipboardTimer from "./FlipboardTimer";
-import AnimatedShinyText from "./ui/animated-shiny-text";
-import AnimatedGradientText from "./ui/animated-gradient-text";
 import { cn } from "@/lib/utils";
+import { useUser } from "@/utils/UserContext";
+import { Game } from "@/utils/dataHelpers";
+import { getCurrentGame } from "@/utils/gameHelpers";
+import { createClient } from "@/utils/supabase/client";
+import { ArrowRightIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import FlipboardTimer from "./FlipboardTimer";
+import AnimatedGradientText from "./ui/animated-gradient-text";
 
 const Navbar = () => {
   const { user, refreshUser } = useUser();
@@ -272,158 +270,6 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
-        onLogin={handleLoginSuccess}
-        isSignUp={isSignUp}
-      />
-    </>
-  );
-
-  return (
-    <>
-      {/* Top Banner */}
-      <div className="w-full max-w-screen overflow-x-hidden p-2 flex justify-between items-center text-white text-sm relative">
-        <div className="absolute left-0 top-0 w-full h-full z-0">
-          <Image src="/nav.png" alt="Banner" layout="fill" objectFit="cover" />
-        </div>
-        <div className="flex items-center space-x-4 z-10">
-          <div className="">
-            <Link href="/">
-              <Image
-                src="/logo-web-horizontal.png"
-                alt="Logo"
-                width={100}
-                height={100}
-              />
-            </Link>
-          </div>
-          <div className="relative w-full max-w-[235px] aspect-[235/87] z-10">
-            <Image
-              src="/sign BIG.png"
-              alt="Jackpot"
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-contain"
-              priority
-            />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-white text- font-bold drop-shadow-lg pt-1">
-                {typeof currentJackpot === "number"
-                  ? `£${currentJackpot}`
-                  : "JACKPOT"}
-              </span>
-            </div>
-          </div>
-          <Link href={`/games/${currentGame?.id}`}>
-            <Button
-              variant="secondary"
-              size="sm"
-              className="bg-[#FFC700] text-black"
-            >
-              Play Now
-            </Button>
-          </Link>
-        </div>
-        <div className="flex items-center space-x-4 border-l border-white pl-4 z-10">
-          {user ? (
-            <div className="flex items-center gap-2">
-              <div className="flex flex-col">
-                <span className="font-semibold">
-                  Cash:
-                  <span className="text-yellow-400">
-                    £{user.account_balance}
-                  </span>{" "}
-                </span>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-semibold">
-                  You have{" "}
-                  <span className="text-yellow-400">
-                    {user.credit_balance} Q
-                  </span>{" "}
-                  left.
-                </span>
-                <small className="text-xxs">Buy more credits</small>
-              </div>
-              <AddCreditsModal />
-            </div>
-          ) : (
-            <div>Sign in to see your credits</div>
-          )}
-        </div>
-      </div>
-
-      {/* Header */}
-      <div className="bg-white p-4 flex justify-between items-center w-full max-w-screen overflow-x-hidden">
-        <div className="flex justify-start items-center gap-4 text-black">
-          <nav>
-            <ul className="flex space-x-4">
-              <li>
-                <Link href="/games" className="hover:underline">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/how-to-play" className="hover:underline">
-                  How to Play
-                </Link>
-              </li>
-              <li>
-                <Link href="/winners" className="hover:underline">
-                  Winners
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq" className="hover:underline">
-                  FAQ
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <div className="flex space-x-4 items-center">
-          {user ? (
-            <>
-              <Link
-                href="/profile"
-                className="text-sm font-semibold text-black"
-              >
-                Welcome, {user.email}
-              </Link>
-              <Button
-                variant="outline"
-                size="sm"
-                className="bg-transparent border-pink-900 text-pink-900"
-                onClick={handleSignOut}
-              >
-                Logout
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                className="bg-transparent border-pink-900 text-pink-900"
-                onClick={handleSignIn}
-              >
-                Login
-              </Button>
-              <Button
-                variant="secondary"
-                size="sm"
-                className="bg-[#FF6B00] text-white"
-                onClick={handleSignUp}
-              >
-                Register
-              </Button>
-            </>
-          )}
-        </div>
-      </div>
-
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
