@@ -4,7 +4,7 @@ export interface Game {
   id: string;
   question: string;
   gameStatus: string;
-  jackpot: number;
+  current_prize: number;
   // Add other properties as needed
 }
 

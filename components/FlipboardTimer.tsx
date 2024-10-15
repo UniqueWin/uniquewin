@@ -1,0 +1,83 @@
+"use client";
+import "./flipboard.css";
+
+import React, { useState, useEffect } from "react";
+import { Timer } from "lucide-react";
+
+const FlipDigit = ({ digit }: { digit: string }) => {
+  const [flip, setFlip] = useState(false);
+
+  useEffect(() => {
+    setFlip(true);
+    const timer = setTimeout(() => setFlip(false), 500);
+    return () => clearTimeout(timer);
+  }, [digit]);
+
+  return (
+    <div className="flip-digit">
+      <div className={`top ${flip ? "flip-top" : ""}`}>{digit}</div>
+      <div className={`bottom ${flip ? "flip-bottom" : ""}`}>{digit}</div>
+    </div>
+  );
+};
+
+export default function FlipboardTimer() {
+  const [time, setTime] = useState("23:55:13");
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTime((prevTime) => {
+        const [hours, minutes, seconds] = prevTime.split(":").map(Number);
+        let newSeconds = seconds - 1;
+        let newMinutes = minutes;
+        let newHours = hours;
+
+        if (newSeconds < 0) {
+          newSeconds = 59;
+          newMinutes -= 1;
+        }
+        if (newMinutes < 0) {
+          newMinutes = 59;
+          newHours -= 1;
+        }
+        if (newHours < 0) {
+          clearInterval(timer);
+          return "00:00:00";
+        }
+
+        return `${String(newHours).padStart(2, "0")}:${String(
+          newMinutes
+        ).padStart(2, "0")}:${String(newSeconds).padStart(2, "0")}`;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="w-full max-w-md mx-auto text-white">
+      <div className="flex items-center justify-center mbf-4">
+        <Timer className="w-6 h-6 mr-2" />
+        <h2 className="text-xl font-bold">GAME ENDS IN</h2>
+      </div>
+      <div className="flex justify-center items-center text-3xl font-bold">
+        {time.split("").map((digit, index) =>
+          digit === ":" ? (
+            <span key={index} className="mx-">
+              :
+            </span>
+          ) : (
+            <div className="flex flex-col items-center">
+              <FlipDigit key={index} digit={digit} />
+            </div>
+          )
+        )}
+      </div>
+      <div className="flex gap-2 w-full">
+        <small className="text-xs">HOURS</small>
+        <small className="text-xs">MINUTES</small>
+        <small className="text-xs">SECONDS</small>
+      </div>
+    </div>
+  );
+}

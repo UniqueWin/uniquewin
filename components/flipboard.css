@@ -1,0 +1,52 @@
+.flip-digit {
+  position: relative;
+  width: 0.6em;
+  height: 1em;
+  perspective: 200px;
+  display: inline-block;
+  margin: 0 0.05em;
+}
+.top,
+.bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0.5em;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0.1em;
+  overflow: hidden;
+  line-height: 1;
+  text-align: center;
+}
+.top {
+  top: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  transform-origin: bottom;
+}
+.bottom {
+  bottom: 0;
+  transform-origin: top;
+  line-height: 0;
+}
+.flip-top {
+  animation: flipTop 0.5s ease-in;
+}
+.flip-bottom {
+  animation: flipBottom 0.5s ease-out;
+}
+@keyframes flipTop {
+  0% {
+    transform: rotateX(0deg);
+  }
+  100% {
+    transform: rotateX(-90deg);
+  }
+}
+@keyframes flipBottom {
+  0% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
