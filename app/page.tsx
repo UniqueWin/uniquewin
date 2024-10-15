@@ -456,7 +456,7 @@ export default function Home() {
             {/* Card 2 */}
             <div className="w-full rounded-xl bg-white text-black shadow-lg">
               <Image
-                src="/chest.png"
+                src="/Chest.png"
                 alt="Instant Prizes"
                 width={500}
                 height={500}
@@ -476,7 +476,7 @@ export default function Home() {
             {/* Card 3 */}
             <div className="w-full rounded-xl bg-white text-black shadow-lg">
               <Image
-                src="/pound.png"
+                src="/Pound.png"
                 alt="Live Raffle"
                 width={500}
                 height={500}
