@@ -22,7 +22,15 @@ const FlipDigit = ({ digit }: { digit: string }) => {
   );
 };
 
-export default function FlipboardTimer({ game }: { game: Game }) {
+export default function FlipboardTimer({
+  game,
+  showTitle,
+  mobile = false,
+}: {
+  game: Game;
+  showTitle: boolean;
+  mobile: boolean;
+}) {
   // const [time, setTime] = useState("23:55:13");
   //get time until game end
   const endTime = new Date(game.end_time);
@@ -69,11 +77,30 @@ export default function FlipboardTimer({ game }: { game: Game }) {
     return () => clearInterval(timer);
   }, []);
 
+  if (mobile) {
+    return (
+      <div className="text-white flex justify-start items-center w-full max-w-[170px]">
+        <span className="text-sm w-full">Next Game in:</span>
+        <div className="flex justify-center items-start font-bold tracking-widest w-full">
+          {time.split("").map((digit, index) =>
+            digit === ":" ? (
+              <span key={index} className="mx-">
+                :
+              </span>
+            ) : (
+              <div className="flex flex-col items-center">{digit}</div>
+            )
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-md mx-auto text-white">
       <div className="flex items-center justify-center mbf-4">
         {/* <Timer className="w-6 h-6 mr-2" /> */}
-        <h2 className="text-xl font-bold">GAME ENDS IN</h2>
+        {showTitle && <h2 className="text-xl font-bold">GAME ENDS IN</h2>}
       </div>
       <div className="flex justify-center items-center text-3xl font-bold">
         {time.split("").map((digit, index) =>

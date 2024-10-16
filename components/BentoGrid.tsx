@@ -26,7 +26,7 @@ export function BentoGridComponent() {
 }
 
 const PrizeItem = () => (
-  <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-3xl bg-gradient-radial from-[#e13bb1] to-[#c4016b] min-h-[500px]">
+  <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-3xl bg-gradient-radial from-[#e13bb1] to-[#c4016b] md:min-h-full min-h-[500px]">
     <IconTrophy className="h-24 w-24 mb-2 text-yellow-400" />
     <h2 className="text-7xl font-bold">
       £<NumberTicker value={10000} className="text-white" delay={0} />
@@ -36,7 +36,7 @@ const PrizeItem = () => (
 );
 
 const WinnerItem = () => (
-  <div className="relative w-full h-full rounded-3xl overflow-hidden min-h-[500px]">
+  <div className="relative w-full h-full rounded-3xl overflow-hidden md:min-h-full min-h-[500px]">
     <Image
       src="/guy.png"
       alt="Winner"
@@ -62,7 +62,7 @@ const WinnerItem = () => (
 );
 
 const HowToItem = () => (
-  <div className="relative w-full h-full rounded-3xl overflow-hidden min-h-[500px]">
+  <div className="relative w-full h-full rounded-3xl overflow-hidden md:min-h-full min-h-[500px]">
     <Image
       src="/players.png"
       alt="Winner"

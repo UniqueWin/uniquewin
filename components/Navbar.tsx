@@ -8,14 +8,13 @@ import { useUser } from "@/utils/UserContext";
 import { Game } from "@/utils/dataHelpers";
 import { getCurrentGame } from "@/utils/gameHelpers";
 import { createClient } from "@/utils/supabase/client";
-import { ArrowRightIcon } from "lucide-react";
+import { ArrowRightIcon, UserIcon, UserRoundIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import FlipboardTimer from "./FlipboardTimer";
 import AnimatedGradientText from "./ui/animated-gradient-text";
-
 
 const Navbar = () => {
   const { user, refreshUser } = useUser();
@@ -87,24 +86,25 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="w-full text-black relative">
+      <nav className="w-full text-black relative hidden md:block">
         <div className="absolute top-0 left-0 w-full h-[105px] overflow-hidden z-0">
           <Image src="/nav.png" alt="Banner" layout="fill" objectFit="cover" />
         </div>
         <div className="absolute bottom-0 left-0 h-[50px] w-full bg-white z-0"></div>
-        <div className="flex bg-white z-1">
+        <div className="flex bg-white z-1 w-full">
           {/* Logo Section - spans both rows */}
-          <Link href="/">
-            <div className="flex items-center">
+
+          <div className="flex items-center md:w-1/5 lg:w-full">
+            <Link href="/" className="w-full max-w-[285px] max-h-[500px]">
               <Image
                 src="/logo-web-horizontal.png"
                 alt="Logo"
-                width={300}
-                height={300}
-                className="p-0 m-0 z-0"
+                objectFit="contain"
+                layout="fill"
+                className="p-0 m-0 z-30 md:w-full md:h-full aspect-16/9 w-full max-w-[285px] max-h-[500px]"
               />
-            </div>
-          </Link>
+            </Link>
+          </div>
 
           {/* Right side content */}
           <div className="flex-grow flex flex-col z-10">
@@ -142,19 +142,21 @@ const Navbar = () => {
                 <div className="tefxt-right">
                   {/* <div className="text-sm">GAME ENDS IN</div>
                 <div className="text-xl font-bold">23:57:24</div> */}
-                  {currentGame && <FlipboardTimer game={currentGame} />}
+                  {currentGame && (
+                    <FlipboardTimer game={currentGame} showTitle={false} />
+                  )}
                 </div>
               </div>
             </div>
 
             {/* Bottom Row */}
-            <div className="bg-white flex justify-between items-center p-2 h-[50px]">
+            <div className="bg-white flex justify-end items-center p-2 h-[50px]">
               {/* Navigation Links */}
               <div className="hidden md:flex gap-2">
                 {links.map((link) => (
                   <a key={link.href} href={link.href}>
                     <span
-                      className={`w-fit px-3 py-1 font-semibold rounded-2xl hover:bg-[#eddeff] ${
+                      className={`w-fit px-3 py-1 font-semibold rounded-2xl hover:bg-[#eddeff] whitespace-nowrap ${
                         pathname === link.href ? "bg-[#eddeff]" : ""
                       }`}
                     >
@@ -208,14 +210,14 @@ const Navbar = () => {
                             />
                           </svg>
                         </div>
-                        <div className="text-xs w-full ml-2 text-black">
+                        <div className="text-xs w-full ml-2 text-black whitespace-nowrap">
                           Welcome back, <br />
                           {user?.email}!
                         </div>
                       </div>
                       {/* cash */}
                       <div className="flex flex-col justify-center items-center border-r-2 px-2 border-purple-100">
-                        <span className="text-sm">
+                        <span className="text-sm flex gap-1">
                           Cash:
                           <span className="font-bold text-pink-500">
                             £{user?.account_balance}
@@ -294,20 +296,121 @@ const Navbar = () => {
         </div>
       </nav>
 
+      {/* mobile */}
+      <nav className="w-full text-black relative md:hidden border-4 border-red-500 sm:h-[170px">
+        <div className="absolute top-0 left-0 w-full h-[150px] sm:h-[175px] overflow-hidden z-0">
+          <Image src="/nav.png" alt="Banner" layout="fill" objectFit="cover" />
+        </div>
+        <div className="absolute bottom-0 left-0 h-[50px] w-full bg-white z-0"></div>
+        <div className="flex flex-col h-[150px] sm:h-[175px]">
+          {/* top row */}
+          <div className="flex justify-between items-start pt-1 z-10 w-full h-[150px]">
+            <div className="flex items-start justify-start w-full">
+              <Link href="/">
+                <Image
+                  src="/logo-web-horizontal.png"
+                  alt="Logo"
+                  objectFit="contain"
+                  layout="fill"
+                  className="p-0 m-0 z-0 w-[100px] h-[100px] max-w-[175px] max-h-[110px] sm:w-[100px] sm:h-[100px] sm:max-w-[250px] sm:max-h-[140px] md:w-full md:h-full md:max-w-[250px] md:max-h-[140px]"
+                />
+              </Link>
+            </div>
+
+            <div className="flex flex-col w-full justify-start items-center h-full">
+              <div className="relative w-full max-w-[200px] sm:max-w-[200px] sm:w-[200px] aspect-[235/87] z-10">
+                <Image
+                  src="/sign BIG.png"
+                  alt="Jackpot"
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-contain"
+                  priority
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-white text- font-bold drop-shadow-lg pt-2 text-4xl">
+                    {typeof currentJackpot === "number" ? (
+                      <span>
+                        £
+                        <NumberTicker
+                          value={currentJackpot}
+                          className="text-white"
+                        />
+                      </span>
+                    ) : (
+                      "?????"
+                    )}
+                  </span>
+                </div>
+              </div>
+              <div className="w-full flex justify-center items-center">
+                {currentGame && (
+                  <FlipboardTimer game={currentGame} showTitle={false} mobile />
+                )}
+              </div>
+            </div>
+          </div>
+          {/* bottom row */}
+          <div className="flex justify-between items-center p-1 z-10 w-full h-[50px] px-4">
+            {/* user account and credits button */}
+            <div className="flex items-center justify-center gap-2">
+              <div className="bg-purple-200 rounded-full flex items-center justify-center w-9 h-9 text-purple-800 px-1">
+                <UserRoundIcon className="h-10 w-10 text-purple-900" />
+              </div>
+              <div className="flex justify-center items-center gap-2">
+                <div className="flex flex-col justify-center items-center">
+                  <span className="font-bold text-pink-500">
+                    {user?.credit_balance} Credits{" "}
+                    <span className="text-sm text-black">left.</span>
+                  </span>
+                  <span className="text-xs">Buy more credits</span>
+                </div>
+                <Button
+                  variant="secondary"
+                  className="h-9 text-white font-semibold text-sm bg-gradient-to-t from-[#347158] to-[#58e364] hover:from-green-400 hover:to-green-500 rounded-xl"
+                >
+                  Buy Credits
+                </Button>
+              </div>
+            </div>
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden text-purple-800"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-10 w-10"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </nav>
+
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="relative">
-        <div className="sm:hidden bg-white/50 text-black p-4 absolute top-0 left-0 w-full z-10">
-          {links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="block py-2 px-4 text-sm hover:bg-[#eddeff]"
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
+          <div className="md:hidden bg-white/90 text-black p-4 absolute top-0 left-0 w-full z-30">
+            {links.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="block py-2 px-4 text-sm hover:bg-[#eddeff]"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
         </div>
       )}
 
