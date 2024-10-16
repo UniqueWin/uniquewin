@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import FlipboardTimer from "./FlipboardTimer";
 import AnimatedGradientText from "./ui/animated-gradient-text";
 
+
 const Navbar = () => {
   const { user, refreshUser } = useUser();
   const pathname = usePathname();
@@ -26,6 +27,7 @@ const Navbar = () => {
   const supabase = createClient();
   const [currentJackpot, setCurrentJackpot] = useState<number | null>(null);
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     refreshUser();
@@ -148,9 +150,9 @@ const Navbar = () => {
             {/* Bottom Row */}
             <div className="bg-white flex justify-between items-center p-2 h-[50px]">
               {/* Navigation Links */}
-              <div className="flex gap-2">
+              <div className="hidden md:flex gap-2">
                 {links.map((link) => (
-                  <a href={link.href}>
+                  <a key={link.href} href={link.href}>
                     <span
                       className={`w-fit px-3 py-1 font-semibold rounded-2xl hover:bg-[#eddeff] ${
                         pathname === link.href ? "bg-[#eddeff]" : ""
@@ -161,6 +163,27 @@ const Navbar = () => {
                   </a>
                 ))}
               </div>
+
+              {/* Mobile Menu Button */}
+              <button
+                className="sm:hidden"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </button>
 
               {/* User Info and Credits */}
               <div className="flex items-center justify-between gap-2">
@@ -270,6 +293,24 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="relative">
+        <div className="sm:hidden bg-white/50 text-black p-4 absolute top-0 left-0 w-full z-10">
+          {links.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="block py-2 px-4 text-sm hover:bg-[#eddeff]"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+        </div>
+      )}
+
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
