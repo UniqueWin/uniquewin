@@ -339,15 +339,18 @@ export default function Home() {
         </div> */}
       </div>
 
+{/* light = #8018e9 */}
+{/* light = #6b14cd */}
       <div className="h-[60vh] sm:h-[60vh] md:h-[65vh] lg:h-[87vh] relative overflow-hidden">
         <div className="absolute inset-[-100%]">
+           {/* [--aurora:repeating-conic-gradient(from_0deg_at_50%_50%,#6b14cd_0deg_10deg,rgba(255,255,255,0.1)_10deg_20deg)] */}
           <div
             className="
-              [--aurora:repeating-conic-gradient(from_0deg_at_50%_50%,#4B0082_0deg_10deg,rgba(255,255,255,0.1)_10deg_20deg)]
+              [--aurora:repeating-conic-gradient(from_0deg_at_50%_50%,#6b14cd_0deg_10deg,#8018e9_10deg_20deg)]
               [background-image:var(--aurora)]
               absolute inset-0
               animate-spin-slow
-              filter blur
+              filter blu
               
             "
           ></div>
