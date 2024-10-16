@@ -143,20 +143,24 @@ const Navbar = () => {
                   {/* <div className="text-sm">GAME ENDS IN</div>
                 <div className="text-xl font-bold">23:57:24</div> */}
                   {currentGame && (
-                    <FlipboardTimer game={currentGame} showTitle={false} />
+                    <FlipboardTimer
+                      game={currentGame}
+                      showTitle={false}
+                      mobile={false}
+                    />
                   )}
                 </div>
               </div>
             </div>
 
             {/* Bottom Row */}
-            <div className="bg-white flex justify-end items-center p-2 h-[50px]">
+            <div className="bg-white flex justify-end items-center p-2 h-[50px] gap-4">
               {/* Navigation Links */}
-              <div className="hidden md:flex gap-2">
+              <div className="hidden md:flex gap-2 lg:mr-10">
                 {links.map((link) => (
                   <a key={link.href} href={link.href}>
                     <span
-                      className={`w-fit px-3 py-1 font-semibold rounded-2xl hover:bg-[#eddeff] whitespace-nowrap ${
+                      className={`w-fit px-2 lg:px-3 py-1 font-semibold rounded-2xl hover:bg-[#eddeff] whitespace-nowrap ${
                         pathname === link.href ? "bg-[#eddeff]" : ""
                       }`}
                     >
@@ -166,30 +170,9 @@ const Navbar = () => {
                 ))}
               </div>
 
-              {/* Mobile Menu Button */}
-              <button
-                className="sm:hidden"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              </button>
-
               {/* User Info and Credits */}
               <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center px-2">
+                <div className="flex items-center px-2 gap-4">
                   {user ? (
                     <>
                       {/* profile */}
