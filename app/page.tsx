@@ -307,21 +307,18 @@ export default function Home() {
       </div>
       <div className="absolute top-4 right-4 z-20 select-none">
         <div className="z-10 flex items-center justify-center">
-          <Link href="/games">
-            <AnimatedGradientText>
-              <Circle
-                className="mr-1 h-4 w-4"
-                fill={currentGame?.status === "active" ? "#00ff00" : "#ff0000"}
-              />
-              <span
-                className={cn(
-                  `inline animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent`
-                )}
-              >
-                {currentGame?.status === "active" ? "LIVE" : " "}
-              </span>
-              <ChevronRight className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
-            </AnimatedGradientText>
+          <Link
+            href="/games"
+            className="flex items-center bg-black/40 p-1 rounded-full"
+          >
+            <Circle
+              className="mr-1 h-4 w-4"
+              fill={currentGame?.status === "active" ? "#00ff00" : "#ff0000"}
+            />
+            <span className={cn(``)}>
+              {currentGame?.status === "active" ? "LIVE" : " "}
+            </span>
+            <ChevronRight className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
           </Link>
         </div>
         {/* <div
@@ -339,11 +336,11 @@ export default function Home() {
         </div> */}
       </div>
 
-{/* light = #8018e9 */}
-{/* light = #6b14cd */}
+      {/* light = #8018e9 */}
+      {/* light = #6b14cd */}
       <div className="h-[60vh] sm:h-[60vh] md:h-[65vh] lg:h-[87vh] relative overflow-hidden">
         <div className="absolute inset-[-100%]">
-           {/* [--aurora:repeating-conic-gradient(from_0deg_at_50%_50%,#6b14cd_0deg_10deg,rgba(255,255,255,0.1)_10deg_20deg)] */}
+          {/* [--aurora:repeating-conic-gradient(from_0deg_at_50%_50%,#6b14cd_0deg_10deg,rgba(255,255,255,0.1)_10deg_20deg)] */}
           <div
             className="
               [--aurora:repeating-conic-gradient(from_0deg_at_50%_50%,#6b14cd_0deg_10deg,#8018e9_10deg_20deg)]
@@ -362,11 +359,8 @@ export default function Home() {
               {Array.from({ length: 30 }).map((_, index) => (
                 <div
                   key={index}
-                  className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full blur-[1.5px] duration-1000 ${
-                    index === flashingIndex
-                      ? "bg-yellow-300 animate-pulse"
-                      : "bg-yellow-200 bg-opacity-50"
-                  }`}
+                  className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500 blur-[1px] animate-flash`}
+                  style={{ animationDelay: `${index * 0.05}s` }} // Faster delay
                 ></div>
               ))}
             </div>
@@ -400,11 +394,8 @@ export default function Home() {
               {Array.from({ length: 30 }).map((_, index) => (
                 <div
                   key={index}
-                  className={`w-2 h-2 md:w-3 md:h-3 rounded-full blur-[1.5px] duration-1000 ${
-                    index === reverseFlashingIndex
-                      ? "bg-yellow-300 animate-pulse"
-                      : "bg-yellow-200 bg-opacity-50"
-                  }`}
+                  className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500 blur-[1px] animate-flash`}
+                  style={{ animationDelay: `${index * 0.05}s` }} // Faster delay
                 ></div>
               ))}
             </div>
