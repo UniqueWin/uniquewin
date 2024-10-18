@@ -390,7 +390,7 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-            <div className="flex gap-1 md:gap-2 mx-auto w-full justify-center items-center">
+            <div className="flex gap-1 md:gap-2 mx-auto w-full justify-center items-center rotate-180">
               {Array.from({ length: 30 }).map((_, index) => (
                 <div
                   key={index}
