@@ -1,36 +1,42 @@
-import React from "react";
 import Link from "next/link";
 
-import {
-  IconBrandFacebook,
-  IconBrandFacebookFilled,
-  IconBrandInstagram,
-  IconBrandTwitter,
-  IconBrandX,
-} from "@tabler/icons-react";
-
 import Image from "next/image";
+import SignUpBanner from "./SignUpBanner";
+import { cn } from "@/lib/utils";
 
 const Footer = () => {
   return (
-    //logo | horizontal links | social icons
-    //copyright | terms privacy
-    <section className="bg-gray-50 p-10 text-black z-20 h-full">
-      <div className="container mx-auto p-4 rounded-xl">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+    <section className="pt-4 md:p-10 bg-transparent text-black h-full lg:h-[500px] relative">
+      <div className="absolute top-0 left-0 h-[200px] w-full md:w-full md:h-full z-[-1] text-gray-50 flex justify-center items-start">
+        {/* this image is overalpping the container div below */}
+        <Image
+          src={"/wave.png"}
+          alt="Signup"
+          layout="fill" 
+          objectFit="cover"
+          className="z-[-1]"
+        />
+      </div>
+      <div className="absolute -top-10 left-0 w-full h-fit -z-1 text-gray-50 flex justify-center items-start">
+        <SignUpBanner />
+      </div>
+
+      {/* this container is being overlapped by the image above */}
+      <div className="container mx-auto p-4 z-20 bg-[#f3f0f9] mt-16 md:mt-32 max-w-6xl">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center z-20 gap-10 md:gap-4">
           {/* logo */}
           <h2 className="text-xl font-bold mb-4">
             <Link href="/">
               <Image
-                src="/logo-web-horizontal.png"
+                src="/footer-logo.png"
                 alt="Logo"
-                width={100}
-                height={100}
+                width={209}
+                height={85}
               />
             </Link>
           </h2>
           {/* horizontal links */}
-          <ul className="flex gap-4 font-semibold">
+          <ul className="flex flex-col md:flex-row justify-center items-center gap-4 font-semibold">
             <li>
               <Link href="/how-to-play" className="hover:text-gray-300">
                 How to Play
@@ -49,8 +55,11 @@ const Footer = () => {
           </ul>
           {/* social icons */}
           <div className="flex space-x-4">
-            <Link href="https://www.facebook.com/uniquewinuk" className="">
-              <FacebookIcon className="h-5 w-5" />
+            <Link
+              href="https://www.facebook.com/uniquewinuk"
+              className="cursor-pointer"
+            >
+              <FacebookIcon className="h-5 w-5 cursor-pointer" />
             </Link>
             <Link href="https://x.com/UniqueWin" className="">
               <XIcon className="h-5 w-5" />
@@ -107,7 +116,7 @@ const FacebookIcon = ({ className }: { className: string }) => {
       width="666.66669"
       height="666.66718"
       viewBox="0 0 666.66668 666.66717"
-      className={className}
+      className={cn("cursor-pointer", className)}
     >
       <defs id="defs13">
         <clipPath clipPathUnits="userSpaceOnUse" id="clipPath25">
@@ -161,7 +170,7 @@ const XIcon = ({ className }: { className: string }) => {
       fillRule="evenodd"
       clipRule="evenodd"
       viewBox="0 0 512 462.799"
-      className={className}
+      className={cn("cursor-pointer", className)}
     >
       <path
         fillRule="nonzero"
@@ -178,7 +187,7 @@ const InstagramIcon = ({ className }: { className: string }) => {
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
-      className={className}
+      className={cn("cursor-pointer", className)}
     >
       <defs>
         <radialGradient
@@ -212,7 +221,7 @@ const TikTokIcon = ({ className }: { className: string }) => {
       imageRendering="optimizeQuality"
       fillRule="evenodd"
       clipRule="evenodd"
-      className={className}
+      className={cn("cursor-pointer", className)}
     >
       <path
         d="M204958 0c5369 45832 32829 78170 77253 81022v43471l-287 27V87593c-44424-2850-69965-30183-75333-76015l-47060-1v192819c6791 86790-60835 89368-86703 56462 30342 18977 79608 6642 73766-68039V0h58365zM78515 319644c-26591-5471-50770-21358-64969-44588-34496-56437-3401-148418 96651-157884v54345l-164 27v-40773C17274 145544 7961 245185 33650 286633c9906 15984 26169 27227 44864 33011z"
@@ -237,7 +246,7 @@ const TikTokIconBox = ({ className }: { className: string }) => {
       fillRule="evenodd"
       clipRule="evenodd"
       viewBox="0 0 1000 1000"
-      className={className}
+      className={cn("cursor-pointer", className)}
     >
       <path d="M906.25 0H93.75C42.19 0 0 42.19 0 93.75v812.49c0 51.57 42.19 93.75 93.75 93.75l812.5.01c51.56 0 93.75-42.19 93.75-93.75V93.75C1000 42.19 957.81 0 906.25 0zM684.02 319.72c-32.42-21.13-55.81-54.96-63.11-94.38-1.57-8.51-2.45-17.28-2.45-26.25H515l-.17 414.65c-1.74 46.43-39.96 83.7-86.8 83.7-14.57 0-28.27-3.63-40.35-9.99-27.68-14.57-46.63-43.58-46.63-76.97 0-47.96 39.02-86.98 86.97-86.98 8.95 0 17.54 1.48 25.66 4.01V421.89c-8.41-1.15-16.95-1.86-25.66-1.86-105.01 0-190.43 85.43-190.43 190.45 0 64.42 32.18 121.44 81.3 155.92 30.93 21.72 68.57 34.51 109.14 34.51 105.01 0 190.43-85.43 190.43-190.43V400.21c40.58 29.12 90.3 46.28 143.95 46.28V343.03c-28.89 0-55.8-8.59-78.39-23.31z" />
     </svg>

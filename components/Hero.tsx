@@ -156,8 +156,8 @@ function Hero({}: Props) {
       </div>
       <div className="h-100 absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,rgba(75,0,130,0.3)_50%,rgba(75,0,130,0.7)_100%)]"></div>
       <div className="relative z-10 h-full flex flex-col items-center justify-start md:justify-start mt-44 sm:mt-64 md:mt-80 lg:mt-[500px] xl:mt-[500px] 2xl:mt-[500px] px-4 overflow-y-auto">
-        <div className="text-white mb-4 bg-black bg-opacity-20 p-4 px-4 md:px-10 rounded-[30px] border2 border-white border-opacity-40 w-full sm:max-w-md md:max-w-2xl z-20">
-          <div className="flex gap-1 md:gap-2 mx-auto w-full justify-center items-center">
+        <div className="text-white mb-4 bg-transparent md:bg-black md:bg-opacity-20 p-4 px-4 md:px-10 rounded-[30px] border2 border-white border-opacity-40 w-full sm:max-w-md md:max-w-2xl z-20">
+          <div className="gap-1 md:gap-2 mx-auto w-full justify-center items-center hidden md:flex">
             {Array.from({ length: 30 }).map((_, index) => (
               <div
                 key={index}
@@ -167,7 +167,7 @@ function Hero({}: Props) {
             ))}
           </div>
           <div className="py-4 flex flex-col gap-2 items-center">
-            <h2 className="text-xl md:text-3xl font-bold text-center">
+            <h2 className="text-4xl md:text-3xl font-bold text-center">
               Name the boss name beginning with 'T':
             </h2>
             <CustomSwitch
@@ -178,21 +178,21 @@ function Hero({}: Props) {
               <PlaceholdersAndVanishInput
                 placeholders={placeholders.map(
                   (placeholder) => placeholder.question
-                )}
+                )} 
                 onChange={handleChange}
                 onSubmit={onSubmit}
-                className="w-full sm:w-96 rounded-lg px-0"
+                className="w-full sm:w-96 rounded-xl px-0"
               />
               <Button
                 variant="secondary"
                 size="lg"
-                className="text-white font-semibold text-xl h-12 bg-gradient-to-t from-[#347158] to-[#58e364] from-30% to-100% w-full sm:w-28 mt-2 sm:mt-0"
+                className="text-white font-semibold text-xl h-12 bg-gradient-to-t from-[#347158] to-[#58e364] from-30% to-100% w-full sm:w-28 mt-2 sm:mt-0 rounded-xl"
               >
                 Answer!
               </Button>
             </div>
           </div>
-          <div className="flex gap-1 md:gap-2 mx-auto w-full justify-center items-center rotate-180">
+          <div className="flex gap-1 md:gap-2 mx-auto w-full justify-center items-center rotate-180 hidden md:flex">
             {Array.from({ length: 30 }).map((_, index) => (
               <div
                 key={index}
@@ -203,7 +203,7 @@ function Hero({}: Props) {
           </div>
         </div>
 
-        <p className="text-white text-sm md:text-base mt-2">
+        <p className="text-white text-sm md:text-base hidden md:block">
           Cost £1 to play £5 lucky dip
         </p>
       </div>

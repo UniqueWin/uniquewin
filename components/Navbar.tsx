@@ -279,65 +279,9 @@ const Navbar = () => {
         </div>
       </nav>
 
-      <div className="grid grid-cols-5 bg-white text-black w-full">
-        <div className="col-span-1"></div>
-        <div className="col-span-3 flex justify-center items-center">
-          {links.map((link) => (
-            <a key={link.href} href={link.href}>
-              <span
-                className={`w-fit px-2 lg:px-3 py-1 font-semibold rounded-2xl hover:bg-[#eddeff] whitespace-nowrap ${
-                  pathname === link.href ? "bg-[#eddeff]" : ""
-                }`}
-              >
-                {link.label}
-              </span>
-            </a>
-          ))}
-        </div>
-        <div className="col-span-1 flex justify-end items-center">
-          <div className="flex items-center gap-2 border-r-2 px-2 border-purple-100">
-            <div className="bg-purple-200 rounded-full flex items-center justify-center w-8 h-8 text-purple-800 px-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8 text-purple-900"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-            </div>
-            <div className="text-xs w-full ml-2 text-black whitespace-nowrap">
-              Welcome back, <br />
-              {user?.email}!
-            </div>
-          </div>
-          <div className="flex flex-col justify-center items-center border-r-2 px-2 border-purple-100">
-            <span className="text-sm flex gap-1">
-              Cash:
-              <span className="font-bold text-pink-500">
-                £{user?.account_balance}
-              </span>
-            </span>
-          </div>
-          <div className="flex flex-col justify-center items-center px-2">
-            <span className="text-sm">
-              Credits:{" "}
-              <span className="text-pink-500 font-semibold">
-                {user?.credit_balance}
-              </span>
-            </span>
-          </div>
-        </div>
-      </div>
 
       {/* mobile */}
-      <nav className="w-full text-black relative md: sm:h-[170px">
+      <nav className="w-full text-black relative md:hidden sm:h-[170px]">
         <div className="absolute top-0 left-0 w-full h-[150px] sm:h-[175px] overflow-hidden z-0">
           <Image src="/nav.png" alt="Banner" layout="fill" objectFit="cover" />
         </div>

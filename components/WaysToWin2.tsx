@@ -48,14 +48,14 @@ export default function WaysToWin2() {
       animate="visible"
     >
       <small className="text-lg text-purple-800 font-semibold">Discover</small>
-      <h2 className="text-6xl font-bold mb-4 text-[#1e1631] py-5">
+      <h2 className="text-4xl md:text-6xl font-bold mb-4 text-[#1e1631] py-5">
         3 Ways to Win{" "}
         <span className="p-[0.5px]0.5px] relative">
           <div className="rotate-[-2deg] absolute inset-0 w-full h-full bg-[#f79e07]"></div>
           <span className="relative z-10 text-white">Big Prizes</span>
         </span>
       </h2>
-      <p className="mb-10 lg:max-w-[40%] mx-auto text-lg">
+      <p className="mb-10 px-4 lg:max-w-[40%] mx-auto text-lg">
         Explore our exciting opportunities to win unique prizes, instant
         rewards, and participate in live raffles.
       </p>
@@ -75,7 +75,7 @@ export default function WaysToWin2() {
               className="mb-4 rounded-t-xl lg:h-[245px] lg:w-[405px] object-cover"
             />
             <div className="p-4 flex flex-col gap-2 py-6">
-              <h3 className="font-bold text-4xl mb-2 text-[#420982]">
+              <h3 className="font-bold text-3xl md:text-4xl mb-2 text-[#420982]">
                 {way.title}
               </h3>
               <p className="text-lg px-2">{way.description}</p>

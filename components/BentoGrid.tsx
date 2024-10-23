@@ -10,7 +10,7 @@ import NumberTicker from "@/components/ui/number-ticker";
 
 export function BentoGridComponent() {
   return (
-    <BentoGrid className="mx-10 px-4 md:mx-auto my-10 md:grid-cols-3 md:grid-rows-2 gap-4 lg:gap-12 h-auto lg:h-[500px]">
+    <BentoGrid className="px-4 md:mx-auto my-10 md:grid-cols-3 md:grid-rows-2 gap-4 lg:gap-12 lg:h-[500px]">
       {items.map((item, i) => (
         <BentoGridItem
           key={i}
@@ -26,7 +26,7 @@ export function BentoGridComponent() {
 }
 
 const PrizeItem = () => (
-  <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-3xl bg-gradient-radial from-[#e13bb1] to-[#c4016b] md:min-h-full lg:min-h-[500px]">
+  <div className="flex flex-col items-center justify-center h-full text-white p-4 rounded-3xl bg-gradient-radial from-[#e13bb1] to-[#c4016b] md:min-h-full h-[330px] lg:min-h-[500px] ">
     {/* <IconTrophy className="h-24 w-24 mb-2 text-yellow-400" /> */}
     <Image
       src="/trophy-icon.png"
@@ -44,7 +44,7 @@ const PrizeItem = () => (
 
 const WinnerItem = () => (
   // 405x275
-  <div className="relative w-full h-full rounded-3xl overflow-hidden md:min-h-full max-h-[275px] lg:h-[275px] ">
+  <div className="relative w-full h-[260px] rounded-3xl overflow-hidden md:min-h-full max-h-[275px] lg:h-[275px]">
     {/* <Image src="/guy.png" alt="Winner" width={405} height={275} className="object-cover"/> */}
     <Image
       src="/guy.png"
@@ -70,9 +70,27 @@ const WinnerItem = () => (
   </div>
 );
 
+const WinnersCountItem = () => (
+  <div className="flex flex-col items-center justify-center text-white p-4 rounded-3xl h-full w-full bg-gradient-radial from-[#fbb304] via-[#fbb304] to-[#fb8c00]">
+    <h2 className="text-8xl font-bold leading-none">
+      <NumberTicker value={875} className="text-white leading-none" delay={0} />
+    </h2>
+    <p className="text-xl lg:text-4xl leading-none">Winners</p>
+  </div>
+);
+
+const PlayersCountItem = () => (
+  <div className="flex flex-col items-center justify-center text-white p-4 rounded-3xl w-full bg-gradient-radial from-purple-600 to-purple-800 leading-none h-[145px] md:h-full">
+    <h2 className="text-4xl lg:text-[80px] font-bold leading-none">
+      <NumberTicker value={1200} className="text-white" delay={0} />
+    </h2>
+    <p className="text-xl lg:text-4xl leading-none">players</p>
+  </div>
+);
+
 const HowToItem = () => (
   // 405x275
-  <div className="relative w-full h-full rounded-3xl overflow-hidden md:min-h-full max-h-[275px] lg:h-[275px] ">
+  <div className="relative w-full h-[260px] rounded-3xl overflow-hidden md:min-h-full max-h-[275px] lg:h-[275px] ">
     {/* <Image src="/people.png" alt="Winner" width={405} height={263} /> */}
     <Image
       src="/people.png"
@@ -97,44 +115,8 @@ const HowToItem = () => (
   </div>
 );
 
-const WinnersCountItem = () => (
-  <div className="flex flex-col items-center justify-center text-white p-4 rounded-3xl h-full w-full bg-gradient-radial from-[#fbb304] via-[#fbb304] to-[#fb8c00]">
-    <h2 className="text-8xl font-bold leading-none">
-      <NumberTicker value={875} className="text-white leading-none" delay={0} />
-    </h2>
-    <p className="text-xl lg:text-4xl leading-none">Winners</p>
-  </div>
-);
-
-const PlayersCountItem = () => (
-  <div className="flex flex-col items-center justify-center text-white p-4 rounded-3xl h-full w-full bg-gradient-radial from-purple-600 to-purple-800 leading-none">
-    <h2 className="text-4xl lg:text-[80px] font-bold leading-none">
-      <NumberTicker value={1200} className="text-white" delay={0} />
-    </h2>
-    <p className="text-xl lg:text-4xl leading-none">players</p>
-  </div>
-);
-
-const HowToPlayItem = () => (
-  //radial gradient
-  //#d0c8c1 center
-  //#cfc9be outer
-  <div className="flex items-center justify-between p-4 rounded-2xl relative h-full w-full bg-gradient-radial from-[#d0c8c1] to-[#bbb6ac]">
-    <div className="flex items-center"></div>
-    <div className="absolute bottom-0 left-0 w-full bg-white bg-opacity-20 backdrop-blur-[1px p-2 rounded-b-xl text-purple-800 flex justify-between items-center px-4">
-      <p className="font-bold">How to play?</p>
-      <Button
-        size="sm"
-        className="bg-orange-400 bg-gradient-to-b from-orange-400 to-orange-500 text-white hover:bg-orange-500 hover:from-orange-400 hover:to-orange-700"
-      >
-        Read FAQ
-      </Button>
-    </div>
-  </div>
-);
-
 const WinnersAndHowToPlayItem = () => (
-  <div className="flex flex-col h-full w-full gap-7">
+  <div className="flex flex-col h-full w-full gap-4 md:gap-7">
     <div className="h-full lg:h-[200px] md:h-1/3">
       <WinnersCountItem />
     </div>
@@ -145,8 +127,8 @@ const WinnersAndHowToPlayItem = () => (
 );
 
 const WinnerAndPlayersCountItem = () => (
-  <div className="flex flex-col h-full w-full gap-7">
-    <div className="flex-gro h-ful w-full">
+  <div className="flex flex-col h-full w-full gap-4 md:gap-7">
+    <div className="flex-gro h-ful w-full order-1 md:order-none">
       <WinnerItem />
     </div>
     <div className="h-full lg:h-[200px] md:h-1/3">
