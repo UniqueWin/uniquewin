@@ -22,7 +22,7 @@ const Footer = () => {
       </div>
 
       {/* this container is being overlapped by the image above */}
-      <div className="container mx-auto p-4 z-20 bg-[#f3f0f9] mt-16 md:mt-32 max-w-6xl">
+      <div className="container mx-auto p-4 z-20 bg-[#f3f0f9] mt-16 md:mt-32 max-w-6xl pb-20">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center z-20 gap-10 md:gap-4">
           {/* logo */}
           <h2 className="text-xl font-bold mb-4">
