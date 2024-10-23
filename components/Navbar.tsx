@@ -337,7 +337,7 @@ const Navbar = () => {
       </div>
 
       {/* mobile */}
-      <nav className="w-full text-black relative md:hidden border-4 border-red-500 sm:h-[170px">
+      <nav className="w-full text-black relative md: sm:h-[170px">
         <div className="absolute top-0 left-0 w-full h-[150px] sm:h-[175px] overflow-hidden z-0">
           <Image src="/nav.png" alt="Banner" layout="fill" objectFit="cover" />
         </div>
