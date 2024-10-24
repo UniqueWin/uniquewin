@@ -19,13 +19,15 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ({ label, onChange }) => {
   };
 
   return (
-    <div className="flex items-center space-x-2 py-1">
+    <div className="flex items-center gap-4 md:gap-2 bg-black bg-opacity-40 p-2 rounded-full w-23 px-10 justify-center py-2 md:bg-transparent my-2 md:my-0">
       <CloverSwitch
         id="lucky-dip"
         onCheckedChange={handleToggle}
         checked={isChecked}
       />
-      <Label htmlFor="lucky-dip">Lucky Dip</Label>
+      <Label htmlFor="lucky-dip" className="font-bold">
+        Lucky Dip
+      </Label>
     </div>
   );
 };
