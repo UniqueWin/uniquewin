@@ -88,7 +88,9 @@ export default function FlipboardTimer({
                 :
               </span>
             ) : (
-              <div className="flex flex-col items-center">{digit}</div>
+              <div className="flex flex-col items-center" key={index}>
+                {digit}
+              </div>
             )
           )}
         </div>
@@ -109,7 +111,7 @@ export default function FlipboardTimer({
               :
             </span>
           ) : (
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center" key={index}>
               <FlipDigit key={index} digit={digit} />
             </div>
           )
