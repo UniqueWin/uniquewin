@@ -6,7 +6,7 @@ type Props = {};
 
 function SignUpBanner({}: Props) {
   return (
-    <div className="hidden md:block bg-purple-800 text-white my-10 w-full max-w-4xl rounded-3xl flex items-center justify-start overflow-hidden bg-gradient-to-b from-purple-700 to-purple-900 md:w-[830px] md:h-[140px] z-10 relative">
+    <div className="bg-purple-800 text-white my-10 w-full max-w-4xl rounded-3xl flex items-center justify-start overflow-hidden bg-gradient-to-b from-purple-700 to-purple-900 md:w-[830px] md:h-[140px] z-10 relative">
       <div className="">
         <Image
           src="/trophy.png"

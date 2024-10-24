@@ -142,7 +142,7 @@ const Navbar = () => {
                   {currentGame && (
                     <FlipboardTimer
                       game={currentGame}
-                      showTitle={false}
+                      showTitle={true}
                       mobile={false}
                     />
                   )}

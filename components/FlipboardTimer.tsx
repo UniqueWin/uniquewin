@@ -4,6 +4,7 @@ import "./flipboard.css";
 import React, { useState, useEffect } from "react";
 import { Timer } from "lucide-react";
 import { Game } from "@/utils/dataHelpers";
+import Image from "next/image";
 
 const FlipDigit = ({ digit }: { digit: string }) => {
   const [flip, setFlip] = useState(false);
@@ -88,7 +89,9 @@ export default function FlipboardTimer({
                 :
               </span>
             ) : (
-              <div className="flex flex-col items-center">{digit}</div>
+              <div className="flex flex-col items-center" key={index}>
+                {digit}
+              </div>
             )
           )}
         </div>
@@ -97,28 +100,31 @@ export default function FlipboardTimer({
   }
 
   return (
-    <div className="w-full max-w-md mx-auto text-white">
+    <div className="w-full max-w-md mx-auto text-white bg-black/40 p-[0.5] rounded relative">
+      <div className="absolute -top-2 left-5 w-full h-full">
+        <Image src="/watch.png" alt="watch" width={21} height={23} />
+      </div>
       <div className="flex items-center justify-center mbf-4">
         {/* <Timer className="w-6 h-6 mr-2" /> */}
-        {showTitle && <h2 className="text-xl font-bold">GAME ENDS IN</h2>}
+        {showTitle && <h2 className="text-xs font-bold">GAME ENDS IN</h2>}
       </div>
-      <div className="flex justify-center items-center text-3xl font-bold">
+      <div className="flex justify-center items-center font-bold">
         {time.split("").map((digit, index) =>
           digit === ":" ? (
             <span key={index} className="mx-">
               :
             </span>
           ) : (
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center text-[20px]" key={index}>
               <FlipDigit key={index} digit={digit} />
             </div>
           )
         )}
       </div>
-      <div className="flex gap-2 w-full">
-        <small className="text-xs">HOURS</small>
-        <small className="text-xs">MINUTES</small>
-        <small className="text-xs">SECONDS</small>
+      <div className="grid grid-cols-3 w-full">
+        <span className="text-[10px] text-center">HOURS</span>
+        <span className="text-[10px] text-center">MINUTES</span>
+        <span className="text-[10px] text-center">SECONDS</span>
       </div>
     </div>
   );

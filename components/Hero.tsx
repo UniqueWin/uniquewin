@@ -168,7 +168,8 @@ function Hero({}: Props) {
           </div>
           <div className="py-4 flex flex-col gap-2 items-center">
             <h2 className="text-4xl md:text-3xl font-bold text-center">
-              Name the boss name beginning with 'T':
+              {randomPlaceholder.question}
+              {/* Name the boss name beginning with 'T': */}
             </h2>
             <CustomSwitch
               label="Lucky Dip"

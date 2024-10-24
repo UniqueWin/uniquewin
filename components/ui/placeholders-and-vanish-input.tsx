@@ -15,12 +15,14 @@ export function PlaceholdersAndVanishInput({
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   className?: string;
 }) {
-  const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
+  const [currentPlaceholder, setCurrentPlaceholder] = useState(() => 
+    Math.floor(Math.random() * placeholders.length)
+  );
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startAnimation = () => {
     intervalRef.current = setInterval(() => {
-      setCurrentPlaceholder((prev) => (prev + 1) % placeholders.length);
+      setCurrentPlaceholder(Math.floor(Math.random() * placeholders.length));
     }, 3000);
   };
   const handleVisibilityChange = () => {
