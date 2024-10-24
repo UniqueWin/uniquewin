@@ -36,6 +36,18 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 const Navbar = () => {
   const { user, refreshUser } = useUser();
   const pathname = usePathname();
@@ -77,22 +89,8 @@ const Navbar = () => {
     fetchCurrentJackpot();
   }, []);
 
-  const handleSignIn = () => {
-    setIsSignUp(false);
-    setIsLoginModalOpen(true);
-  };
-
-  const handleSignUp = () => {
-    setIsSignUp(true);
-    setIsLoginModalOpen(true);
-  };
-
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    refreshUser();
-  };
-
-  const handleLoginSuccess = () => {
     refreshUser();
   };
 
@@ -253,7 +251,7 @@ const Navbar = () => {
                     </>
                   ) : (
                     <div className="flex gap-2">
-                      <button
+                      {/* <button
                         type="button"
                         onClick={handleSignIn}
                         className={cn(
@@ -289,7 +287,7 @@ const Navbar = () => {
                             <ArrowRightIcon className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5 text-black/40 text-opacity-50" />
                           </span>
                         </AnimatedGradientText>
-                      </button>
+                      </button> */}
                     </div>
                   )}
                 </div>
@@ -376,7 +374,6 @@ const Navbar = () => {
             </div>
             <Sheet>
               <SheetTrigger>
-                
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-8 w-8 text-violet-700"
@@ -433,26 +430,25 @@ const Navbar = () => {
                         </li>
                       ) : (
                         <>
-                          <li className="w-full px-10 flex flex-col gap-f">
-                            <Link href="/register">
-                              <Button
-                                variant="secondary"
-                                className="text-white text-lg font-bold bg-gradient-to-t from-violet-700 to-violet-900 hover:from-violet-500 hover:to-violet-800 w-full"
-                              >
-                                Register
-                              </Button>
-                            </Link>
+                          {/* <li className="w-full px-10 flex flex-col gap-f">
+                            <Button
+                              variant="secondary"
+                              className="text-white text-lg font-bold bg-gradient-to-t from-violet-700 to-violet-900 hover:from-violet-500 hover:to-violet-800 w-full"
+                              onClick={handleSignUp}
+                            >
+                              Register
+                            </Button>
                           </li>
                           <li className="w-full px-10">
-                            <Link href="/login">
-                              <Button
-                                variant="outline"
-                                className="text-lg font-bold w-full bg-transparent hover:bg-violet-600 text-violet-800"
-                              >
-                                Login
-                              </Button>
-                            </Link>
-                          </li>
+                            <Button
+                              variant="outline"
+                              className="text-lg font-bold w-full bg-transparent hover:bg-violet-600 text-violet-800"
+                              onClick={handleSignIn}
+                            >
+                              Login
+                            </Button>
+                          </li> */}
+                          <LoginModal isSignUp={isSignUp} />
                         </>
                       )}
                       {/* social icons */}
@@ -516,7 +512,7 @@ const Navbar = () => {
       </nav>
 
       {/* fixed mobile app navbar */}
-      <nav className="bg-indigo-800 p-4 fixed bottom-0 left-0 w-full z-[99]">
+      <nav className="bg-indigo-800 p-4 fixed bottom-0 left-0 w-full z-[99] md:hidden">
         <ul className="flex justify-between items-center">
           {links.map((link) => (
             <Link href={link.href}>
@@ -578,12 +574,12 @@ const Navbar = () => {
         </div>
       )} */}
 
-      <LoginModal
+      {/* <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
         onLogin={handleLoginSuccess}
         isSignUp={isSignUp}
-      />
+      /> */}
     </>
   );
 };
