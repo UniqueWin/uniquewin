@@ -415,13 +415,13 @@ const Navbar = () => {
       </nav>
 
       {/* fixed mobile app navbar */}
-      <nav className="bg-indigo-800 p-4 fixed bottom-0 left-0 w-full z-[99] md:hidden">
+      <nav className="bg-violet-800 p-4 fixed bottom-0 left-0 w-full z-[99] md:hidden">
         <ul className="flex justify-between items-center">
           {links.map((link) => (
             <Link href={link.href}>
               <li
                 key={link.href}
-                className={`p-2 rounded-lg hover:bg-orange-500 bg-indigo-700 bg-opacity-50 ${
+                className={`p-2 rounded-lg hover:bg-orange-500 bg-violet-700 bg-opacity-50 ${
                   pathname === link.href ? "bg-orange-500" : ""
                 }`}
               >
