@@ -5,7 +5,15 @@ type Props = {};
 function Banner({}: Props) {
   return (
     <section className="bg-[#fbead1] my-10 relative h-[400px] md:h-[200px]">
-      <div className="absolute top-0 left-0 h-[400px] w-full md:w-full md:h-full z-0">
+      <div className="block md:hidden absolute top-0 left-0 h-[400px] w-full md:w-full md:h-full z-0">
+        <Image
+          src="/mobile-banner-image.png"
+          alt="banner"
+          layout="fill"
+          className="md:object-contain"
+        />
+      </div>
+      <div className="hidden md:block absolute top-0 left-0 h-[400px] w-full md:w-full md:h-full z-0">
         <Image
           src="/bannerbg.png"
           alt="banner"
