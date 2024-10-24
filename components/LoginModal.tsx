@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -14,9 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 interface LoginModalProps {
   isSignUp: boolean;
 }
@@ -77,26 +75,26 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
   return (
     <Dialog>
-      <>
+      <span className="flex flex-col md:flex-row gap-2 border-l md:border-purple-200 md:pl-4 border-none pl-0 w-full">
         <DialogTrigger asChild>
           <Button
             variant="outline"
-            className="bg-white text-lg text-purple-800 font-bold rounded-xl focus:bg-purple-400"
-            onClick={() => setIsSignUp(false)}
-          >
-            Login
-          </Button>
-        </DialogTrigger>
-        <DialogTrigger asChild>
-          <Button
-            variant="outline"
-            className="bg-indigo-800 text-lg text-white font-bold rounded-xl focus:bg-indigo-600"
+            className="bg-violet-800 text-sm text-white font-bold rounded-lg focus:bg-violet-600 py-1 md:max-h-8 px-4 md:w-22 w-full hover:bg-violet-700 hover:text-white order-1 md:order-2 uppercase md:text-xs"
             onClick={() => setIsSignUp(true)}
           >
             Register
           </Button>
         </DialogTrigger>
-      </>
+        <DialogTrigger asChild className="w-full">
+          <Button
+            variant="outline"
+            className="bg-white text-xs text-violet-800 font-bold rounded-lg focus:bg-violet-400 py-1 md:max-h-8 px-4 md:w-22 w-full hover:bg-violet-600 hover:text-white order-2 md:order-1 uppercase md:text-xs"
+            onClick={() => setIsSignUp(false)}
+          >
+            Login
+          </Button>
+        </DialogTrigger>
+      </span>
       <DialogContent className="rounded-xl max-w-[90vw] md:max-w-[400px] mx-auto bg-white text-black">
         <DialogHeader>
           <DialogTitle>{isSignUp ? "Register" : "Login"}</DialogTitle>
@@ -149,29 +147,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                 ? "Already have an account? Login"
                 : "Need an account? Sign Up"}
             </button>
-            {/* <div>
-              <DialogClose asChild>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  className="mr-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500"
-                >
-                  Close
-                </Button>
-              </DialogClose>
-              <DialogClose>
-                <Button
-                  type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                >
-                  {isSignUp ? "Register" : "Login"}
-                </Button>
-              </DialogClose>
-            </div> */}
           </div>
         </form>
         <DialogFooter className="flex flex-row justify-between items-center w-full">
-          {/* <Button type="submit">Save changes</Button> */}
           <DialogClose asChild className="w-full">
             <Button
               type="button"
@@ -192,78 +170,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100]">
-      <div className="bg-white text-black p-8 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-4">
-          {isSignUp ? "Sign Up" : "Login"}
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-black"
-              required
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-black"
-              required
-            />
-          </div>
-          {error && <p className="text-red-500">{error}</p>}
-          {message && <p className="text-green-500">{message}</p>}
-          <div className="flex justify-between items-center">
-            <button
-              type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-blue-600 hover:underline"
-            >
-              {isSignUp
-                ? "Already have an account? Login"
-                : "Need an account? Sign Up"}
-            </button>
-            <div>
-              <button
-                type="button"
-                onClick={onClose}
-                className="mr-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-              >
-                {isSignUp ? "Sign Up" : "Login"}
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
   );
 };
 
