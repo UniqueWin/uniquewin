@@ -13,7 +13,7 @@ function About({}: Props) {
         </h4>
         <h3 className="w-full h-full text-5xl lg:text-5xl font-bold text-black">
           About Our Games, <br /> Learn
-          <span className="p-[0.5px] m-1 relative leading-normal">
+          <span className="p-[0.5px] m-1 relative leading-normal whitespace-nowrap">
             <div className="rotate-[-2deg] absolute inset-0 w-full h-full bg-[#f79e07]"></div>
             <span className="relative z-10 text-white">How To Play</span>
           </span>

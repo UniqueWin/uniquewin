@@ -23,12 +23,12 @@ function Features({}: Props) {
             height={640}
             className="rounded-xl"
           />
-          <div className="absolute bottom-4 md:bottom-0 left-0 w-full h-20 flex items-center justify-center font-bold text-white text-2xl md:text-4xl px-4 md:px-10 md:mb-8">
+          <div className="absolute bottom-4 md:bottom-0 left-0 w-full h-20 flex items-center justify-center font-bold text-white text-xl sm:text-3xl md:text-4xl px-4 md:px-10 md:mb-8">
             <span className="w-full md:w-[93%] leading-tight">
               Don't Miss the 8pm Result Show on{" "}
-              <span className="bg-white px-1 rotate-[-3deg] text-blue-800">
+              <Highlight fill="white" color="blue-800">
                 Facebook
-              </span>
+              </Highlight>
             </span>
           </div>
         </div>
@@ -42,9 +42,8 @@ function Features({}: Props) {
             height={640}
             className="rounded-xl"
           />
-          <div className="absolute bottom-4 md:bottom-0 left-0 w-full h-20 flex items-center justify-center font-bold text-white text-2xl md:text-4xl px-10 md:mb-8">
-            <span className="w-full md:w-[93%] leading-tight p-[0.5px] relative">
-              <div></div>
+          <div className="absolute bottom-4 md:bottom-0 left-0 w-full h-20 flex items-center justify-center font-bold text-white text-xl sm:text-3xl md:text-4xl md:px-10 md:mb-8 mx-auto">
+            <span className="w-[90%] md:w-[93%] leading-tight p-[0.5px]">
               Discover Your Luck with Our Exciting{" "}
               <Highlight fill="white" color="purple-900">
                 Lucky Dip

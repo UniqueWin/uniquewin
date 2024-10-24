@@ -50,7 +50,7 @@ export default function WaysToWin2() {
       <small className="text-lg text-purple-800 font-semibold">Discover</small>
       <h2 className="text-4xl md:text-6xl font-bold mb-4 text-[#1e1631] py-5">
         3 Ways to Win{" "}
-        <span className="p-[0.5px]0.5px] relative">
+        <span className="p-[0.5px]0.5px] relative whitespace-nowrap">
           <div className="rotate-[-2deg] absolute inset-0 w-full h-full bg-[#f79e07]"></div>
           <span className="relative z-10 text-white">Big Prizes</span>
         </span>
